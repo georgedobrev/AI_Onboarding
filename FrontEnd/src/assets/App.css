@@ -1,0 +1,16 @@
+body {
+    background-color: #111315;
+}
+
+.navbar {
+    width: 60px;
+}
+
+.navbar .MuiListItem-root {
+    margin-bottom: 60px;
+    margin-left: 20px;
+}
+
+.navbar .MuiListItemIcon-root {
+    color: white;
+}
