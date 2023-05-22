@@ -28,13 +28,4 @@ const Navbar: React.FC = () => {
   );
 };
 
-const App: React.FC = () => {
-  return (
-      <div className="App">
-      <Navbar />
-      <div className="line"></div>
-    </div>
-  );
-};
-
-export default App;
+export default Navbar;
