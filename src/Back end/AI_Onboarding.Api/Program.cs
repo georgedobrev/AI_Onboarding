@@ -1,5 +1,5 @@
 
-namespace AI_Onboarding
+namespace AI_Onboarding.Api
 {
     public class Program
     {
