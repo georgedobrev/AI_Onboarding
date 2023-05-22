@@ -2,8 +2,6 @@ using AI_Onboarding.Data;
 using AI_Onboarding.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using System;
 
 namespace AI_Onboarding.Api
 {
@@ -20,6 +18,7 @@ namespace AI_Onboarding.Api
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            // Getting the connection string from appsettings.{Enviroment}.json
             var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
             var configuration = new ConfigurationBuilder()
              .SetBasePath(Directory.GetCurrentDirectory())
@@ -28,7 +27,7 @@ namespace AI_Onboarding.Api
             .Build();
 
             builder.Services.AddDbContext<DataContext>(options =>
-                options.UseSqlServer(configuration.GetConnectionString("HomeSqlConnection")));
+                options.UseSqlServer(configuration.GetConnectionString("SqlConnection")));
 
             builder.Services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<DataContext>();
 
