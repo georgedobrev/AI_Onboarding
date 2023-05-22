@@ -1,27 +1,31 @@
 body {
     background-color: #111315;
+    margin: 0;
 }
 
 .navbar {
     width: 60px;
     position: relative;
+    margin-left: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .navbar .MuiListItem-root {
     margin-bottom: 60px;
-    margin-left: 20px;
 }
 
 .navbar .MuiListItemIcon-root {
     color: white;
 }
 
+.App {
+    display: flex;
+    height: 100vh;
+}
+
 .line {
-    position: absolute;
-    top: 0;
-    right: 0; /* Position the line on the right */
-    bottom: 0;
-    width: 2px;
-    height: 100%;
-    background-color: white;
+    width: 0.3px;
+    background-color: #2a2c2d;
 }
