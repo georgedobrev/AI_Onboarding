@@ -4,6 +4,7 @@ body {
 
 .navbar {
     width: 60px;
+    position: relative;
 }
 
 .navbar .MuiListItem-root {
@@ -13,4 +14,14 @@ body {
 
 .navbar .MuiListItemIcon-root {
     color: white;
+}
+
+.line {
+    position: absolute;
+    top: 0;
+    right: 0; /* Position the line on the right */
+    bottom: 0;
+    width: 2px;
+    height: 100%;
+    background-color: white;
 }

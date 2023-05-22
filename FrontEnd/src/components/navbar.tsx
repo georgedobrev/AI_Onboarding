@@ -1,31 +1,32 @@
 import React from "react";
-import { List, ListItem, ListItemIcon } from "@mui/material";
+import {List, ListItem, ListItemIcon} from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
 import MessageIcon from "@mui/icons-material/Message";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
 const Navbar: React.FC = () => {
-  return (
-    <div className="navbar">
+    return (
+        <div className="navbar">
+      <div className="line"></div>
       <List>
         <ListItem button>
           <ListItemIcon>
-            <HomeIcon />
+            <HomeIcon/>
           </ListItemIcon>
         </ListItem>
         <ListItem button>
           <ListItemIcon>
-            <MessageIcon />
+            <MessageIcon/>
           </ListItemIcon>
         </ListItem>
         <ListItem button>
           <ListItemIcon>
-            <AccountCircleIcon />
+            <AccountCircleIcon/>
           </ListItemIcon>
         </ListItem>
       </List>
     </div>
-  );
+    );
 };
 
 export default Navbar;
