@@ -36,3 +36,18 @@ body {
     background-color: #2a2c2d;
     margin-left: 25px;
 }
+
+.cross-line {
+    width: 100px;
+    height: 3px;
+    background-color: #2a2c2d;
+    margin-top: 30px;
+    margin-bottom: 500px;
+}
+
+h1 {
+    color: white;
+    margin-left: 35px;
+    margin-top: 25px;
+    font-size: 30px;
+}
