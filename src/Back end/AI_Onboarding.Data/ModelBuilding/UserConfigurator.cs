@@ -16,7 +16,7 @@ public class UserConfigurator : IEntityTypeConfiguration<User>
 
         builder.Property(e => e.NormalizedEmail).HasMaxLength(100);
 
-        builder.Property(e => e.PhoneNumber).HasMaxLength(50).IsRequired();
+        builder.Property(e => e.PhoneNumber).HasMaxLength(50);
 
         builder.HasIndex(e => e.Email).IsUnique();
 

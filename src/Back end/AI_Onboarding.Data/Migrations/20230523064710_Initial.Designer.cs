@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AI_Onboarding.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230522160702_Initial")]
+    [Migration("20230523064710_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -63,7 +63,6 @@ namespace AI_Onboarding.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
-                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 

@@ -18,16 +18,8 @@ namespace AI_Onboarding.Api
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            // Getting the connection string from appsettings.{Enviroment}.json
-            var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
-            var configuration = new ConfigurationBuilder()
-             .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-            .AddJsonFile($"appsettings.{environment}.json", optional: true, reloadOnChange: true)
-            .Build();
-
             builder.Services.AddDbContext<DataContext>(options =>
-                options.UseSqlServer(configuration.GetConnectionString("SqlConnection")));
+                options.UseSqlServer(builder.Configuration.GetConnectionString("SqlConnection")));
 
             builder.Services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<DataContext>();
 
