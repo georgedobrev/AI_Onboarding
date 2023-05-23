@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.6.33712.159
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AI_Onboarding.Api", "AI_Onboarding.Api\AI_Onboarding.Api.csproj", "{7FE9474E-84DC-46A7-9595-647E15FC3651}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AI_Onboarding.Api", "AI_Onboarding.Api\AI_Onboarding.Api.csproj", "{7FE9474E-84DC-46A7-9595-647E15FC3651}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AI_Onboarding.Data", "AI_Onboarding.Data", "{1E8B6A9D-4EDD-420D-B5D6-9EC4B34FE811}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AI_Onboarding.Data", "AI_Onboarding.Data\AI_Onboarding.Data.csproj", "{5E3006B0-5C65-49CB-AE32-4E06FE250122}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,9 +19,16 @@ Global
 		{7FE9474E-84DC-46A7-9595-647E15FC3651}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7FE9474E-84DC-46A7-9595-647E15FC3651}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7FE9474E-84DC-46A7-9595-647E15FC3651}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E3006B0-5C65-49CB-AE32-4E06FE250122}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E3006B0-5C65-49CB-AE32-4E06FE250122}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E3006B0-5C65-49CB-AE32-4E06FE250122}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E3006B0-5C65-49CB-AE32-4E06FE250122}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5E3006B0-5C65-49CB-AE32-4E06FE250122} = {1E8B6A9D-4EDD-420D-B5D6-9EC4B34FE811}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {38CEAB8D-73BA-43FC-9A00-B1D9A7AFD902}
