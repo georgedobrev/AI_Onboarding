@@ -1,17 +1,27 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
     background-color: #111315;
     margin: 0;
 }
 
 .navbar {
-    width: 50px;
     position: relative;
-    margin-left: 25px;
     display: flex;
-    align-items: center;
+
     justify-content: center;
 }
 
+.navbar .MuiList-root {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+justify-content: center;
+}
 .navbar .MuiListItem-root {
     margin-bottom: 70px;
     padding: 10px;
@@ -20,34 +30,62 @@ body {
 .navbar .MuiListItemIcon-root {
     color: white;
     display: flex;
-    width: 20px; /* Adjust the width to shrink the size of the item icons */
+    width: 20px;
     height: 20px;
-    justify-content: center; /* Center the item icons horizontally */
+    justify-content: center;
+    /* Center the item icons horizontally */
     align-items: center;
 }
 
 .App {
     display: flex;
     height: 100vh;
+    flex-direction: row;
+}
+
+.content-container {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    width: 100%;
 }
 
 .line {
     width: 0.5px;
     background-color: #2a2c2d;
-    margin-left: 25px;
+
+    top: 0;
+    bottom: 0;
 }
 
-.cross-line {
-    width: 100px;
-    height: 3px;
+.header-line {
+    width: 100%;
+    height: 0.5px;
     background-color: #2a2c2d;
-    margin-top: 30px;
-    margin-bottom: 500px;
+    margin-top: 25px;
+
+}
+
+.heading-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 h1 {
     color: white;
-    margin-left: 35px;
+    white-space: pre-wrap;
     margin-top: 25px;
     font-size: 30px;
+    text-align: center;
+}
+
+h2 {
+    color: white;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.nav-container{
+    display: flex;
 }
