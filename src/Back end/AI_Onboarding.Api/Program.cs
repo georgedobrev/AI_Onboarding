@@ -1,7 +1,8 @@
-using Serilog;
+using Serilog.AspNetCore;
 using Serilog.Sinks.SystemConsole;
 using Serilog.Sinks.MSSqlServer;
-
+using Serilog;
+using Microsoft.AspNetCore.Builder;
 
 namespace AI_Onboarding.Api
 {
@@ -13,25 +14,15 @@ namespace AI_Onboarding.Api
                 .AddJsonFile("appsettings.json")
                 .Build();
 
-            Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Verbose()
-                .WriteTo.Console()
-                .WriteTo.MSSqlServer(
-                connectionString: "YourdatabaseConnectionString",
-                sinkOptions: new MSSqlServerSinkOptions { TableName = "Logs" },
-                columnOptions: new ColumnOptions(),
-                restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Error)
-                .CreateLogger();
-
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddEndpointsApiExplorer(); 
             builder.Services.AddSwaggerGen();
-
+            builder.Host.UseSerilog((hostingContext, logger) => logger.ReadFrom.Configuration(hostingContext.Configuration));
 
             var app = builder.Build();
 
@@ -53,5 +44,7 @@ namespace AI_Onboarding.Api
 
             Log.CloseAndFlush();
         }
+
+        
     }
 }
