@@ -28,3 +28,10 @@
 .nav-container {
     display: flex;
 }
+
+.navbar-line {
+    width: 0.5px;
+    background-color: var(--lineColor);
+    top: 0;
+    bottom: 0;
+}

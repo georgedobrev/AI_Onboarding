@@ -3,6 +3,7 @@
   line-height: 1.5;
   font-weight: 400;
 
+  --lineColor: #2a2c2d;
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
   background-color: #242424;

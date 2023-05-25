@@ -26,7 +26,7 @@ const Navbar: React.FC = () => {
                         </ListItemIcon>
                     </ListItem>
                 </List>
-                <div className="line"></div>
+                <div className="navbar-line"></div>
             </div>
         </div>
     );
