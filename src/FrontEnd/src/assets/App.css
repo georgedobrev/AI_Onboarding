@@ -81,6 +81,7 @@ h1 {
     display: flex;
 }
 
+/*
 h2 {
     color: white;
     text-align: center;
@@ -104,8 +105,6 @@ h2 {
     background-color: #2a2c2d;
     margin-left: 205px;
     position: absolute;
-    /*top: 0;*/
-    /*left: 0;*/
 }
 
 .horizontal-chatline {
@@ -114,6 +113,6 @@ h2 {
     background-color: #2a2c2d;
     margin-top: 85px;
     position: absolute;
-    /*top: 0;*/
-    /*left: 0;*/
 }
+
+*/
