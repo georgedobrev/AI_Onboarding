@@ -1,0 +1,31 @@
+.navbar {
+    position: relative;
+    display: flex;
+    justify-content: center;
+}
+
+.navbar .MuiList-root {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.navbar .MuiListItem-root {
+    margin-bottom: 70px;
+    padding: 10px;
+}
+
+.navbar .MuiListItemIcon-root {
+    color: white;
+    display: flex;
+    width: 20px;
+    height: 20px;
+    justify-content: center;
+    align-items: center;
+}
+
+.nav-container {
+    display: flex;
+}
+

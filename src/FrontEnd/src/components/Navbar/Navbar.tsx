@@ -3,6 +3,7 @@ import { List, ListItem, ListItemIcon } from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
 import MessageIcon from '@mui/icons-material/Message';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import './Navbar.css';
 
 const Navbar: React.FC = () => {
   return (

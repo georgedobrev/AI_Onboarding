@@ -1,4 +1,6 @@
 import React from "react";
+import Chats from "./Chats/Chats.tsx";
+import Messages from "./Messages/Messages.tsx";
 
 const Home: React.FC = () => {
     return (
@@ -9,11 +11,9 @@ const Home: React.FC = () => {
                     <div className="header-line"></div>
                 </div>
                 <Chats/>
+                <Messages/>
             </div>
         </>
     )
 }
-
-import Chats from "./Chats";
-
 export default Home;

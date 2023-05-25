@@ -1,0 +1,23 @@
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    width: 205px;
+    position: relative;
+    z-index: 0;
+}
+
+.vertical-chatline {
+    width: 1px;
+    height: 100vh;
+    background-color: #2a2c2d;
+    margin-left: 205px;
+    position: absolute;
+}
+
+.horizontal-chatline {
+    width: 100%;
+    height: 1px;
+    background-color: #2a2c2d;
+    margin-top: 85px;
+    position: absolute;
+}
