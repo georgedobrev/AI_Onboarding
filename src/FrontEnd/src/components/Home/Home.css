@@ -1,0 +1,34 @@
+.content-container {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    width: 100%;
+}
+
+.line {
+    width: 0.5px;
+    background-color: #2a2c2d;
+    top: 0;
+    bottom: 0;
+}
+
+.header-line {
+    width: 100%;
+    height: 0.5px;
+    background-color: #2a2c2d;
+    margin-top: 25px;
+}
+
+.heading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.header-title {
+    color: white;
+    white-space: pre-wrap;
+    margin-top: 25px;
+    font-size: 30px;
+    text-align: center;
+}

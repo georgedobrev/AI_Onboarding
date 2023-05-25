@@ -5,12 +5,31 @@
     align-items: center;
     margin-top: -60px;
     margin-left: 205px;
+    margin-right: 350px;
+    overflow: hidden;
 }
 
 .vertical-messagesline {
     width: 1px;
-    height: 100vh;
-    background-color: #2a2c2d;
-    margin-left: 500px;
+    height: 100%;
+    background-color: var(--lineColor);
+    margin-left: 700px;
+    margin-right: -851px;
     position: absolute;
+}
+
+.horizontal-messagesline {
+    position: relative;
+    width: 100%;
+    margin-top: 83px;
+    height: 1px;
+    background-color: var(--lineColor);
+}
+
+
+.messages-title  {
+    color: white;
+    font-size: 30px;
+    margin-top: 15px;
+    text-align: center;
 }

@@ -21,3 +21,10 @@
     margin-top: 85px;
     position: absolute;
 }
+
+.chats-title {
+    color: white;
+    font-size: 25px;
+    margin-top: 25px;
+    text-align: center;
+}
