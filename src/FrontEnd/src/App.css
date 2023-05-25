@@ -5,7 +5,7 @@
 }
 
 body {
-  background-color: #111315;
+  background-color: var(--mainColor);
   margin: 0;
 }
 
