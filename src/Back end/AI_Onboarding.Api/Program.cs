@@ -10,9 +10,7 @@ namespace AI_Onboarding.Api
     {
         public static void Main(string[] args)
         {
-            var configuration = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json")
-                .Build();
+            
 
             var builder = WebApplication.CreateBuilder(args);
 
