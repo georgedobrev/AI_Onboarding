@@ -1,3 +1,7 @@
+using AI_Onboarding.Data;
+using AI_Onboarding.Data.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Serilog.AspNetCore;
 using Serilog.Sinks.SystemConsole;
 using Serilog.Sinks.MSSqlServer;
@@ -10,8 +14,6 @@ namespace AI_Onboarding.Api
     {
         public static void Main(string[] args)
         {
-            
-
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
@@ -21,6 +23,11 @@ namespace AI_Onboarding.Api
             builder.Services.AddEndpointsApiExplorer(); 
             builder.Services.AddSwaggerGen();
             builder.Host.UseSerilog((hostingContext, logger) => logger.ReadFrom.Configuration(hostingContext.Configuration));
+
+            builder.Services.AddDbContext<DataContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("SqlConnection")));
+
+            builder.Services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<DataContext>();
 
             var app = builder.Build();
 
@@ -35,14 +42,9 @@ namespace AI_Onboarding.Api
 
             app.UseAuthorization();
 
-
             app.MapControllers();
 
             app.Run();
-
-            Log.CloseAndFlush();
         }
-
-        
     }
 }
