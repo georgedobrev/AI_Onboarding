@@ -2,6 +2,11 @@ using AI_Onboarding.Data;
 using AI_Onboarding.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Serilog.AspNetCore;
+using Serilog.Sinks.SystemConsole;
+using Serilog.Sinks.MSSqlServer;
+using Serilog;
+using Microsoft.AspNetCore.Builder;
 
 namespace AI_Onboarding.Api
 {
@@ -15,8 +20,9 @@ namespace AI_Onboarding.Api
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddEndpointsApiExplorer(); 
             builder.Services.AddSwaggerGen();
+            builder.Host.UseSerilog((hostingContext, logger) => logger.ReadFrom.Configuration(hostingContext.Configuration));
 
             builder.Services.AddDbContext<DataContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("SqlConnection")));
