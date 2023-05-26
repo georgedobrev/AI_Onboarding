@@ -9,6 +9,11 @@ namespace AI_Onboarding.Data.ModelBuilding
         public void Configure(EntityTypeBuilder<RoleClaim> builder)
         {
             builder.ToTable("RoleClaims");
+
+            builder.HasOne(x => x.ModifiedBy)
+            .WithMany(x => x.ModifiedRoleClaims)
+            .HasForeignKey(x => x.ModifiedById)
+            .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

@@ -11,6 +11,11 @@ namespace AI_Onboarding.Data.ModelBuilding
             builder.ToTable("UserTokens");
 
             builder.Property(e => e.Name).HasMaxLength(255);
+
+            builder.HasOne(x => x.ModifiedBy)
+            .WithMany(x => x.ModifiedUserTokens)
+            .HasForeignKey(x => x.ModifiedById)
+            .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

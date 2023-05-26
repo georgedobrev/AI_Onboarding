@@ -13,6 +13,11 @@ namespace AI_Onboarding.Data.ModelBuilding
             builder.Property(e => e.Name).HasMaxLength(255);
 
             builder.Property(e => e.NormalizedName).HasMaxLength(255);
+
+            builder.HasOne(x => x.ModifiedBy)
+            .WithMany(x => x.ModifiedRoles)
+            .HasForeignKey(x => x.ModifiedById)
+            .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
