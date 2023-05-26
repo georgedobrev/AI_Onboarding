@@ -1,0 +1,17 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--mainColor);
+  margin: 0;
+}
+
+.App {
+  display: flex;
+  height: 100vh;
+  flex-direction: row;
+}
+
