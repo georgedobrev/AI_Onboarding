@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AI_Onboarding.Data
 {
-    public class DataContext : IdentityDbContext<User, Role, int>
+    public class DataContext : IdentityDbContext<User, Role, int, UserClaim, UserRole, UserLogin, RoleClaim, UserToken>
     {
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
