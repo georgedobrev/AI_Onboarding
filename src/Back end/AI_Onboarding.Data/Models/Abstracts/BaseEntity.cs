@@ -1,11 +1,10 @@
-﻿using Microsoft.AspNetCore.Identity;
-
-namespace AI_Onboarding.Data.Models
+﻿namespace AI_Onboarding.Data.Models
 {
-    public class User : IdentityUser<int>, IBaseEntity
+    public class BaseEntity : IBaseEntity
     {
         public DateTime CreatedAt { get; set; }
         public DateTime? ModifiedAt { get; set; }
         public string ModifiedBy { get; set; }
     }
 }
+

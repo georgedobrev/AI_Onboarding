@@ -2,10 +2,11 @@
 
 namespace AI_Onboarding.Data.Models
 {
-    public class User : IdentityUser<int>, IBaseEntity
+    public class UserClaim : IdentityUserClaim<int>, IBaseEntity
     {
         public DateTime CreatedAt { get; set; }
         public DateTime? ModifiedAt { get; set; }
         public string ModifiedBy { get; set; }
     }
 }
+

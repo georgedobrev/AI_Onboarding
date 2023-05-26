@@ -1,13 +1,12 @@
 ﻿using AI_Onboarding.Data.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Linq.Expressions;
 
 namespace AI_Onboarding.Data.Repository
 {
 
-    public class Repository<T> : IRepository<T> where T : BaseEntity
+    public class Repository<T> : IRepository<T> where T : class, IBaseEntity
     {
         private readonly IdentityDbContext _context;
         private readonly DbSet<T> _entities;
@@ -18,14 +17,20 @@ namespace AI_Onboarding.Data.Repository
             _entities = context.Set<T>();
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync()
+        public IQueryable<T> GetAll()
         {
-            return await _entities.ToListAsync();
+            return _entities.AsQueryable();
         }
 
-        public async Task<T?> GetByIdAsync(int id)
+        public T? Find(int id)
         {
-            return await _entities.SingleOrDefaultAsync(s => s.Id == id);
+            T? entity = _entities.Find(id);
+            if (entity is null)
+            {
+                return null;
+            }
+
+            return entity;
         }
 
         public void Add(T entity)
@@ -33,26 +38,31 @@ namespace AI_Onboarding.Data.Repository
             _entities.Add(entity);
         }
 
-        public async Task<bool> SaveChangesAsync()
+        public bool SaveChanges()
         {
-            return await _context.SaveChangesAsync().ConfigureAwait(false) > 0;
+            return _context.SaveChanges() > 0;
         }
 
-        public async Task<T?> FindByConditionAsync(Expression<Func<T, bool>> predicate)
+        public T? FindByCondition(Expression<Func<T, bool>> predicate)
         {
-            return await _context.Set<T>().FirstOrDefaultAsync(predicate);
-        }
-
-        public async Task<T?> Remove(int id)
-        {
-            T? entity = await GetByIdAsync(id);
+            T? entity = _entities.FirstOrDefault(predicate);
             if (entity is null)
             {
                 return null;
             }
 
-            EntityEntry<T> entry = _entities.Remove(entity);
-            return entry.Entity;
+            return entity;
+        }
+
+        public T? Remove(int id)
+        {
+            T? entity = Find(id);
+            if (entity is null)
+            {
+                return null;
+            }
+
+            return entity;
         }
     }
 }

@@ -21,7 +21,7 @@ namespace AI_Onboarding.Api
             builder.Services.AddDbContext<DataContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("SqlConnection")));
 
-            builder.Services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<DataContext>();
+            builder.Services.AddIdentity<User, Role>().AddEntityFrameworkStores<DataContext>();
 
             var app = builder.Build();
 

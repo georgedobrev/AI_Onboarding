@@ -1,12 +1,12 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AI_Onboarding.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AI_Onboarding.Data.ModelBuilding
 {
-    public class UserTokensConfigurator : IEntityTypeConfiguration<IdentityUserToken<string>>
+    public class UserTokensConfigurator : IEntityTypeConfiguration<UserToken>
     {
-        public void Configure(EntityTypeBuilder<IdentityUserToken<string>> builder)
+        public void Configure(EntityTypeBuilder<UserToken> builder)
         {
             builder.ToTable("UserTokens");
 
