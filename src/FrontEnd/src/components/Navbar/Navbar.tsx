@@ -6,30 +6,30 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import './Navbar.css';
 
 const Navbar: React.FC = () => {
-  return (
-      <div className="navbar">
-        <div className="nav-container">
-          <List>
-            <ListItem button>
-              <ListItemIcon>
-                <HomeIcon />
-              </ListItemIcon>
-            </ListItem>
-            <ListItem button>
-              <ListItemIcon>
-                <MessageIcon />
-              </ListItemIcon>
-            </ListItem>
-            <ListItem button>
-              <ListItemIcon>
-                <AccountCircleIcon />
-              </ListItemIcon>
-            </ListItem>
-          </List>
-          <div className="line"></div>
+    return (
+        <div className="navbar">
+            <div className="nav-container">
+                <List>
+                    <ListItem button>
+                        <ListItemIcon>
+                            <HomeIcon />
+                        </ListItemIcon>
+                    </ListItem>
+                    <ListItem button>
+                        <ListItemIcon>
+                            <MessageIcon />
+                        </ListItemIcon>
+                    </ListItem>
+                    <ListItem button>
+                        <ListItemIcon>
+                            <AccountCircleIcon />
+                        </ListItemIcon>
+                    </ListItem>
+                </List>
+                <div className="navbar-line"></div>
+            </div>
         </div>
-      </div>
-  );
+    );
 };
 
 export default Navbar;

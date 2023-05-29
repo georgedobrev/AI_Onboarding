@@ -1,5 +1,9 @@
+using AI_Onboarding.Data;
+using AI_Onboarding.Data.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
-namespace AI_Onboarding
+namespace AI_Onboarding.Api
 {
     public class Program
     {
@@ -14,6 +18,11 @@ namespace AI_Onboarding
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddDbContext<DataContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("SqlConnection")));
+
+            builder.Services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<DataContext>();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -26,7 +35,6 @@ namespace AI_Onboarding
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
 
             app.MapControllers();
 

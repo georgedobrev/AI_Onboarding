@@ -1,0 +1,65 @@
+.google-signup-container {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.google-signup-overlay {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 650px;
+    width: 400px;
+    background-color: white;
+    border-radius: 8px;
+}
+
+.google-signup-header {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 750px;
+    width: 400px;
+    border-bottom: 1px solid #c9cace; /* Add a border at the bottom */
+}
+
+.google-signup-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 650px;
+    width: 400px;
+}
+
+.google-signup-welcome-h1 {
+    font-size: 1.875rem;
+    font-weight: 300;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    text-align: center;
+    color: black;
+}
+
+.google-signup-welcome-span {
+    font-size: 1.3rem;
+    font-weight: 300;
+}
+
+.google-signup-h1 {
+    font-size: 1.275rem;
+    font-weight: 400;
+    margin-top: 3rem;
+    margin-bottom: 3rem;
+    color: black;
+}
+
+.google-signup-logo {
+    width: 90px; /* Adjust the width as needed */
+    height: auto;
+    margin-bottom: 10px;
+    border-radius: 7px;
+}
