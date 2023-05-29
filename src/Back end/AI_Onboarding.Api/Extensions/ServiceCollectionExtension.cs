@@ -1,18 +1,47 @@
-﻿namespace AI_Onboarding.Services;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Configuration;
-using Microsoft.EntityFrameworkCore.SqlServer;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using AI_Onboarding.Data;
+using AI_Onboarding.Data.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 public static class ServiceCollectionExtension
 {
-    
-    public static IServiceCollection RegisterDbContext(IServiceCollection services, IConfiguration configuration)
+
+    public static void RegisterDbContext(IServiceCollection services, IConfiguration configuration)
     {
-        
+
         services.AddDbContext<DataContext>(options =>
-                options.UseSqlServer(configuration.GetConnectionString("<from appsettings.{Environment}.json>")));
+                options.UseSqlServer(configuration.GetConnectionString("SqlConnection")));
+
+        services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<DataContext>();
     }
+
+    public static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+        }).AddJwtBearer(o =>
+        {
+            o.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidIssuer = configuration["Jwt:Issuer"],
+                ValidAudience = configuration["Jwt:Audience"],
+                IssuerSigningKey = new SymmetricSecurityKey
+                (Encoding.UTF8.GetBytes(configuration["Jwt:Key"])),
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true
+            };
+        });
+
+        services.AddAuthorization();
+    }
+
 }
 
