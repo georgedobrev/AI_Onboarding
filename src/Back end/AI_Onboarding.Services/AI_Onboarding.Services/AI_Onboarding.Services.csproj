@@ -20,5 +20,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\AI_Onboarding.Data\AI_Onboarding.Data.csproj" />
+    <ProjectReference Include="..\..\AI_Onboarding.ViewModels\AI_Onboarding.ViewModels.csproj" />
   </ItemGroup>
 </Project>

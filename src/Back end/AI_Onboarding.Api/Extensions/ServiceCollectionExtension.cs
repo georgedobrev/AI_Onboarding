@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using AI_Onboarding.Data.Repository;
 
 public static class ServiceCollectionExtension
 {
@@ -20,6 +21,8 @@ public static class ServiceCollectionExtension
 
     public static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
     {
+        services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+
         services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
