@@ -1,18 +1,23 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AI_Onboarding.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AI_Onboarding.Data.ModelBuilding
 {
-    public class RoleConfigurator : IEntityTypeConfiguration<IdentityRole>
+    public class RoleConfigurator : IEntityTypeConfiguration<Role>
     {
-        public void Configure(EntityTypeBuilder<IdentityRole> builder)
+        public void Configure(EntityTypeBuilder<Role> builder)
         {
             builder.ToTable("Roles");
 
             builder.Property(e => e.Name).HasMaxLength(255);
 
             builder.Property(e => e.NormalizedName).HasMaxLength(255);
+
+            builder.HasOne(x => x.ModifiedBy)
+            .WithMany(x => x.ModifiedRoles)
+            .HasForeignKey(x => x.ModifiedById)
+            .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

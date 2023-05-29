@@ -17,4 +17,10 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.5" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Models\Abstracts\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\Abstracts\" />
+  </ItemGroup>
 </Project>
