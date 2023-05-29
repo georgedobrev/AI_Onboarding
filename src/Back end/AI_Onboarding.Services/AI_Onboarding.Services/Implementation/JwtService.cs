@@ -1,5 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using AI_Onboarding.Data.Models;
 using AI_Onboarding.Services.Interfaces;
@@ -32,10 +33,16 @@ namespace AI_Onboarding.Services.Implementation
 
             var tokenHandler = new JwtSecurityTokenHandler();
 
+            var refreshToken = GenerateRefreshToken();
+
+            _ = int.TryParse(_configuration["JWT:RefreshTokenValidityInDays"], out int refreshTokenValidityInDays);
+
             return new AuthenticationResponse
             {
                 Token = tokenHandler.WriteToken(token),
-                Expiration = expiration
+                Expiration = expiration,
+                RefreshToken = refreshToken,
+                RefreshTokenValidTo = DateTime.Now.AddDays(refreshTokenValidityInDays)
             };
         }
 
@@ -68,6 +75,14 @@ namespace AI_Onboarding.Services.Implementation
                     ),
                     SecurityAlgorithms.HmacSha256
                 );
+        }
+
+        private static string GenerateRefreshToken()
+        {
+            var randomNumber = new byte[64];
+            using var rng = RandomNumberGenerator.Create();
+            rng.GetBytes(randomNumber);
+            return Convert.ToBase64String(randomNumber);
         }
     }
 }

@@ -16,7 +16,7 @@ public static class ServiceCollectionExtension
         services.AddDbContext<DataContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("SqlConnection")));
 
-        services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<DataContext>();
+        services.AddIdentity<User, Role>().AddEntityFrameworkStores<DataContext>();
     }
 
     public static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
