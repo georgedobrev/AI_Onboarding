@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Data.SqlClient;
 
+
 namespace Custom_Exception_Filter.Filters
 {
     public interface IExceptionFilter
