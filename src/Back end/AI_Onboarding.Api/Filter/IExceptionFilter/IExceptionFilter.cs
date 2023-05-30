@@ -7,12 +7,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Data.SqlClient;
 
-
-namespace Custom_Exception_Filter.Filters
+namespace AI_Onboarding.Api.Filter.IExceptionFilter
 {
     public interface IExceptionFilter
     {
         void OnException(ExceptionContext context);
-
     }
 }
+
