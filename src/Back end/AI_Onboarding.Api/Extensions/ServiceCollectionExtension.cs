@@ -4,9 +4,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore.SqlServer;
 using Microsoft.EntityFrameworkCore;
 using AI_Onboarding.Data;
-using AI_Onboarding.Api.Filter;
-using Serilog;
-using AI_Onboarding.Api.Filter.IExceptionFilter;
 
 public static class ServiceCollectionExtension
 {
@@ -17,13 +14,5 @@ public static class ServiceCollectionExtension
         services.AddDbContext<DataContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("<from appsettings.{Environment}.json>")));
     }
-
-   public static IServiceCollection RegisterFilters(this IServiceCollection services)
-    {
-        services.AddScoped<IExceptionFilter, CustomExceptionFilter>();
-        services.AddSingleton<ILogger>(Log.Logger);
-        return services;
-    }
-
 }
 

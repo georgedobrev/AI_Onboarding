@@ -18,9 +18,6 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.5" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <Folder Include="Controllers\" />
-    <Folder Include="Filter\" />
-    <Folder Include="Filter\IExceptionFilter\" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
   </ItemGroup>
 
   <ItemGroup>
@@ -38,8 +35,4 @@
     <ProjectReference Include="..\AI_Onboarding.Data\AI_Onboarding.Data.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Remove="Filter\" />
-    <None Remove="Filter\IExceptionFilter\" />
-  </ItemGroup>
 </Project>
