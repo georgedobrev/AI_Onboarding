@@ -1,11 +1,12 @@
-.google-signup-container {
+.signup-container {
     display: flex;
     width: 100%;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 }
-.google-signup-overlay {
+
+.signup-overlay {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -16,26 +17,33 @@
     border-radius: 8px;
 }
 
-.google-signup-header {
+.signup-header {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 750px;
+    height: 2750px;
     width: 400px;
-    border-bottom: 1px solid #c9cace; /* Add a border at the bottom */
+    position: relative;
 }
 
-.google-signup-body {
+.signup-or {
+    position: relative;
+    font-size: 15px;
+    z-index: 1;
+    top: 83px;
+    padding: 0 10px;
+    background-color: #ffffff;
+}
+
+.signup-body {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
     height: 650px;
     width: 400px;
 }
 
-.google-signup-welcome-h1 {
+.signup-welcome-h1 {
     font-size: 1.875rem;
     font-weight: 300;
     margin-top: 2rem;
@@ -44,12 +52,12 @@
     color: black;
 }
 
-.google-signup-welcome-span {
+.signup-welcome-span {
     font-size: 1.3rem;
     font-weight: 300;
 }
 
-.google-signup-h1 {
+.signup-h1 {
     font-size: 1.275rem;
     font-weight: 400;
     margin-top: 3rem;
@@ -58,8 +66,51 @@
 }
 
 .google-signup-logo {
-    width: 90px; /* Adjust the width as needed */
+    width: 90px;
     height: auto;
     margin-bottom: 10px;
     border-radius: 7px;
+}
+
+.signup-button-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 3rem;
+}
+
+.email-field,
+.password-field,
+.signup-continue-btn {
+    width: 320px;
+}
+
+.email-field {
+    top: 30px;
+}
+
+.password-field {
+    top: 40px;
+}
+
+.signup-continue-btn {
+    top: 60px;
+    background-color: #080731 !important;
+    color: white;
+}
+
+.signup-continue-btn:hover{
+    background-color: #18c1e2 !important;
+    color: white;
+}
+
+
+.signup-header::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    width: 315px;
+    height: 1px;
+    background-color: #c9cace;
 }
