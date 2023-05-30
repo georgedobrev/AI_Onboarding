@@ -10,10 +10,8 @@ using AI_Onboarding.Services.Implementation;
 
 public static class ServiceCollectionExtension
 {
-
     public static IServiceCollection RegisterDbContext(IServiceCollection services, IConfiguration configuration)
     {
-
         services.AddDbContext<DataContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("SqlConnection")));
 
@@ -26,8 +24,7 @@ public static class ServiceCollectionExtension
     {
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
-        services.AddScoped<IAccessTokenService, AccessTokenService>();
-        services.AddScoped<IRefreshTokenService, RefreshTokenService>();
+        services.AddScoped<ITokenService, TokenService>();
 
         services.AddAuthentication(options =>
         {
@@ -54,4 +51,3 @@ public static class ServiceCollectionExtension
         return services;
     }
 }
-
