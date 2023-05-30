@@ -1,8 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
-using AI_Onboarding.Data.Models;
 using AI_Onboarding.Services.Interfaces;
 using AI_Onboarding.ViewModels.JWTModels;
 using Microsoft.Extensions.Configuration;
@@ -10,39 +8,35 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace AI_Onboarding.Services.Implementation
 {
-    public class JwtService : IJwtService
+    public class AccessTokenService : IAccessTokenService
     {
-        private const int EXPIRATION_MINUTES = 5;
-
         private readonly IConfiguration _configuration;
+        private readonly RefreshTokenService _refreshTokenService;
 
-        public JwtService(IConfiguration configuration)
+        public AccessTokenService(RefreshTokenService refreshTokenService, IConfiguration configuration)
         {
+            _refreshTokenService = refreshTokenService;
             _configuration = configuration;
         }
 
-        public AuthenticationResponse CreateToken(User user)
+        public TokenResponse CreateToken(TokenRequest request)
         {
-            var expiration = DateTime.UtcNow.AddMinutes(EXPIRATION_MINUTES);
+            _ = int.TryParse(_configuration["JWT:RefreshTokenValidityInDays"], out int tokenValidityInMinutes);
+
+            var expiration = DateTime.UtcNow.AddMinutes(tokenValidityInMinutes);
 
             var token = CreateJwtToken(
-                CreateClaims(user),
+                CreateClaims(request),
                 CreateSigningCredentials(),
                 expiration
             );
 
             var tokenHandler = new JwtSecurityTokenHandler();
 
-            var refreshToken = GenerateRefreshToken();
-
-            _ = int.TryParse(_configuration["JWT:RefreshTokenValidityInDays"], out int refreshTokenValidityInDays);
-
-            return new AuthenticationResponse
+            return new TokenResponse
             {
                 Token = tokenHandler.WriteToken(token),
-                Expiration = expiration,
-                RefreshToken = refreshToken,
-                RefreshTokenValidTo = DateTime.Now.AddDays(refreshTokenValidityInDays)
+                RefreshToken = _refreshTokenService.GenerateToken(request.Username)
             };
         }
 
@@ -57,13 +51,12 @@ namespace AI_Onboarding.Services.Implementation
             );
         }
 
-        private Claim[] CreateClaims(User user)
+        private Claim[] CreateClaims(TokenRequest request)
         {
             return new[] {
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
-                new Claim(ClaimTypes.Name, user.UserName),
-                new Claim(ClaimTypes.Email, user.Email)
+                new Claim(ClaimTypes.Name, request.Username)
             };
         }
 
@@ -75,14 +68,6 @@ namespace AI_Onboarding.Services.Implementation
                     ),
                     SecurityAlgorithms.HmacSha256
                 );
-        }
-
-        private static string GenerateRefreshToken()
-        {
-            var randomNumber = new byte[64];
-            using var rng = RandomNumberGenerator.Create();
-            rng.GetBytes(randomNumber);
-            return Convert.ToBase64String(randomNumber);
         }
     }
 }

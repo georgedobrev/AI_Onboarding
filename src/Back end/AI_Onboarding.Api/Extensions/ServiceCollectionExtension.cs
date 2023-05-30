@@ -1,27 +1,33 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using AI_Onboarding.Data;
 using AI_Onboarding.Data.Models;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using AI_Onboarding.Data.Repository;
+using AI_Onboarding.Services.Interfaces;
+using AI_Onboarding.Services.Implementation;
 
 public static class ServiceCollectionExtension
 {
 
-    public static void RegisterDbContext(IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection RegisterDbContext(IServiceCollection services, IConfiguration configuration)
     {
 
         services.AddDbContext<DataContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("SqlConnection")));
 
         services.AddIdentity<User, Role>().AddEntityFrameworkStores<DataContext>();
+
+        return services;
     }
 
-    public static void ConfigureServices(IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection ConfigureServices(IServiceCollection services, IConfiguration configuration)
     {
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+
+        services.AddScoped<IAccessTokenService, AccessTokenService>();
+        services.AddScoped<IRefreshTokenService, RefreshTokenService>();
 
         services.AddAuthentication(options =>
         {
@@ -44,7 +50,8 @@ public static class ServiceCollectionExtension
         });
 
         services.AddAuthorization();
-    }
 
+        return services;
+    }
 }
 

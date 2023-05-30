@@ -3,9 +3,9 @@ using AI_Onboarding.ViewModels.JWTModels;
 
 namespace AI_Onboarding.Services.Interfaces
 {
-    public interface IJwtService
+    public interface IAccessTokenService
     {
-        AuthenticationResponse CreateToken(User user);
+        TokenResponse CreateToken(TokenRequest user);
     }
 }
 
