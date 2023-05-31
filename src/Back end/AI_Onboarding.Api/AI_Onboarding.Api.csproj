@@ -18,6 +18,8 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.5" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <Folder Include="Controllers\" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.5" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.6" />
   </ItemGroup>
 
   <ItemGroup>
@@ -33,6 +35,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AI_Onboarding.Data\AI_Onboarding.Data.csproj" />
+    <ProjectReference Include="..\AI_Onboarding.Services\AI_Onboarding.Services\AI_Onboarding.Services.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
   </ItemGroup>
 
 </Project>
