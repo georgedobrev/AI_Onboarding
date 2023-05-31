@@ -1,15 +1,14 @@
-import React, {useEffect, useState} from "react";
-import {useNavigate, useLocation, Link} from 'react-router-dom';
-import {GoogleLogin} from "@react-oauth/google";
-import './Signup.css';
-import {TextField} from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
+import { TextField } from "@mui/material";
 import PasswordField from './PasswordField';
-import logoImage from '../../assets/blankfactor-logo.jpg';
 import Button from '@mui/material/Button';
+import './Signup.css';
+import logoImage from '../../assets/blankfactor-logo.jpg';
 
 const Signup: React.FC = () => {
     const navigate = useNavigate();
-    const location = useLocation();
     const [isSignupSuccess, setSignupSuccess] = useState(false);
 
     useEffect(() => {
@@ -19,8 +18,8 @@ const Signup: React.FC = () => {
         }
     }, []);
 
-    const handleGoogleSignupSuccess = (credentialResponse: any) => {
-        console.log(credentialResponse);
+    const handleGoogleSignupSuccess = (credentialResponse: CredentialResponse) => {
+        console.log('Login Success', credentialResponse)
         navigate('/home');
         setSignupSuccess(true);
         localStorage.setItem('signupSuccess', 'true');
@@ -30,9 +29,7 @@ const Signup: React.FC = () => {
         console.log('Login Failed');
     };
 
-    const shouldRenderContainer = location.pathname !== '/home';
-
-    return shouldRenderContainer ? (
+    return (
         <div className="signup-container">
             <div className="signup-overlay">
                 <div className="signup-header">
@@ -65,7 +62,7 @@ const Signup: React.FC = () => {
                 </div>
             </div>
         </div>
-    ) : null;
+    );
 };
 
 export default Signup;
