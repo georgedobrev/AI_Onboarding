@@ -1,16 +1,22 @@
 ﻿using AI_Onboarding.Data.ModelBuilding;
 using AI_Onboarding.Data.Models;
+using AI_Onboarding.Data.Repository;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace AI_Onboarding.Data
 {
     public class DataContext : IdentityDbContext<User, Role, int, UserClaim, UserRole, UserLogin, RoleClaim, UserToken>
     {
-        private readonly User _currentUser;
-        public DataContext(DbContextOptions<DataContext> options, User currentUser) : base(options)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly Repository<User> _repository;
+
+        public DataContext(DbContextOptions<DataContext> options, IHttpContextAccessor httpContextAccessor, Repository<User> repository) : base(options)
         {
-            _currentUser = currentUser;
+            _httpContextAccessor = httpContextAccessor;
+            _repository = repository;
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -41,10 +47,13 @@ namespace AI_Onboarding.Data
 
                 ((BaseEntity)entityEntry.Entity).ModifiedAt = currentDate;
 
-                if (_currentUser is not null)
+                _ = int.TryParse(_httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out int userId);
+                var user = _repository.Find(userId);
+
+                if (user is not null)
                 {
-                    ((BaseEntity)entityEntry.Entity).ModifiedBy = _currentUser;
-                    ((BaseEntity)entityEntry.Entity).ModifiedById = _currentUser.Id;
+                    ((BaseEntity)entityEntry.Entity).ModifiedBy = user;
+                    ((BaseEntity)entityEntry.Entity).ModifiedById = userId;
                 }
             }
 
