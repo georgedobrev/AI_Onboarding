@@ -8,6 +8,7 @@ using AI_Onboarding.Api.Filter;
 using Serilog;
 using AI_Onboarding.Api.Filter.IExceptionFilter;
 
+
 public static class ServiceCollectionExtension
 {
     
@@ -21,7 +22,12 @@ public static class ServiceCollectionExtension
    public static IServiceCollection RegisterFilters(this IServiceCollection services)
     {
         services.AddScoped<IExceptionFilter, CustomExceptionFilter>();
-        services.AddSingleton<ILogger>(Log.Logger);
+
+        services.AddControllers(options =>
+        {
+            options.Filters.Add<CustomExceptionFilter>();
+        });
+
         return services;
     }
 
