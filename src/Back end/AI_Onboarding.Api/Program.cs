@@ -7,6 +7,8 @@ using Serilog.Sinks.SystemConsole;
 using Serilog.Sinks.MSSqlServer;
 using Serilog;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Mvc;
+
 
 namespace AI_Onboarding.Api
 {
@@ -22,12 +24,18 @@ namespace AI_Onboarding.Api
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer(); 
             builder.Services.AddSwaggerGen();
+            builder.Services.AddAutoMapper(typeof(Program));
             builder.Host.UseSerilog((hostingContext, logger) => logger.ReadFrom.Configuration(hostingContext.Configuration));
 
             builder.Services.AddDbContext<DataContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("SqlConnection")));
 
             builder.Services.AddIdentity<User, Role>().AddEntityFrameworkStores<DataContext>();
+
+            builder.Services.AddMvc(options =>
+            {
+                options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+            });
 
             var app = builder.Build();
 

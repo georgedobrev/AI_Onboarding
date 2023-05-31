@@ -13,6 +13,7 @@ public static class ServiceCollectionExtension
         
         services.AddDbContext<DataContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("<from appsettings.{Environment}.json>")));
+        return services;
     }
 }
 
