@@ -8,8 +8,7 @@ using AI_Onboarding.Api.Filter;
 using Serilog;
 using AI_Onboarding.Api.Filter.IExceptionFilter;
 
-
-public static class ServiceCollectionExtension
+public static class ServiceCollectionExtension 
 {
     
     public static IServiceCollection RegisterDbContext(IServiceCollection services, IConfiguration configuration)

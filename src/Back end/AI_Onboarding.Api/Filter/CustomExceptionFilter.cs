@@ -13,6 +13,7 @@ using Serilog.Configuration;
 using Serilog.Events;
 using Serilog.Core;
 
+
 namespace AI_Onboarding.Api.Filter
 {
 
@@ -21,7 +22,9 @@ namespace AI_Onboarding.Api.Filter
     public class CustomExceptionFilter : IExceptionFilter.IExceptionFilter,IFilterMetadata
     {
 
-        private readonly Logger _logger;
+        private readonly ILogger<CustomExceptionFilter> _logger;
+
+        public CustomExceptionFilter(ILogger<CustomExceptionFilter> logger) {  _logger = logger; }
 
         public void OnException(ExceptionContext filterContext)
         {
@@ -33,7 +36,7 @@ namespace AI_Onboarding.Api.Filter
             var logDate = DateTime.Now;
 
 
-            _logger.Error("Date: {LogDate}, Controller: { ControllerName}, Action: {ActionName}, Error Message: {ExceptionMessage}, Stack Trace: {StackTrace}", logDate, controllerName, actionName, exceptionMessage, stackTrace);
+            _logger.LogError("Date: {LogDate}, Controller: { ControllerName}, Action: {ActionName}, Error Message: {ExceptionMessage}, Stack Trace: {StackTrace}", logDate, controllerName, actionName, exceptionMessage, stackTrace);
 
         }
 
