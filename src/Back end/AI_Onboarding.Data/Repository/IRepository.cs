@@ -8,6 +8,7 @@ namespace AI_Onboarding.Data.Repository
         IQueryable<T> GetAll();
         T? Find(int id);
         void Add(T entity);
+        void Update(T entity);
         T? Remove(int id);
         bool SaveChanges();
         T? FindByCondition(Expression<Func<T, bool>> predicate);

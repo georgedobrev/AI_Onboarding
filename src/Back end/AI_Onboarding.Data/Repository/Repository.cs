@@ -1,6 +1,7 @@
 ﻿using AI_Onboarding.Data.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Linq.Expressions;
 
 namespace AI_Onboarding.Data.Repository
@@ -63,6 +64,12 @@ namespace AI_Onboarding.Data.Repository
             }
 
             return entity;
+        }
+
+        public void Update(T obj)
+        {
+            _entities.Attach(obj);
+            _context.Entry(obj).State = EntityState.Modified;
         }
     }
 }
