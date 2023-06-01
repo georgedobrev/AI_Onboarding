@@ -1,41 +1,55 @@
 import React, { useState } from 'react';
-import { TextField, IconButton, InputAdornment } from '@mui/material';
+import { TextField, InputAdornment, IconButton } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 
-const PasswordField = () => {
-    const [showPassword, setShowPassword] = useState(false);
+interface PasswordFieldProps {
+  label: string;
+  passwordValue: string;
+  onPasswordChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  className: string;
+}
 
-    const handleClickShowPassword = () => {
-        setShowPassword(!showPassword);
-    };
+const PasswordField: React.FC<PasswordFieldProps> = ({
+  label,
+  passwordValue,
+  onPasswordChange,
+  className,
+}) => {
+  const [showPassword, setShowPassword] = useState(false);
 
-    const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
-        event.preventDefault();
-    };
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
 
-    return (
-        <TextField
-            id="outlined-password-input"
-            label="Password"
-            type={showPassword ? 'text' : 'password'}
-            autoComplete="current-password"
-            className="password-field"
-            InputProps={{
-                endAdornment: (
-                    <InputAdornment position="end">
-                        <IconButton
-                            aria-label="toggle password visibility"
-                            onClick={handleClickShowPassword}
-                            onMouseDown={handleMouseDownPassword}
-                            edge="end"
-                        >
-                            {showPassword ? <Visibility /> : <VisibilityOff />}
-                        </IconButton>
-                    </InputAdornment>
-                ),
-            }}
-        />
-    );
+  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+  };
+
+  return (
+    <TextField
+      id="outlined-password-input"
+      label={label}
+      type={showPassword ? 'text' : 'password'}
+      autoComplete="new-password"
+      className={className}
+      value={passwordValue}
+      onChange={onPasswordChange}
+      InputProps={{
+        endAdornment: (
+          <InputAdornment position="end">
+            <IconButton
+              aria-label="toggle password visibility"
+              onClick={handleClickShowPassword}
+              onMouseDown={handleMouseDownPassword}
+              edge="end"
+            >
+              {showPassword ? <Visibility /> : <VisibilityOff />}
+            </IconButton>
+          </InputAdornment>
+        ),
+      }}
+    />
+  );
 };
 
 export default PasswordField;
