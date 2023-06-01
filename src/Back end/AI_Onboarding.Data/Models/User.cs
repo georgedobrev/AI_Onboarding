@@ -5,6 +5,8 @@ namespace AI_Onboarding.Data.Models
 {
     public class User : IdentityUser<int>, IBaseEntity
     {
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? ModifiedAt { get; set; }
         public User ModifiedBy { get; set; }

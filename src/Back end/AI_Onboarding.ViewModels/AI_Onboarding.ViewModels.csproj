@@ -8,8 +8,16 @@
 
   <ItemGroup>
     <None Remove="JWTModels\" />
+    <None Remove="UserModels\UserProfiles\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="JWTModels\" />
+    <Folder Include="UserModels\UserProfiles\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AI_Onboarding.Data\AI_Onboarding.Data.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
   </ItemGroup>
 </Project>

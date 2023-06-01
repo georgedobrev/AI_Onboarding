@@ -11,12 +11,10 @@ namespace AI_Onboarding.Data
     public class DataContext : IdentityDbContext<User, Role, int, UserClaim, UserRole, UserLogin, RoleClaim, UserToken>
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly Repository<User> _repository;
 
-        public DataContext(DbContextOptions<DataContext> options, IHttpContextAccessor httpContextAccessor, Repository<User> repository) : base(options)
+        public DataContext(DbContextOptions<DataContext> options, IHttpContextAccessor httpContextAccessor) : base(options)
         {
             _httpContextAccessor = httpContextAccessor;
-            _repository = repository;
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -48,7 +46,7 @@ namespace AI_Onboarding.Data
                 ((BaseEntity)entityEntry.Entity).ModifiedAt = currentDate;
 
                 _ = int.TryParse(_httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out int userId);
-                var user = _repository.Find(userId);
+                var user = base.Users.Find(userId);
 
                 if (user is not null)
                 {

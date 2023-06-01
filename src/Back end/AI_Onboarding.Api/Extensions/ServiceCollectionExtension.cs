@@ -7,6 +7,7 @@ using System.Text;
 using AI_Onboarding.Data.Repository;
 using AI_Onboarding.Services.Interfaces;
 using AI_Onboarding.Services.Implementation;
+using AI_Onboarding.Data.AutoMapperProfiles;
 
 public static class ServiceCollectionExtension
 {
@@ -25,6 +26,9 @@ public static class ServiceCollectionExtension
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
         services.AddScoped<ITokenService, TokenService>();
+
+        var mapper = AutoMapperConfig.Configure();
+        services.AddSingleton(mapper);
 
         services.AddAuthentication(options =>
         {
