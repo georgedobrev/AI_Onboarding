@@ -14,9 +14,9 @@ namespace AI_Onboarding.Services.Implementation
     public class TokenService : ITokenService
     {
         private readonly IConfiguration _configuration;
-        private readonly Repository<User> _repository;
+        private readonly IRepository<User> _repository;
 
-        public TokenService(Repository<User> repository, IConfiguration configuration)
+        public TokenService(IRepository<User> repository, IConfiguration configuration)
         {
             _repository = repository;
             _configuration = configuration;

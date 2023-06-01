@@ -1,7 +1,5 @@
 ﻿using AI_Onboarding.Data.Models;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Linq.Expressions;
 
 namespace AI_Onboarding.Data.Repository
@@ -9,12 +7,12 @@ namespace AI_Onboarding.Data.Repository
 
     public class Repository<T> : IRepository<T> where T : class, IBaseEntity
     {
-        private readonly IdentityDbContext _context;
+        private readonly DataContext _context;
         private readonly DbSet<T> _entities;
 
-        public Repository(IdentityDbContext context)
+        public Repository(DataContext context)
         {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
+            _context = context;
             _entities = context.Set<T>();
         }
 

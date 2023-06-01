@@ -1,5 +1,4 @@
-﻿using AI_Onboarding.Data.Models;
-using AI_Onboarding.ViewModels.JWTModels;
+﻿using AI_Onboarding.ViewModels.JWTModels;
 
 namespace AI_Onboarding.Services.Interfaces
 {

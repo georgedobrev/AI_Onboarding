@@ -44,6 +44,7 @@ namespace AI_Onboarding.Api
 
             ServiceCollectionExtension.RegisterDbContext(builder.Services, builder.Configuration);
             ServiceCollectionExtension.ConfigureServices(builder.Services, builder.Configuration);
+            ServiceCollectionExtension.ConfigureAuth(builder.Services, builder.Configuration);
 
             var app = builder.Build();
 
