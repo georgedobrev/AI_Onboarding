@@ -14,14 +14,14 @@
 .header-title {
     color: white;
     white-space: pre-wrap;
-    margin-top: 25px;
+    margin-top: 24px;
     font-size: 30px;
     text-align: center;
 }
 
 .header-line {
     width: 100%;
-    height: 0.5px;
+    height: 1px;
     background-color: var(--lineColor);
-    margin-top: 25px;
+    margin-top: 24px;
 }
