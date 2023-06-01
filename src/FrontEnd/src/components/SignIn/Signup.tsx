@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {useNavigate, useLocation, Link} from 'react-router-dom';
-import {GoogleLogin} from "@react-oauth/google";
+import {CredentialResponse, GoogleLogin} from "@react-oauth/google";
 import './Signup.css';
 import {TextField} from "@mui/material";
 import PasswordField from './PasswordField';
@@ -19,7 +19,7 @@ const Signup: React.FC = () => {
         }
     }, []);
 
-    const handleGoogleSignupSuccess = (credentialResponse: any) => {
+    const handleGoogleSignupSuccess = (credentialResponse: CredentialResponse) => {
         console.log(credentialResponse);
         navigate('/home');
         setSignupSuccess(true);
