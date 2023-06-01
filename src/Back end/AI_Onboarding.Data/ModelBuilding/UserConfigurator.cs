@@ -21,5 +21,10 @@ public class UserConfigurator : IEntityTypeConfiguration<User>
         builder.HasIndex(e => e.Email).IsUnique();
 
         builder.HasIndex(e => e.NormalizedEmail).IsUnique();
+
+        builder.HasOne(x => x.ModifiedBy)
+            .WithMany(x => x.ModifiedUsers)
+            .HasForeignKey(x => x.ModifiedById)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }
