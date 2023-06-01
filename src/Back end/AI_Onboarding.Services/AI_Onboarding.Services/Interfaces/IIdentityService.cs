@@ -1,7 +1,5 @@
-﻿using System;
-using AI_Onboarding.Services.Abstract;
+﻿using AI_Onboarding.Services.Abstract;
 using AI_Onboarding.ViewModels.UserModels;
-using Microsoft.AspNetCore.Mvc;
 
 namespace AI_Onboarding.Services.Interfaces
 {
@@ -10,4 +8,3 @@ namespace AI_Onboarding.Services.Interfaces
         public Task<bool> RegisterAsync(UserRegistrationViewModel user);
     }
 }
-

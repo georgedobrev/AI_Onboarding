@@ -1,14 +1,10 @@
-﻿using System;
-using System.Security.Claims;
-using AI_Onboarding.Data.Models;
+﻿using AI_Onboarding.Data.Models;
 using AI_Onboarding.Data.Repository;
 using AI_Onboarding.Services.Interfaces;
 using AI_Onboarding.ViewModels.UserModels;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Win32;
+using System.Net;
 
 namespace AI_Onboarding.Services.Implementation
 {
@@ -34,15 +30,15 @@ namespace AI_Onboarding.Services.Implementation
             await _userManager.CreateAsync(user, viewUser.Password);
 
             _repository.Add(user);
-            if (_repository.SaveChanges())
+            try
             {
+                _repository.SaveChanges();
                 return true;
             }
-            else
+            catch (Exception ex)
             {
                 return false;
             }
         }
     }
 }
-

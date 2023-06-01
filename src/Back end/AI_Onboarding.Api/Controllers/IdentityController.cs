@@ -1,12 +1,7 @@
-﻿using AI_Onboarding;
-using Microsoft.AspNetCore.Mvc;
-using AutoMapper;
-using AI_Onboarding.Data.Models;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using AI_Onboarding.ViewModels.UserModels;
 using AI_Onboarding.Services.Interfaces;
-using System.Security.Claims;
 
 namespace AI_Onboarding.Api.Controllers
 {
@@ -36,4 +31,3 @@ namespace AI_Onboarding.Api.Controllers
         }
     }
 }
-
