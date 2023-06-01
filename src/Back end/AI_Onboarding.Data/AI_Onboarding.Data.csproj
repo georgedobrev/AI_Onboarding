@@ -25,7 +25,4 @@
   <ItemGroup>
     <Folder Include="Models\Abstracts\" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\AI_Onboarding.ViewModels\AI_Onboarding.ViewModels.csproj" />
-  </ItemGroup>
 </Project>

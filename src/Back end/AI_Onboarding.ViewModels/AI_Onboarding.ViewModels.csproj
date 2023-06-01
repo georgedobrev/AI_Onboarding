@@ -15,9 +15,9 @@
     <Folder Include="UserModels\UserProfiles\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AI_Onboarding.Data\AI_Onboarding.Data.csproj" />
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="12.0.1" />
+    <ProjectReference Include="..\AI_Onboarding.Data\AI_Onboarding.Data.csproj" />
   </ItemGroup>
 </Project>

@@ -45,7 +45,9 @@ namespace AI_Onboarding.Data
 
                 ((BaseEntity)entityEntry.Entity).ModifiedAt = currentDate;
 
+
                 _ = int.TryParse(_httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out int userId);
+
                 var user = base.Users.Find(userId);
 
                 if (user is not null)
@@ -53,6 +55,7 @@ namespace AI_Onboarding.Data
                     ((BaseEntity)entityEntry.Entity).ModifiedBy = user;
                     ((BaseEntity)entityEntry.Entity).ModifiedById = userId;
                 }
+
             }
 
             return base.SaveChanges();

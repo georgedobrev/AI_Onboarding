@@ -1,48 +1,40 @@
-﻿using System;
-using AI_Onboarding.Data.Models.UserRegistration;
-using AI_Onboarding.
+﻿using AI_Onboarding;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
 using AI_Onboarding.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
+using AI_Onboarding.ViewModels.UserModels;
+using AI_Onboarding.Services.Interfaces;
+using System.Security.Claims;
 
 namespace AI_Onboarding.Api.Controllers
 {
-	[ApiController]
-	[Route("api/[controller]")]
-	public class AccountController : ControllerBase
-	{
-        private readonly IMapper _mapper;
-        private readonly UserManager<User> _userManager;
+    [ApiController]
+    [Route("api/[controller]")]
+    public class AccountController : ControllerBase
+    {
+        private readonly IIdentityService _identityServise;
 
-        public AccountController(IMapper mapper, UserManager<User> userManager)
+        public AccountController(IIdentityService identityServise)
         {
-            _mapper = mapper;
-            _userManager = userManager;
+            _identityServise = identityServise;
         }
 
 
         [HttpPost("register")]
-		[AllowAnonymous]
-		public async Task<IActionResult> Register(UserRegistrationModel userModel)
-		{
-
-			var user = _mapper.Map<User>(userModel);
-			var result = await _userManager.CreateAsync(user, userModel.Password);
-
-			if (!result.Succeeded)
-			{
-				foreach (var error in result.Errors)
-				{
-					ModelState.AddModelError(error.Code, error.Description);
-				}
-				return StatusCode(400);
-			}
-			await _userManager.AddPasswordAsync(user, "Visitor");
-
-			return Ok();
-		}
-	}
+        [AllowAnonymous]
+        public async Task<IActionResult> Register([FromBody] UserRegistrationViewModel userModel)
+        {
+            if (await _identityServise.RegisterAsync(userModel))
+            {
+                return Ok();
+            }
+            else
+            {
+                return StatusCode(400);
+            }
+        }
+    }
 }
 
