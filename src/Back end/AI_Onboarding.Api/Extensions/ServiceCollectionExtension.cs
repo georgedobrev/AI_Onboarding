@@ -5,9 +5,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using AI_Onboarding.Data.Repository;
-using AI_Onboarding.Services.Interfaces;
+using AI_Onboarding.Services.Abstract;
 using AI_Onboarding.Services.Implementation;
-using Microsoft.AspNetCore.Identity;
+using System.Reflection;
+using NuGet.Protocol;
 
 public static class ServiceCollectionExtension
 {
@@ -25,7 +26,7 @@ public static class ServiceCollectionExtension
     {
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
-        services.AddScoped<ITokenService, TokenService>();
+        services.AddScopedServiceTypes(typeof(TokenService).Assembly, typeof(IService));
 
         return services;
     }
@@ -56,4 +57,24 @@ public static class ServiceCollectionExtension
 
         return services;
     }
+
+
+    private static IServiceCollection AddScopedServiceTypes(this IServiceCollection services, Assembly assembly, Type fromType)
+    {
+        var serviceTypes = assembly.GetTypes()
+            .Where(x => !string.IsNullOrEmpty(x.Namespace) && x.IsClass && !x.IsAbstract && fromType.IsAssignableFrom(x))
+            .Select(x => new
+            {
+                Interface = x.GetInterface($"I{x.Name}"),
+                Implementation = x
+            });
+
+        foreach (var serviceType in serviceTypes)
+        {
+            services.AddScoped(serviceType.Interface, serviceType.Implementation);
+        }
+
+        return services;
+    }
+
 }
