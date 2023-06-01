@@ -9,14 +9,13 @@
   <ItemGroup>
     <None Remove="Interfaces\" />
     <None Remove="Implementation\" />
-    <None Remove="Interfaces\IService\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Interfaces\" />
-    <Folder Include="Implementation\" />
-    <Folder Include="Interfaces\IService\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.5" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\AI_Onboarding.Data\AI_Onboarding.Data.csproj" />
+    <ProjectReference Include="..\..\AI_Onboarding.ViewModels\AI_Onboarding.ViewModels.csproj" />
   </ItemGroup>
 </Project>
