@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { CredentialResponse, GoogleLogin } from '@react-oauth/google';
-import { TextField } from '@mui/material';
-import Button from '@mui/material/Button';
-import PasswordField from './PasswordField';
+import { GoogleLogin } from '@react-oauth/google';
 import './Signup.css';
+import { TextField } from '@mui/material';
+import PasswordField from './PasswordField';
 import logoImage from '../../assets/blankfactor-logo.jpg';
+import Button from '@mui/material/Button';
 
 const Signup: React.FC = () => {
   const navigate = useNavigate();
@@ -19,7 +19,7 @@ const Signup: React.FC = () => {
     }
   }, []);
 
-  const handleGoogleSignupSuccess = (credentialResponse: CredentialResponse) => {
+  const handleGoogleSignupSuccess = () => {
     setSignupSuccess(true);
     localStorage.setItem('signupSuccess', 'true');
     navigate('/home');
@@ -67,7 +67,7 @@ const Signup: React.FC = () => {
           </div>
           <span className="signup-noaccount">
             Don't have an account?&nbsp;
-            <Link to="/signup" className="signup-hyperlink">
+            <Link to="/register" className="signup-hyperlink">
               Sign up
             </Link>
           </span>
