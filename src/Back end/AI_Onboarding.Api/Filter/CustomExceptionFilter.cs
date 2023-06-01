@@ -19,7 +19,7 @@ namespace AI_Onboarding.Api.Filter
 
 
 
-    public class CustomExceptionFilter : IExceptionFilter.IExceptionFilter,IFilterMetadata
+    public class CustomExceptionFilter : ExceptionFilterAttribute
     {
 
         private readonly ILogger<CustomExceptionFilter> _logger;

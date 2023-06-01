@@ -19,7 +19,6 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <Folder Include="Controllers\" />
     <Folder Include="Filter\" />
-    <Folder Include="Filter\IExceptionFilter\" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
   </ItemGroup>
 
@@ -40,6 +39,5 @@
 
   <ItemGroup>
     <None Remove="Filter\" />
-    <None Remove="Filter\IExceptionFilter\" />
   </ItemGroup>
 </Project>

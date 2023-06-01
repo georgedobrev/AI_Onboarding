@@ -20,7 +20,6 @@ public static class ServiceCollectionExtension
 
    public static IServiceCollection RegisterFilters(this IServiceCollection services)
     {
-        services.AddScoped<IExceptionFilter, CustomExceptionFilter>();
 
         services.AddControllers(options =>
         {
