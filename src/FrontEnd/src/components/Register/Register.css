@@ -1,0 +1,45 @@
+.register-signup-header-forms {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    margin-top: 25px;
+    gap: 10px;
+}
+
+.register-signup-continue-btn {
+    background-color: var(--blankfactorLogoDarkBlue) !important;
+    color: var(--whiteColor);
+    width: 320px;
+}
+
+.register-signup-continue-btn:hover {
+    background-color: var(--blankfactorLogoLightBlue) !important;
+    color: var(--whiteColor);
+}
+
+.register-signin-account {
+    width: 320px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    /*margin-top: 15px;*/
+    font-size: 14px;
+}
+
+.register-name-field {
+    width: 320px;
+    display: flex;
+    flex-direction: row;
+}
+
+.register-email-field {
+    width: 320px;
+}
+
+.register-password-field, .confirm-register-password-field {
+    width: 320px;
+}
+

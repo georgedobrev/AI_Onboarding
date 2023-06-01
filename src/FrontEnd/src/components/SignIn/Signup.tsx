@@ -37,18 +37,19 @@ const Signup: React.FC = () => {
             <div className="signup-overlay">
                 <div className="signup-header">
                     <div className="signup-header-container">
-                        <img src={logoImage} alt="blankfactor" className="google-signup-logo" />
-                        <h1 className="signup-welcome-h1">Welcome to <br /></h1>
+                        <img src={logoImage} alt="blankfactor" className="google-signup-logo"/>
+                        <h1 className="signup-welcome-h1">Welcome to <br/></h1>
                         <span className="signup-welcome-span">Blankfactor ChatBot!</span>
                     </div>
                     <div className="signup-header-forms">
-                        <TextField id="outlined-basic" label="Email address" variant="outlined" className="email-field" />
-                        <PasswordField />
+                        <TextField id="outlined-basic" label="Email address" variant="outlined"
+                                   className="email-field"/>
+                        <PasswordField label="Password" className="password-field"/>
                         <Button variant="contained" className="signup-continue-btn">Continue</Button>
                     </div>
                     <span className="signup-noaccount">Don't have an account?&nbsp;
-                        <Link to="/signup" className="signup-hyperlink">Sign up</Link>
-          </span>
+                        <Link to="/register" className="signup-hyperlink">Sign up</Link>
+                    </span>
                 </div>
                 <div className="signup-body">
                     <span className="signup-or">OR</span>
