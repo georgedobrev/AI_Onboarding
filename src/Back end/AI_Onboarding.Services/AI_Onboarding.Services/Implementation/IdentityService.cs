@@ -33,9 +33,6 @@ namespace AI_Onboarding.Services.Implementation
 
             await _userManager.CreateAsync(user, viewUser.Password);
 
-            await _userManager.AddClaimAsync(user, new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()));
-
-
             _repository.Add(user);
             if (_repository.SaveChanges())
             {

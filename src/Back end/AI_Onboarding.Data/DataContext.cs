@@ -31,29 +31,33 @@ namespace AI_Onboarding.Data
 
         public override int SaveChanges()
         {
-            var entities = ChangeTracker.Entries()
-                .Where(x => x.Entity is BaseEntity && (x.State == EntityState.Added || x.State == EntityState.Modified));
+            var entities = ChangeTracker.Entries();
 
             var currentDate = DateTime.UtcNow;
 
+            int.TryParse(_httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out int userId);
+
             foreach (var entityEntry in entities)
             {
-                if (entityEntry.State == EntityState.Added)
+                var entity = entityEntry.Entity as IBaseEntity;
+
+                if (entity is null)
                 {
-                    ((BaseEntity)entityEntry.Entity).CreatedAt = currentDate;
+                    continue;
                 }
 
-                ((BaseEntity)entityEntry.Entity).ModifiedAt = currentDate;
-
-
-                _ = int.TryParse(_httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out int userId);
-
-                var user = base.Users.Find(userId);
-
-                if (user is not null)
+                if (entityEntry.State == EntityState.Added)
                 {
-                    ((BaseEntity)entityEntry.Entity).ModifiedBy = user;
-                    ((BaseEntity)entityEntry.Entity).ModifiedById = userId;
+                    entity.CreatedAt = currentDate;
+                }
+                else
+                {
+                    if (userId > 0)
+                    {
+                        entity.ModifiedById = userId;
+                    }
+
+                    entity.ModifiedAt = currentDate;
                 }
 
             }

@@ -7,14 +7,12 @@ namespace AI_Onboarding.Data.Models
 {
     public class User : IdentityUser<int>, IBaseEntity
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? ModifiedAt { get; set; }
-        public User ModifiedBy { get; set; }
+        public User? ModifiedBy { get; set; }
         public int? ModifiedById { get; set; }
         public ICollection<RoleClaim> ModifiedRoleClaims { get; set; }
         public ICollection<Role> ModifiedRoles { get; set; }

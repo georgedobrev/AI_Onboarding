@@ -21,7 +21,6 @@ namespace AI_Onboarding.Api.Controllers
             _identityServise = identityServise;
         }
 
-
         [HttpPost("register")]
         [AllowAnonymous]
         public async Task<IActionResult> Register([FromBody] UserRegistrationViewModel userModel)
