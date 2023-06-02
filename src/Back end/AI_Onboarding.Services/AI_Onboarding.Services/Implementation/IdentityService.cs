@@ -60,17 +60,27 @@ namespace AI_Onboarding.Services.Implementation
 
         public async Task<(bool Success, string Message, TokenResponseViewModel? Tokens)> LoginAsync(UserLoginViewModel user)
         {
-            var result = await _signInManager.PasswordSignInAsync(user.Email, user.Password, false, false);
+            var messages = "";
 
-            if (result.Succeeded)
+            try
             {
-                int id = _repository.FindByCondition(u => u.Email == user.Email).Id;
+                var result = await _signInManager.PasswordSignInAsync(user.Email, user.Password, false, false);
 
-                return (true, "Login success", _tokenService.GenerateAccessToken(user.Email, id));
+                if (result.Succeeded)
+                {
+                    int id = _repository.FindByCondition(u => u.Email == user.Email).Id;
+
+                    return (true, "Login success", _tokenService.GenerateAccessToken(user.Email, id));
+                }
+                else
+                {
+                    return (false, "Wrong credentials", null);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                return (false, "Wrong credentials", null);
+                messages += $"{ex.Message}";
+                return (false, messages, null);
             }
         }
     }

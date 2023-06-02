@@ -10,6 +10,7 @@ using AI_Onboarding.Services.Implementation;
 using System.Reflection;
 using AI_Onboarding.ViewModels.UserModels.UserProfiles;
 using Microsoft.AspNetCore.Identity;
+using System;
 
 public static class ServiceCollectionExtension
 {
@@ -35,13 +36,26 @@ public static class ServiceCollectionExtension
         return services;
     }
 
-    public static IServiceCollection ConfigureServices(IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection ConfigureServices(IServiceCollection services, IConfiguration configuration, IWebHostEnvironment environment)
     {
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
         services.AddScopedServiceTypes(typeof(TokenService).Assembly, typeof(IService));
 
         services.AddAutoMapper(typeof(UserProfile));
+
+        if (environment.IsDevelopment())
+        {
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(builder =>
+                {
+                    builder.WithOrigins("http://localhost:5173")
+                           .AllowAnyHeader()
+                           .AllowAnyMethod();
+                });
+            });
+        }
 
         return services;
     }
