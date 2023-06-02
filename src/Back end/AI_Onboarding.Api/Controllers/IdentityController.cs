@@ -7,11 +7,11 @@ namespace AI_Onboarding.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AccountController : ControllerBase
+    public class IdentityController : ControllerBase
     {
         private readonly IIdentityService _identityServise;
 
-        public AccountController(IIdentityService identityServise)
+        public IdentityController(IIdentityService identityServise)
         {
             _identityServise = identityServise;
         }
@@ -20,13 +20,14 @@ namespace AI_Onboarding.Api.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Register([FromBody] UserRegistrationViewModel userModel)
         {
-            if (await _identityServise.RegisterAsync(userModel))
+            var result = await _identityServise.RegisterAsync(userModel);
+            if (result.Success)
             {
-                return Ok();
+                return Ok("Register succsefull");
             }
             else
             {
-                return StatusCode(400);
+                return BadRequest(result.Message);
             }
         }
     }

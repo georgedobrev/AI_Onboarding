@@ -10,9 +10,7 @@ namespace AI_Onboarding.ViewModels.UserModels.UserProfiles
         public UserProfile()
         {
             CreateMap<UserRegistrationViewModel, User>()
-                .ForMember(u => u.PasswordHash, opt => opt.MapFrom(x => x.Password));
-
-
+                .ForMember(u => u.UserName, opt => opt.MapFrom(x => x.Email));
         }
     }
 }

@@ -44,7 +44,7 @@ namespace AI_Onboarding.Api
             });
             builder.Host.UseSerilog((hostingContext, logger) => logger.ReadFrom.Configuration(hostingContext.Configuration));
 
-            ServiceCollectionExtension.RegisterDbContext(builder.Services, builder.Configuration);
+            ServiceCollectionExtension.RegisterDbContext(builder.Services, builder.Configuration, builder.Environment);
             ServiceCollectionExtension.ConfigureServices(builder.Services, builder.Configuration);
 
             var app = builder.Build();

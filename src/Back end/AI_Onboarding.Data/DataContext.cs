@@ -33,7 +33,7 @@ namespace AI_Onboarding.Data
         {
             var entities = ChangeTracker.Entries();
 
-            var currentDate = DateTime.UtcNow;
+            var currentDate = DateTime.Now;
 
             int.TryParse(_httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out int userId);
 

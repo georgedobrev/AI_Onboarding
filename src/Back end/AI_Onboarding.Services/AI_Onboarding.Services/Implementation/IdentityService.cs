@@ -5,6 +5,7 @@ using AI_Onboarding.ViewModels.UserModels;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using System.Net;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace AI_Onboarding.Services.Implementation
 {
@@ -21,23 +22,33 @@ namespace AI_Onboarding.Services.Implementation
             _userManager = userManager;
         }
 
-        public async Task<bool> RegisterAsync(UserRegistrationViewModel viewUser)
+        public async Task<(bool Success, string Message)> RegisterAsync(UserRegistrationViewModel viewUser)
         {
+            var messages = "";
+
             var user = _mapper.Map<User>(viewUser);
-
-            user.SecurityStamp = Guid.NewGuid().ToString();
-
-            await _userManager.CreateAsync(user, viewUser.Password);
-
-            _repository.Add(user);
             try
             {
-                _repository.SaveChanges();
-                return true;
+                var result = await _userManager.CreateAsync(user, viewUser.Password);
+
+                if (result.Succeeded)
+                {
+                    return (true, messages);
+                }
+                else
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        messages += $"{error.Description}%";
+                    }
+
+                    return (false, messages.Remove(messages.Length - 1));
+                }
             }
             catch (Exception ex)
             {
-                return false;
+                messages += $"{ex.Message}";
+                return (false, messages);
             }
         }
     }

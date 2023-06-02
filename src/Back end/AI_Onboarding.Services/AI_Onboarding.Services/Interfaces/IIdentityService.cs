@@ -5,6 +5,6 @@ namespace AI_Onboarding.Services.Interfaces
 {
     public interface IIdentityService : IService
     {
-        public Task<bool> RegisterAsync(UserRegistrationViewModel user);
+        public Task<(bool Success, string Message)> RegisterAsync(UserRegistrationViewModel user);
     }
 }

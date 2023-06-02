@@ -8,15 +8,29 @@ using AI_Onboarding.Data.Repository;
 using AI_Onboarding.Services.Interfaces;
 using AI_Onboarding.Services.Implementation;
 using AI_Onboarding.ViewModels.UserModels.UserProfiles;
+using AI_Onboarding.Services.Abstract;
+using Microsoft.AspNetCore.Identity;
 
 public static class ServiceCollectionExtension
 {
-    public static IServiceCollection RegisterDbContext(IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection RegisterDbContext(IServiceCollection services, IConfiguration configuration, IWebHostEnvironment environment)
     {
         services.AddDbContext<DataContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("SqlConnection")));
 
         services.AddIdentity<User, Role>().AddEntityFrameworkStores<DataContext>();
+
+        if (environment.IsDevelopment())
+        {
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.Password.RequireDigit = false;
+                options.Password.RequiredLength = 4;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireLowercase = false;
+            });
+        }
 
         return services;
     }
