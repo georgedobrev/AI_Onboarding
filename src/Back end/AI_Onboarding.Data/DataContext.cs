@@ -11,12 +11,10 @@ namespace AI_Onboarding.Data
     public class DataContext : IdentityDbContext<User, Role, int, UserClaim, UserRole, UserLogin, RoleClaim, UserToken>
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly Repository<User> _repository;
 
-        public DataContext(DbContextOptions<DataContext> options, IHttpContextAccessor httpContextAccessor, Repository<User> repository) : base(options)
+        public DataContext(DbContextOptions<DataContext> options, IHttpContextAccessor httpContextAccessor) : base(options)
         {
             _httpContextAccessor = httpContextAccessor;
-            _repository = repository;
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -33,28 +31,35 @@ namespace AI_Onboarding.Data
 
         public override int SaveChanges()
         {
-            var entities = ChangeTracker.Entries()
-                .Where(x => x.Entity is BaseEntity && (x.State == EntityState.Added || x.State == EntityState.Modified));
+            var entities = ChangeTracker.Entries();
 
-            var currentDate = DateTime.UtcNow;
+            var currentDate = DateTime.Now;
+
+            int.TryParse(_httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out int userId);
 
             foreach (var entityEntry in entities)
             {
+                var entity = entityEntry.Entity as IBaseEntity;
+
+                if (entity is null)
+                {
+                    continue;
+                }
+
                 if (entityEntry.State == EntityState.Added)
                 {
-                    ((BaseEntity)entityEntry.Entity).CreatedAt = currentDate;
+                    entity.CreatedAt = currentDate;
                 }
-
-                ((BaseEntity)entityEntry.Entity).ModifiedAt = currentDate;
-
-                _ = int.TryParse(_httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out int userId);
-                var user = _repository.Find(userId);
-
-                if (user is not null)
+                else
                 {
-                    ((BaseEntity)entityEntry.Entity).ModifiedBy = user;
-                    ((BaseEntity)entityEntry.Entity).ModifiedById = userId;
+                    if (userId > 0)
+                    {
+                        entity.ModifiedById = userId;
+                    }
+
+                    entity.ModifiedAt = currentDate;
                 }
+
             }
 
             return base.SaveChanges();

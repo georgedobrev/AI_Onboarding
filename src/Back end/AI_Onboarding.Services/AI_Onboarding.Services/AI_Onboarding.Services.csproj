@@ -9,6 +9,7 @@
   <ItemGroup>
     <None Remove="Interfaces\" />
     <None Remove="Implementation\" />
+    <None Remove="Abstract\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.5" />
@@ -17,5 +18,8 @@
   <ItemGroup>
     <ProjectReference Include="..\..\AI_Onboarding.Data\AI_Onboarding.Data.csproj" />
     <ProjectReference Include="..\..\AI_Onboarding.ViewModels\AI_Onboarding.ViewModels.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Abstract\" />
   </ItemGroup>
 </Project>
