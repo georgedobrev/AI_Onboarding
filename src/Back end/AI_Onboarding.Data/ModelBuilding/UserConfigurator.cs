@@ -8,6 +8,10 @@ public class UserConfigurator : IEntityTypeConfiguration<User>
     {
         builder.ToTable("Users");
 
+        builder.Property(e => e.FirstName).HasMaxLength(255).IsRequired();
+
+        builder.Property(e => e.LastName).HasMaxLength(255).IsRequired();
+
         builder.Property(e => e.UserName).HasMaxLength(255);
 
         builder.Property(e => e.NormalizedUserName).HasMaxLength(255);

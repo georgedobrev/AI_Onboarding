@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Serilog;
 
@@ -14,6 +15,7 @@ namespace AI_Onboarding.Api
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddAutoMapper(typeof(Program));
             builder.Services.AddSwaggerGen(option =>
             {
                 option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
@@ -42,7 +44,7 @@ namespace AI_Onboarding.Api
             });
             builder.Host.UseSerilog((hostingContext, logger) => logger.ReadFrom.Configuration(hostingContext.Configuration));
 
-            ServiceCollectionExtension.RegisterDbContext(builder.Services, builder.Configuration);
+            ServiceCollectionExtension.RegisterDbContext(builder.Services, builder.Configuration, builder.Environment);
             ServiceCollectionExtension.ConfigureServices(builder.Services, builder.Configuration);
             ServiceCollectionExtension.ConfigureAuth(builder.Services, builder.Configuration);
 

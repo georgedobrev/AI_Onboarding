@@ -1,11 +1,15 @@
 ﻿using AI_Onboarding.ViewModels.JWTModels;
+﻿using AI_Onboarding.Data.Models;
+using AI_Onboarding.Services.Abstract;
+using AI_Onboarding.ViewModels.JWTModels;
+using System.Security.Claims;
 
 namespace AI_Onboarding.Services.Interfaces
 {
-    public interface ITokenService
+    public interface ITokenService : IService
     {
-        TokenResponse GenerateAccessToken(TokenRequest user);
+        TokenResponseViewModel GenerateAccessToken(TokenRequestViewModel user);
 
-        string GenerateRefreshToken(string username);
+        string GenerateRefreshToken();
     }
 }

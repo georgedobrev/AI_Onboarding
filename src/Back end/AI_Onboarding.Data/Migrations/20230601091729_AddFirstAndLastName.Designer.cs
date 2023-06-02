@@ -4,6 +4,7 @@ using AI_Onboarding.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AI_Onboarding.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230601091729_AddFirstAndLastName")]
+    partial class AddFirstAndLastName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -41,6 +44,7 @@ namespace AI_Onboarding.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("ModifiedById")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -84,6 +88,7 @@ namespace AI_Onboarding.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("ModifiedById")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<int>("RoleId")
@@ -144,6 +149,7 @@ namespace AI_Onboarding.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("ModifiedById")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<string>("NormalizedEmail")
@@ -167,7 +173,7 @@ namespace AI_Onboarding.Data.Migrations
                     b.Property<string>("RefreshToken")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("RefreshTokenExpiryTime")
+                    b.Property<DateTime>("RefreshTokenExpiryTime")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("SecurityStamp")
@@ -221,6 +227,7 @@ namespace AI_Onboarding.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("ModifiedById")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<int>("UserId")
@@ -250,6 +257,7 @@ namespace AI_Onboarding.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("ModifiedById")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<string>("ProviderDisplayName")
@@ -282,6 +290,7 @@ namespace AI_Onboarding.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("ModifiedById")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.HasKey("UserId", "RoleId");
@@ -312,6 +321,7 @@ namespace AI_Onboarding.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("ModifiedById")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<string>("Value")
@@ -329,7 +339,8 @@ namespace AI_Onboarding.Data.Migrations
                     b.HasOne("AI_Onboarding.Data.Models.User", "ModifiedBy")
                         .WithMany("ModifiedRoles")
                         .HasForeignKey("ModifiedById")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("ModifiedBy");
                 });
@@ -339,7 +350,8 @@ namespace AI_Onboarding.Data.Migrations
                     b.HasOne("AI_Onboarding.Data.Models.User", "ModifiedBy")
                         .WithMany("ModifiedRoleClaims")
                         .HasForeignKey("ModifiedById")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("AI_Onboarding.Data.Models.Role", null)
                         .WithMany()
@@ -355,7 +367,8 @@ namespace AI_Onboarding.Data.Migrations
                     b.HasOne("AI_Onboarding.Data.Models.User", "ModifiedBy")
                         .WithMany("ModifiedUsers")
                         .HasForeignKey("ModifiedById")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("ModifiedBy");
                 });
@@ -365,7 +378,8 @@ namespace AI_Onboarding.Data.Migrations
                     b.HasOne("AI_Onboarding.Data.Models.User", "ModifiedBy")
                         .WithMany("ModifiedUserClaims")
                         .HasForeignKey("ModifiedById")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("AI_Onboarding.Data.Models.User", null)
                         .WithMany()
@@ -381,7 +395,8 @@ namespace AI_Onboarding.Data.Migrations
                     b.HasOne("AI_Onboarding.Data.Models.User", "ModifiedBy")
                         .WithMany("ModifiedUserLogins")
                         .HasForeignKey("ModifiedById")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("AI_Onboarding.Data.Models.User", null)
                         .WithMany()
@@ -397,7 +412,8 @@ namespace AI_Onboarding.Data.Migrations
                     b.HasOne("AI_Onboarding.Data.Models.User", "ModifiedBy")
                         .WithMany("ModifiedUserRoles")
                         .HasForeignKey("ModifiedById")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("AI_Onboarding.Data.Models.Role", null)
                         .WithMany()
@@ -419,7 +435,8 @@ namespace AI_Onboarding.Data.Migrations
                     b.HasOne("AI_Onboarding.Data.Models.User", "ModifiedBy")
                         .WithMany("ModifiedUserTokens")
                         .HasForeignKey("ModifiedById")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("AI_Onboarding.Data.Models.User", null)
                         .WithMany()
