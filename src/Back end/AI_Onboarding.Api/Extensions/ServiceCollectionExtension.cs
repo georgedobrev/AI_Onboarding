@@ -9,7 +9,6 @@ using AI_Onboarding.Services.Abstract;
 using AI_Onboarding.Services.Implementation;
 using System.Reflection;
 using AI_Onboarding.ViewModels.UserModels.UserProfiles;
-using AI_Onboarding.Services.Abstract;
 using Microsoft.AspNetCore.Identity;
 
 public static class ServiceCollectionExtension
