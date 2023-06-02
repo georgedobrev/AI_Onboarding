@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { TextField, Button } from '@mui/material';
 import { GoogleLogin } from '@react-oauth/google';
-import './Signup.css';
-import { TextField } from '@mui/material';
-import PasswordField from './PasswordField';
 import logoImage from '../../assets/blankfactor-logo.jpg';
-import Button from '@mui/material/Button';
+import PasswordField from './PasswordField';
+import './Signup.css';
 
 const Signup: React.FC = () => {
   const navigate = useNavigate();

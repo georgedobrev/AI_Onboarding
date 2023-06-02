@@ -1,29 +1,41 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { TextField } from '@mui/material';
-import PasswordField from '../SignIn/PasswordField';
-import Button from '@mui/material/Button';
+import { Button, IconButton, InputAdornment, TextField } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { useForm } from 'react-hook-form';
 import './Register.css';
 import logoImage from '../../assets/blankfactor-logo.jpg';
 
-const Register: React.FC = () => {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
+type FormValues = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+};
 
-  const handleRegister = () => {
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
-    setError('');
-    // Perform registration logic here
-    // You can validate the form fields and handle registration submission
-    // For simplicity, this example does not include the actual registration logic
-    console.log('Registering user...');
+const Register: React.FC = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    getValues,
+  } = useForm<FormValues>();
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const onSubmit = (data: FormValues) => {
+    // Perform registration logic here using the form data
+    console.log(JSON.stringify(data, null, 2));
+  };
+
+  const handleTogglePasswordVisibility = () => {
+    setShowPassword((prevShowPassword) => !prevShowPassword);
+  };
+
+  const handleToggleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword((prevShowConfirmPassword) => !prevShowConfirmPassword);
   };
 
   return (
@@ -37,51 +49,88 @@ const Register: React.FC = () => {
             </h1>
             <span className="signup-welcome-span">Blankfactor ChatBot!</span>
           </div>
-          <div className="register-signup-header-forms">
-            <TextField
-              id="first-name"
-              label="First Name"
-              variant="outlined"
-              className="register-name-field"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-            />
-            <TextField
-              id="last-name"
-              label="Last Name"
-              variant="outlined"
-              className="register-name-field"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-            />
-            <TextField
-              id="email"
-              label="Email address"
-              variant="outlined"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="register-email-field"
-            />
-            <PasswordField
-              label="Password"
-              passwordValue={password}
-              onPasswordChange={(e) => setPassword(e.target.value)}
-              className="register-password-field"
-            />
-            <PasswordField
-              label="Confirm Password"
-              passwordValue={confirmPassword}
-              onPasswordChange={(e) => setConfirmPassword(e.target.value)}
-              className="confirm-register-password-field"
-            />
-            <Button
-              variant="contained"
-              className="register-signup-continue-btn"
-              onClick={handleRegister}
-            >
-              Continue
-            </Button>
-            {error && <div className="password-error">{error}</div>}
+          <div>
+            <form onSubmit={handleSubmit(onSubmit)} className="register-signup-header-forms">
+              <TextField
+                id="first-name"
+                label="First Name"
+                variant="outlined"
+                className="register-name-field"
+                {...register('firstName', { required: 'First Name is required' })}
+                error={!!errors.firstName}
+                helperText={errors.firstName?.message}
+              />
+              <TextField
+                id="last-name"
+                label="Last Name"
+                variant="outlined"
+                className="register-name-field"
+                {...register('lastName', { required: 'Last Name is required' })}
+                error={!!errors.lastName}
+                helperText={errors.lastName?.message}
+              />
+              <TextField
+                id="email"
+                label="Email address"
+                variant="outlined"
+                className="register-email-field"
+                {...register('email', {
+                  required: 'Email address is required',
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                    message: 'Invalid email address',
+                  },
+                })}
+                error={!!errors.email}
+                helperText={errors.email?.message}
+              />
+              <TextField
+                label="Password"
+                type={showPassword ? 'text' : 'password'}
+                {...register('password', {
+                  required: 'Password is required',
+                  minLength: {
+                    value: 8,
+                    message: 'Password must be at least 8 characters long',
+                  },
+                })}
+                error={!!errors.password}
+                helperText={errors.password?.message}
+                className="register-password-field"
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={handleTogglePasswordVisibility} edge="end">
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+              <TextField
+                label="Confirm Password"
+                type={showConfirmPassword ? 'text' : 'password'}
+                {...register('confirmPassword', {
+                  required: 'Confirm Password is required',
+                  validate: (value) => value === getValues('password') || 'Passwords do not match',
+                })}
+                error={!!errors.confirmPassword}
+                helperText={errors.confirmPassword?.message}
+                className="confirm-register-password-field"
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={handleToggleConfirmPasswordVisibility} edge="end">
+                        {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+              <Button type="submit" variant="contained" className="register-signup-continue-btn">
+                Continue
+              </Button>
+            </form>
           </div>
           <span className="register-signin-account">
             Already have an account?&nbsp;

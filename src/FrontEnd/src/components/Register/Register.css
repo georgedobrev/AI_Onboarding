@@ -4,18 +4,20 @@
     justify-content: center;
     align-items: center;
     margin-bottom: 20px;
-    margin-top: 25px;
+    margin-top: 24px;
     gap: 10px;
 }
 
-.register-signup-continue-btn {
-    background-color: var(--blankfactorLogoDarkBlue) !important;
+.register-signup-continue-btn,
+.register-signup-continue-btn.MuiButton-root {
+    background-color: var(--blankfactorLogoDarkBlue);
     color: var(--whiteColor);
     width: 320px;
 }
 
-.register-signup-continue-btn:hover {
-    background-color: var(--blankfactorLogoLightBlue) !important;
+.register-signup-continue-btn:hover,
+.register-signup-continue-btn.MuiButton-root:hover {
+    background-color: var(--blankfactorLogoLightBlue);
     color: var(--whiteColor);
 }
 
@@ -25,7 +27,6 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    /*margin-top: 15px;*/
     font-size: 14px;
 }
 
