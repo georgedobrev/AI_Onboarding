@@ -6,6 +6,7 @@ using AI_Onboarding.Data.Models;
 using AI_Onboarding.Data.Repository;
 using AI_Onboarding.Services.Interfaces;
 using AI_Onboarding.ViewModels.JWTModels;
+using AI_Onboarding.ViewModels.UserModels;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
@@ -22,24 +23,35 @@ namespace AI_Onboarding.Services.Implementation
             _configuration = configuration;
         }
 
-        public TokenResponseViewModel GenerateAccessToken(TokenRequestViewModel request)
+        public TokenResponseViewModel GenerateAccessToken(string email, int id)
         {
-            int.TryParse(_configuration["JWT:RefreshTokenValidityInDays"], out int tokenValidityInMinutes);
-
+            int.TryParse(_configuration["JWT:TokenValidityInMinutes"], out int tokenValidityInMinutes);
             var expiration = DateTime.UtcNow.AddMinutes(tokenValidityInMinutes);
 
             var token = CreateJwtToken(
-                CreateClaims(request),
+                CreateClaims(email, id),
                 CreateSigningCredentials(),
                 expiration
             );
 
-            var tokenHandler = new JwtSecurityTokenHandler();
+            var accessToken = new JwtSecurityTokenHandler().WriteToken(token);
+            var refreshToken = GenerateRefreshToken();
+
+            int.TryParse(_configuration["JWT:RefreshTokenValidityInDays"], out int refreshTokenValidityInDays);
+            var refreshTokenExpiration = DateTime.UtcNow.AddDays(refreshTokenValidityInDays);
+
+            var dbUser = _repository.Find(id);
+
+            dbUser.RefreshToken = refreshToken;
+            dbUser.RefreshTokenExpiryTime = refreshTokenExpiration;
+
+            _repository.Update(dbUser);
+            _repository.SaveChanges();
 
             return new TokenResponseViewModel
             {
-                Token = tokenHandler.WriteToken(token),
-                RefreshToken = GenerateRefreshToken()
+                Token = accessToken,
+                RefreshToken = refreshToken
             };
         }
 
@@ -54,13 +66,13 @@ namespace AI_Onboarding.Services.Implementation
             );
         }
 
-        private Claim[] CreateClaims(TokenRequestViewModel request)
+        private Claim[] CreateClaims(string email, int id)
         {
             return new[] {
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
-                new Claim(ClaimTypes.Email, request.Email),
-                new Claim(ClaimTypes.Authentication, request.Password)
+                new Claim(ClaimTypes.Email, email),
+                new Claim(ClaimTypes.NameIdentifier, id.ToString())
             };
         }
 
@@ -74,7 +86,7 @@ namespace AI_Onboarding.Services.Implementation
                 );
         }
 
-        public string GenerateRefreshToken()
+        private string GenerateRefreshToken()
         {
             var randomNumber = new byte[64];
             using var rng = RandomNumberGenerator.Create();

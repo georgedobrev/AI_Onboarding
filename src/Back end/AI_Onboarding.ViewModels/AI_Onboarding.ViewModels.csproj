@@ -8,10 +8,6 @@
 
   <ItemGroup>
     <None Remove="JWTModels\" />
-    <None Remove="UserModels\UserProfiles\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="UserModels\UserProfiles\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="12.0.1" />

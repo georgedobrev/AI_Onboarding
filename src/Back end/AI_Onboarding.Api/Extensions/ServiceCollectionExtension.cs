@@ -8,9 +8,7 @@ using AI_Onboarding.Data.Repository;
 using AI_Onboarding.Services.Abstract;
 using AI_Onboarding.Services.Implementation;
 using System.Reflection;
-using NuGet.Protocol;
 using AI_Onboarding.ViewModels.UserModels.UserProfiles;
-using AI_Onboarding.Services.Abstract;
 using Microsoft.AspNetCore.Identity;
 
 public static class ServiceCollectionExtension
@@ -42,6 +40,8 @@ public static class ServiceCollectionExtension
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
         services.AddScopedServiceTypes(typeof(TokenService).Assembly, typeof(IService));
+
+        services.AddAutoMapper(typeof(UserProfile));
 
         return services;
     }

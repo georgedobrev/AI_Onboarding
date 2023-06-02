@@ -1,9 +1,11 @@
 ﻿using AI_Onboarding.Data.Models;
 using AI_Onboarding.Data.Repository;
 using AI_Onboarding.Services.Interfaces;
+using AI_Onboarding.ViewModels.JWTModels;
 using AI_Onboarding.ViewModels.UserModels;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Win32;
 using System.Net;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -13,13 +15,17 @@ namespace AI_Onboarding.Services.Implementation
     {
         private readonly IRepository<User> _repository;
         private readonly IMapper _mapper;
+        private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
+        private readonly ITokenService _tokenService;
 
-        public IdentityService(IRepository<User> repository, IMapper mapper, UserManager<User> userManager)
+        public IdentityService(IRepository<User> repository, IMapper mapper, UserManager<User> userManager, SignInManager<User> signInManager, ITokenService tokenService)
         {
             _repository = repository;
             _mapper = mapper;
             _userManager = userManager;
+            _signInManager = signInManager;
+            _tokenService = tokenService;
         }
 
         public async Task<(bool Success, string Message)> RegisterAsync(UserRegistrationViewModel viewUser)
@@ -33,7 +39,7 @@ namespace AI_Onboarding.Services.Implementation
 
                 if (result.Succeeded)
                 {
-                    return (true, messages);
+                    return (true, "Register succsefull");
                 }
                 else
                 {
@@ -49,6 +55,22 @@ namespace AI_Onboarding.Services.Implementation
             {
                 messages += $"{ex.Message}";
                 return (false, messages);
+            }
+        }
+
+        public async Task<(bool Success, string Message, TokenResponseViewModel? Tokens)> LoginAsync(UserLoginViewModel user)
+        {
+            var result = await _signInManager.PasswordSignInAsync(user.Email, user.Password, false, false);
+
+            if (result.Succeeded)
+            {
+                int id = _repository.FindByCondition(u => u.Email == user.Email).Id;
+
+                return (true, "Login success", _tokenService.GenerateAccessToken(user.Email, id));
+            }
+            else
+            {
+                return (false, "Wrong credentials", null);
             }
         }
     }
