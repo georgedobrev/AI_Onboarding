@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { TextField, Button } from '@mui/material';
+import {TextField, Button, InputAdornment, IconButton} from '@mui/material';
 import { GoogleLogin } from '@react-oauth/google';
 import logoImage from '../../assets/blankfactor-logo.jpg';
-import PasswordField from './PasswordField';
 import './Signup.css';
+import {Visibility, VisibilityOff} from "@mui/icons-material";
 
 const Signup: React.FC = () => {
   const navigate = useNavigate();
   const [isSignupSuccess, setSignupSuccess] = useState(false);
-  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     const storedSuccess = localStorage.getItem('signupSuccess');
@@ -32,6 +32,11 @@ const Signup: React.FC = () => {
     // Do something with the password value
   };
 
+  const handleTogglePasswordVisibility = () => {
+    setShowPassword((prevShowPassword) => !prevShowPassword);
+  };
+
+
   return (
     <div className="signup-container">
       <div className="signup-overlay">
@@ -50,10 +55,18 @@ const Signup: React.FC = () => {
               variant="outlined"
               className="email-field"
             />
-            <PasswordField
+            <TextField
               label="Password"
-              passwordValue={password}
-              onPasswordChange={(e) => setPassword(e.target.value)}
+              type={showPassword ? 'text' : 'password'}
+              InputProps={{
+                endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={handleTogglePasswordVisibility} edge="end">
+                        {showPassword ? <Visibility /> : <VisibilityOff />}
+                      </IconButton>
+                    </InputAdornment>
+                ),
+              }}
               className="password-field"
             />
             <Button
