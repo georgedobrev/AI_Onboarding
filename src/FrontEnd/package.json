@@ -17,6 +17,7 @@
     "@react-oauth/google": "^0.11.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-hook-form": "^7.44.3",
     "react-router-dom": "^6.11.2"
   },
   "devDependencies": {
