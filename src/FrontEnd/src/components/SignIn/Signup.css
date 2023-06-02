@@ -11,10 +11,11 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 650px;
+    min-height: fit-content;
     width: 400px;
     background-color: var(--whiteColor);
     border-radius: 8px;
+    padding-block: 10px;
 }
 
 .signup-header {
@@ -23,7 +24,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 2150px;
+    min-height: fit-content;
     width: 400px;
 }
 
@@ -97,13 +98,15 @@
     top: 40px;
 }
 
-.signup-continue-btn {
-    background-color: var(--blankfactorLogoDarkBlue) !important;
+.signup-continue-btn,
+.signup-continue-btn.MuiButton-root {
+    width: 320px;
+    background-color: var(--blankfactorLogoDarkBlue);
     color: var(--whiteColor);
 }
 
-.signup-continue-btn:hover {
-    background-color: var(--blankfactorLogoLightBlue) !important;
+.signup-continue-btn:hover, .signup-continue-btn.MuiButton-root:hover {
+    background-color: var(--blankfactorLogoLightBlue);
     color: var(--whiteColor);
 }
 
@@ -131,7 +134,8 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    margin-top: 15px;
+    margin-top: 14px;
+    margin-bottom: 24px;
     font-size: 14px;
 }
 
