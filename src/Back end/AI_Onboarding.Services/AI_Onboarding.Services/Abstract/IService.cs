@@ -1,5 +1,5 @@
 ﻿using System;
-namespace AI_Onboarding.Services.Interfaces
+namespace AI_Onboarding.Services.Abstract
 {
 	public interface IService
 	{

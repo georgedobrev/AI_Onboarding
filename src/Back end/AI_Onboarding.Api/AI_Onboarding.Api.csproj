@@ -20,6 +20,7 @@
     <Folder Include="Controllers\" />
     <Folder Include="Filter\" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -35,6 +36,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AI_Onboarding.Data\AI_Onboarding.Data.csproj" />
+    <ProjectReference Include="..\AI_Onboarding.Services\AI_Onboarding.Services\AI_Onboarding.Services.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
   </ItemGroup>
 
   <ItemGroup>

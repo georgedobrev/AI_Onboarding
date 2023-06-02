@@ -8,6 +8,10 @@ public class UserConfigurator : IEntityTypeConfiguration<User>
     {
         builder.ToTable("Users");
 
+        builder.Property(e => e.FirstName).HasMaxLength(255).IsRequired();
+
+        builder.Property(e => e.LastName).HasMaxLength(255).IsRequired();
+
         builder.Property(e => e.UserName).HasMaxLength(255);
 
         builder.Property(e => e.NormalizedUserName).HasMaxLength(255);
@@ -21,5 +25,10 @@ public class UserConfigurator : IEntityTypeConfiguration<User>
         builder.HasIndex(e => e.Email).IsUnique();
 
         builder.HasIndex(e => e.NormalizedEmail).IsUnique();
+
+        builder.HasOne(x => x.ModifiedBy)
+            .WithMany(x => x.ModifiedUsers)
+            .HasForeignKey(x => x.ModifiedById)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

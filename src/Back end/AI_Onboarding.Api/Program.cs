@@ -1,10 +1,5 @@
-using AI_Onboarding.Data;
-using AI_Onboarding.Data.Models;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Serilog.AspNetCore;
-using Serilog.Sinks.SystemConsole;
-using Serilog.Sinks.MSSqlServer;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Models;
 using Serilog;
 using Microsoft.AspNetCore.Builder;
 using AI_Onboarding.Services;
@@ -22,14 +17,38 @@ namespace AI_Onboarding.Api
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-            builder.Services.AddEndpointsApiExplorer(); 
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddAutoMapper(typeof(Program));
+            builder.Services.AddSwaggerGen(option =>
+            {
+                option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+                {
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 1safsfsdfdfd\"",
+                });
+                option.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        new string[] {}
+                    }
+                });
+            });
             builder.Host.UseSerilog((hostingContext, logger) => logger.ReadFrom.Configuration(hostingContext.Configuration));
 
-            builder.Services.AddDbContext<DataContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("SqlConnection")));
-
-            builder.Services.AddIdentity<User, IdentityRole>().AddEntityFrameworkStores<DataContext>();
+            ServiceCollectionExtension.RegisterDbContext(builder.Services, builder.Configuration, builder.Environment);
+            ServiceCollectionExtension.ConfigureServices(builder.Services, builder.Configuration);
 
             var app = builder.Build();
 
@@ -42,6 +61,7 @@ namespace AI_Onboarding.Api
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllers();
