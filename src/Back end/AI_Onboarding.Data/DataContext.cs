@@ -33,7 +33,7 @@ namespace AI_Onboarding.Data
         {
             var entities = ChangeTracker.Entries();
 
-            var currentDate = DateTime.Now;
+            var currentDate = DateTime.UtcNow;
 
             int.TryParse(_httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out int userId);
 
@@ -59,7 +59,6 @@ namespace AI_Onboarding.Data
 
                     entity.ModifiedAt = currentDate;
                 }
-
             }
 
             return base.SaveChanges();

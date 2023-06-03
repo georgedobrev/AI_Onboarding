@@ -69,8 +69,6 @@ namespace AI_Onboarding.Services.Implementation
         private Claim[] CreateClaims(string email, int id)
         {
             return new[] {
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
                 new Claim(ClaimTypes.Email, email),
                 new Claim(ClaimTypes.NameIdentifier, id.ToString())
             };
