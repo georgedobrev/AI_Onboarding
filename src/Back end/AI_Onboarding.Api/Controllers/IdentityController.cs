@@ -2,10 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using AI_Onboarding.ViewModels.UserModels;
 using AI_Onboarding.Services.Interfaces;
-using AI_Onboarding.Data.Models;
-using Newtonsoft.Json.Linq;
 using AI_Onboarding.ViewModels.JWTModels;
-using Microsoft.AspNetCore.DataProtection;
 
 namespace AI_Onboarding.Api.Controllers
 {

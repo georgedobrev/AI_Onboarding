@@ -10,7 +10,6 @@ using AI_Onboarding.Services.Implementation;
 using System.Reflection;
 using AI_Onboarding.ViewModels.UserModels.UserProfiles;
 using Microsoft.AspNetCore.Identity;
-using System;
 
 public static class ServiceCollectionExtension
 {
@@ -87,7 +86,6 @@ public static class ServiceCollectionExtension
         return services;
     }
 
-
     private static IServiceCollection AddScopedServiceTypes(this IServiceCollection services, Assembly assembly, Type fromType)
     {
         var serviceTypes = assembly.GetTypes()
@@ -105,5 +103,4 @@ public static class ServiceCollectionExtension
 
         return services;
     }
-
 }

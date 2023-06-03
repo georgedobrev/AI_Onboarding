@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace AI_Onboarding.ViewModels.UserModels
 {
@@ -14,4 +13,3 @@ namespace AI_Onboarding.ViewModels.UserModels
         public string Password { get; set; }
     }
 }
-

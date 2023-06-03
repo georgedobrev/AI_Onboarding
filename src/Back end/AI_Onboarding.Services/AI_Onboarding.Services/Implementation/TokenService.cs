@@ -6,7 +6,6 @@ using AI_Onboarding.Data.Models;
 using AI_Onboarding.Data.Repository;
 using AI_Onboarding.Services.Interfaces;
 using AI_Onboarding.ViewModels.JWTModels;
-using AI_Onboarding.ViewModels.UserModels;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
@@ -52,7 +51,6 @@ namespace AI_Onboarding.Services.Implementation
             {
                 Token = accessToken,
                 RefreshToken = dbUser.RefreshToken
-
             };
         }
 
