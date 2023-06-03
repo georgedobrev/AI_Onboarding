@@ -23,7 +23,7 @@ namespace AI_Onboarding.Services.Implementation
             _configuration = configuration;
         }
 
-        public TokenResponseViewModel GenerateAccessToken(string email, int id)
+        public TokenViewModel GenerateAccessToken(string email, int id)
         {
             int.TryParse(_configuration["JWT:TokenValidityInMinutes"], out int tokenValidityInMinutes);
             var expiration = DateTime.UtcNow.AddMinutes(tokenValidityInMinutes);
@@ -35,23 +35,24 @@ namespace AI_Onboarding.Services.Implementation
             );
 
             var accessToken = new JwtSecurityTokenHandler().WriteToken(token);
-            var refreshToken = GenerateRefreshToken();
-
-            int.TryParse(_configuration["JWT:RefreshTokenValidityInDays"], out int refreshTokenValidityInDays);
-            var refreshTokenExpiration = DateTime.UtcNow.AddDays(refreshTokenValidityInDays);
 
             var dbUser = _repository.Find(id);
 
-            dbUser.RefreshToken = refreshToken;
-            dbUser.RefreshTokenExpiryTime = refreshTokenExpiration;
+            if (dbUser.RefreshTokenExpiryTime < DateTime.UtcNow || dbUser.RefreshToken is null)
+            {
+                dbUser.RefreshToken = GenerateRefreshToken();
+                int.TryParse(_configuration["JWT:RefreshTokenValidityInDays"], out int refreshTokenValidityInDays);
+                dbUser.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(refreshTokenValidityInDays); ;
+            }
 
             _repository.Update(dbUser);
             _repository.SaveChanges();
 
-            return new TokenResponseViewModel
+            return new TokenViewModel
             {
                 Token = accessToken,
-                RefreshToken = refreshToken
+                RefreshToken = dbUser.RefreshToken
+
             };
         }
 

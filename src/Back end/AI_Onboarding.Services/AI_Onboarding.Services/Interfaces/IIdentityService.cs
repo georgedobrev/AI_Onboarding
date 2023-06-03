@@ -7,6 +7,7 @@ namespace AI_Onboarding.Services.Interfaces
     public interface IIdentityService : IService
     {
         public Task<(bool Success, string Message)> RegisterAsync(UserRegistrationViewModel user);
-        public Task<(bool Success, string Message, TokenResponseViewModel? Tokens)> LoginAsync(UserLoginViewModel user);
+        public Task<(bool Success, string Message, TokenViewModel? Tokens)> LoginAsync(UserLoginViewModel user);
+        public (bool Success, string Message, TokenViewModel? Tokens) RefreshTokenAsync(TokenViewModel tokens);
     }
 }

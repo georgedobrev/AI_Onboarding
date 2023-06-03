@@ -5,9 +5,13 @@ using AI_Onboarding.ViewModels.JWTModels;
 using AI_Onboarding.ViewModels.UserModels;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.Win32;
+using System.IdentityModel.Tokens.Jwt;
 using System.Net;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Security.Claims;
+using System.Text;
 
 namespace AI_Onboarding.Services.Implementation
 {
@@ -18,14 +22,17 @@ namespace AI_Onboarding.Services.Implementation
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
         private readonly ITokenService _tokenService;
+        private readonly IConfiguration _configuration;
 
-        public IdentityService(IRepository<User> repository, IMapper mapper, UserManager<User> userManager, SignInManager<User> signInManager, ITokenService tokenService)
+        public IdentityService(IRepository<User> repository, IMapper mapper, UserManager<User> userManager, SignInManager<User> signInManager,
+            ITokenService tokenService, IConfiguration configuration)
         {
             _repository = repository;
             _mapper = mapper;
             _userManager = userManager;
             _signInManager = signInManager;
             _tokenService = tokenService;
+            _configuration = configuration;
         }
 
         public async Task<(bool Success, string Message)> RegisterAsync(UserRegistrationViewModel viewUser)
@@ -58,7 +65,7 @@ namespace AI_Onboarding.Services.Implementation
             }
         }
 
-        public async Task<(bool Success, string Message, TokenResponseViewModel? Tokens)> LoginAsync(UserLoginViewModel user)
+        public async Task<(bool Success, string Message, TokenViewModel? Tokens)> LoginAsync(UserLoginViewModel user)
         {
             var messages = "";
 
@@ -81,6 +88,49 @@ namespace AI_Onboarding.Services.Implementation
             {
                 messages += $"{ex.Message}";
                 return (false, messages, null);
+            }
+        }
+
+        public (bool Success, string Message, TokenViewModel? Tokens) RefreshTokenAsync(TokenViewModel tokens)
+        {
+            try
+            {
+                var tokenHandler = new JwtSecurityTokenHandler();
+                SecurityToken securityToken;
+
+                var principal = tokenHandler.ValidateToken(tokens.Token, new TokenValidationParameters
+                {
+                    IssuerSigningKey = new SymmetricSecurityKey
+                    (Encoding.UTF8.GetBytes(_configuration["Jwt:Key"])),
+                    ValidateIssuer = true,
+                    ValidIssuer = _configuration["JWT:Issuer"],
+                    ValidateAudience = true,
+                    ValidAudience = _configuration["Jwt:Audience"],
+                    ValidateLifetime = false,
+                    ValidateIssuerSigningKey = true
+                }, out securityToken);
+                var validatedToken = securityToken as JwtSecurityToken;
+
+                if (validatedToken?.Header.Alg != SecurityAlgorithms.HmacSha256)
+                {
+                    return (false, "Invalid algorithm", null);
+                }
+
+                var nameIdentifier = int.Parse(principal.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+                var user = _repository.FindByCondition(u => u.Id == nameIdentifier && u.RefreshToken == Uri.UnescapeDataString(tokens.RefreshToken));
+
+                if (user is null || user?.RefreshTokenExpiryTime < DateTime.UtcNow)
+                {
+                    return (false, "Invalid token", null);
+                }
+
+                var newTokens = _tokenService.GenerateAccessToken(user.Email, user.Id);
+                return (true, "Successfully generated token", newTokens);
+            }
+            catch (Exception ex)
+            {
+                return (false, ex.Message, null);
             }
         }
     }
