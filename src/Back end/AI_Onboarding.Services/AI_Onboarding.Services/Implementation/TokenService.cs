@@ -22,7 +22,7 @@ namespace AI_Onboarding.Services.Implementation
             _configuration = configuration;
         }
 
-        public TokenViewModel GenerateAccessToken(string email, int id)
+        public TokenViewModel GenerateAccessToken(string email, int id, bool isLogin = false)
         {
             int.TryParse(_configuration["JWT:TokenValidityInMinutes"], out int tokenValidityInMinutes);
             var expiration = DateTime.UtcNow.AddMinutes(tokenValidityInMinutes);
@@ -37,7 +37,7 @@ namespace AI_Onboarding.Services.Implementation
 
             var dbUser = _repository.Find(id);
 
-            if (dbUser.RefreshTokenExpiryTime < DateTime.UtcNow || dbUser.RefreshToken is null)
+            if (dbUser.RefreshTokenExpiryTime < DateTime.UtcNow || dbUser.RefreshToken is null || isLogin)
             {
                 dbUser.RefreshToken = GenerateRefreshToken();
                 int.TryParse(_configuration["JWT:RefreshTokenValidityInDays"], out int refreshTokenValidityInDays);

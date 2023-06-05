@@ -6,6 +6,7 @@ using AI_Onboarding.ViewModels.UserModels;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -21,9 +22,10 @@ namespace AI_Onboarding.Services.Implementation
         private readonly UserManager<User> _userManager;
         private readonly ITokenService _tokenService;
         private readonly IConfiguration _configuration;
+        private readonly ILogger<IdentityService> _logger;
 
         public IdentityService(IRepository<User> repository, IMapper mapper, UserManager<User> userManager, SignInManager<User> signInManager,
-            ITokenService tokenService, IConfiguration configuration)
+            ITokenService tokenService, IConfiguration configuration, ILogger<IdentityService> logger)
         {
             _repository = repository;
             _mapper = mapper;
@@ -31,6 +33,7 @@ namespace AI_Onboarding.Services.Implementation
             _signInManager = signInManager;
             _tokenService = tokenService;
             _configuration = configuration;
+            _logger = logger;
         }
 
         public async Task<(bool Success, string Message)> RegisterAsync(UserRegistrationViewModel viewUser)
@@ -58,6 +61,7 @@ namespace AI_Onboarding.Services.Implementation
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "An error occurred");
                 messages += $"{ex.Message}";
                 return (false, messages);
             }
@@ -75,15 +79,16 @@ namespace AI_Onboarding.Services.Implementation
                 {
                     int id = _repository.FindByCondition(u => u.Email == user.Email).Id;
 
-                    return (true, "Login success", _tokenService.GenerateAccessToken(user.Email, id));
+                    return (true, "Login success", _tokenService.GenerateAccessToken(user.Email, id, true));
                 }
                 else
                 {
-                    return (false, "Wrong credentials", null);
+                    return (false, "Invalid email or password", null);
                 }
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "An error occurred");
                 messages += $"{ex.Message}";
                 return (false, messages, null);
             }
@@ -128,6 +133,7 @@ namespace AI_Onboarding.Services.Implementation
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "An error occurred");
                 return (false, ex.Message, null);
             }
         }

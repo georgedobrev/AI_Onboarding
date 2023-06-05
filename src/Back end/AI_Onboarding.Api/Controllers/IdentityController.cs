@@ -41,8 +41,19 @@ namespace AI_Onboarding.Api.Controllers
             var result = await _identityServise.LoginAsync(userModel);
             if (result.Success)
             {
-                Response.Cookies.Append("Access-Token", result.Tokens.Token);
-                Response.Cookies.Append("Refresh-Token", result.Tokens.RefreshToken);
+                Response.Cookies.Append("Access-Token", result.Tokens.Token, new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.Strict
+                });
+
+                Response.Cookies.Append("Refresh-Token", result.Tokens.RefreshToken, new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.Strict
+                });
 
                 return Ok(result.Message);
             }
@@ -64,7 +75,6 @@ namespace AI_Onboarding.Api.Controllers
 
                 Response.Cookies.Append("Access-Token", result.Tokens.Token, new CookieOptions
                 {
-                    Expires = DateTimeOffset.UtcNow.AddMinutes(tokenValidityInMinutes),
                     HttpOnly = true,
                     Secure = true,
                     SameSite = SameSiteMode.Strict
@@ -72,7 +82,6 @@ namespace AI_Onboarding.Api.Controllers
 
                 Response.Cookies.Append("Refresh-Token", result.Tokens.RefreshToken, new CookieOptions
                 {
-                    Expires = DateTimeOffset.UtcNow.AddDays(refreshTokenValidityInDays),
                     HttpOnly = true,
                     Secure = true,
                     SameSite = SameSiteMode.Strict
