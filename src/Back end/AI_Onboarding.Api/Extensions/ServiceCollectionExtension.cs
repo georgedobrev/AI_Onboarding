@@ -19,7 +19,7 @@ public static class ServiceCollectionExtension
     public static IServiceCollection RegisterDbContext(IServiceCollection services, IConfiguration configuration, IWebHostEnvironment environment)
     {
         services.AddDbContext<DataContext>(options =>
-                options.UseSqlServer(configuration.GetConnectionString("<from appsettings.{Environment}.json>")));
+                options.UseSqlServer(configuration.GetConnectionString("SqlConnection")));
     }
 
    public static IServiceCollection RegisterFilters(this IServiceCollection services)
