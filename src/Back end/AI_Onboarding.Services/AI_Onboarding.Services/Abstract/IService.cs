@@ -1,8 +1,7 @@
-﻿using System;
-namespace AI_Onboarding.Services.Abstract
+﻿namespace AI_Onboarding.Services.Abstract
 {
-	public interface IService
-	{
-	}
+    public interface IService
+    {
+    }
 }
 

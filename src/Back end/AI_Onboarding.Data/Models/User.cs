@@ -1,16 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AI_Onboarding.Data.Models
 {
     public class User : IdentityUser<int>, IBaseEntity
     {
-        public int Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? ModifiedAt { get; set; }
         public User? ModifiedBy { get; set; }
         public int? ModifiedById { get; set; }

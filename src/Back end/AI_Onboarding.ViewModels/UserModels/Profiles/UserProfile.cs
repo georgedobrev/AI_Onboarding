@@ -1,6 +1,4 @@
-﻿using System;
-using AutoMapper;
-using AI_Onboarding.ViewModels.UserModels;
+﻿using AutoMapper;
 using AI_Onboarding.Data.Models;
 
 namespace AI_Onboarding.ViewModels.UserModels.UserProfiles
@@ -14,4 +12,3 @@ namespace AI_Onboarding.ViewModels.UserModels.UserProfiles
         }
     }
 }
-

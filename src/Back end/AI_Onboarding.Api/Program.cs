@@ -1,4 +1,3 @@
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Microsoft.AspNetCore.Builder;
@@ -48,7 +47,8 @@ namespace AI_Onboarding.Api
             builder.Host.UseSerilog((hostingContext, logger) => logger.ReadFrom.Configuration(hostingContext.Configuration));
 
             ServiceCollectionExtension.RegisterDbContext(builder.Services, builder.Configuration, builder.Environment);
-            ServiceCollectionExtension.ConfigureServices(builder.Services, builder.Configuration);
+            ServiceCollectionExtension.ConfigureServices(builder.Services, builder.Configuration, builder.Environment);
+            ServiceCollectionExtension.ConfigureAuth(builder.Services, builder.Configuration);
 
             var app = builder.Build();
 
@@ -58,6 +58,8 @@ namespace AI_Onboarding.Api
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            app.UseCors();
 
             app.UseHttpsRedirection();
 

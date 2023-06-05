@@ -1,6 +1,6 @@
 ﻿namespace AI_Onboarding.ViewModels.JWTModels
 {
-    public class TokenResponseViewModel
+    public class TokenViewModel
     {
         public string Token { get; set; }
         public string RefreshToken { get; set; }

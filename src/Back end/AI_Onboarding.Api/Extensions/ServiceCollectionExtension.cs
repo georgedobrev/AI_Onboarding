@@ -8,10 +8,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using AI_Onboarding.Data.Repository;
-using AI_Onboarding.Services.Interfaces;
-using AI_Onboarding.Services.Implementation;
-using AI_Onboarding.ViewModels.UserModels.UserProfiles;
 using AI_Onboarding.Services.Abstract;
+using AI_Onboarding.Services.Implementation;
+using System.Reflection;
+using AI_Onboarding.ViewModels.UserModels.UserProfiles;
 using Microsoft.AspNetCore.Identity;
 
 public static class ServiceCollectionExtension 
@@ -52,16 +52,32 @@ public static class ServiceCollectionExtension
         return services;
     }
 
-    public static IServiceCollection ConfigureServices(IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection ConfigureServices(IServiceCollection services, IConfiguration configuration, IWebHostEnvironment environment)
     {
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
-        services.AddScoped<ITokenService, TokenService>();
-
-        services.AddScoped<IIdentityService, IdentityService>();
+        services.AddScopedServiceTypes(typeof(TokenService).Assembly, typeof(IService));
 
         services.AddAutoMapper(typeof(UserProfile));
 
+        if (environment.IsDevelopment())
+        {
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(builder =>
+                {
+                    builder.WithOrigins("http://localhost:5173")
+                           .AllowAnyHeader()
+                           .AllowAnyMethod();
+                });
+            });
+        }
+
+        return services;
+    }
+
+    public static IServiceCollection ConfigureAuth(IServiceCollection services, IConfiguration configuration)
+    {
         services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -83,6 +99,24 @@ public static class ServiceCollectionExtension
         });
 
         services.AddAuthorization();
+
+        return services;
+    }
+
+    private static IServiceCollection AddScopedServiceTypes(this IServiceCollection services, Assembly assembly, Type fromType)
+    {
+        var serviceTypes = assembly.GetTypes()
+            .Where(x => !string.IsNullOrEmpty(x.Namespace) && x.IsClass && !x.IsAbstract && fromType.IsAssignableFrom(x))
+            .Select(x => new
+            {
+                Interface = x.GetInterface($"I{x.Name}"),
+                Implementation = x
+            });
+
+        foreach (var serviceType in serviceTypes)
+        {
+            services.AddScoped(serviceType.Interface, serviceType.Implementation);
+        }
 
         return services;
     }

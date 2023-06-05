@@ -22,24 +22,35 @@ namespace AI_Onboarding.Services.Implementation
             _configuration = configuration;
         }
 
-        public TokenResponseViewModel GenerateAccessToken(TokenRequestViewModel request)
+        public TokenViewModel GenerateAccessToken(string email, int id, bool isLogin = false)
         {
-            int.TryParse(_configuration["JWT:RefreshTokenValidityInDays"], out int tokenValidityInMinutes);
-
+            int.TryParse(_configuration["JWT:TokenValidityInMinutes"], out int tokenValidityInMinutes);
             var expiration = DateTime.UtcNow.AddMinutes(tokenValidityInMinutes);
 
             var token = CreateJwtToken(
-                CreateClaims(request),
+                CreateClaims(email, id),
                 CreateSigningCredentials(),
                 expiration
             );
 
-            var tokenHandler = new JwtSecurityTokenHandler();
+            var accessToken = new JwtSecurityTokenHandler().WriteToken(token);
 
-            return new TokenResponseViewModel
+            var dbUser = _repository.Find(id);
+
+            if (dbUser.RefreshTokenExpiryTime < DateTime.UtcNow || dbUser.RefreshToken is null || isLogin)
             {
-                Token = tokenHandler.WriteToken(token),
-                RefreshToken = GenerateRefreshToken()
+                dbUser.RefreshToken = GenerateRefreshToken();
+                int.TryParse(_configuration["JWT:RefreshTokenValidityInDays"], out int refreshTokenValidityInDays);
+                dbUser.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(refreshTokenValidityInDays); ;
+            }
+
+            _repository.Update(dbUser);
+            _repository.SaveChanges();
+
+            return new TokenViewModel
+            {
+                Token = accessToken,
+                RefreshToken = dbUser.RefreshToken
             };
         }
 
@@ -54,13 +65,11 @@ namespace AI_Onboarding.Services.Implementation
             );
         }
 
-        private Claim[] CreateClaims(TokenRequestViewModel request)
+        private Claim[] CreateClaims(string email, int id)
         {
             return new[] {
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()),
-                new Claim(ClaimTypes.Email, request.Email),
-                new Claim(ClaimTypes.Authentication, request.Password)
+                new Claim(ClaimTypes.Email, email),
+                new Claim(ClaimTypes.NameIdentifier, id.ToString())
             };
         }
 
@@ -74,7 +83,7 @@ namespace AI_Onboarding.Services.Implementation
                 );
         }
 
-        public string GenerateRefreshToken()
+        private string GenerateRefreshToken()
         {
             var randomNumber = new byte[64];
             using var rng = RandomNumberGenerator.Create();

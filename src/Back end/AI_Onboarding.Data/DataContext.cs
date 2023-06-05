@@ -1,6 +1,5 @@
 ﻿using AI_Onboarding.Data.ModelBuilding;
 using AI_Onboarding.Data.Models;
-using AI_Onboarding.Data.Repository;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -33,7 +32,7 @@ namespace AI_Onboarding.Data
         {
             var entities = ChangeTracker.Entries();
 
-            var currentDate = DateTime.Now;
+            var currentDate = DateTime.UtcNow;
 
             int.TryParse(_httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out int userId);
 
@@ -59,7 +58,6 @@ namespace AI_Onboarding.Data
 
                     entity.ModifiedAt = currentDate;
                 }
-
             }
 
             return base.SaveChanges();
