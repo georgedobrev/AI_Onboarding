@@ -50,6 +50,12 @@ namespace AI_Onboarding.Api
             ServiceCollectionExtension.ConfigureServices(builder.Services, builder.Configuration, builder.Environment);
             ServiceCollectionExtension.ConfigureAuth(builder.Services, builder.Configuration);
 
+            builder.Services.AddAuthentication().AddGoogle(options =>
+            {
+                options.ClientId = builder.Configuration["Google:ClientId"] ;
+                options.ClientSecret = builder.Configuration["Google:ClientServer"];
+            });
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

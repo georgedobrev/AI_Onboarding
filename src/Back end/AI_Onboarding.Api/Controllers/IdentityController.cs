@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Authorization;
 using AI_Onboarding.ViewModels.UserModels;
 using AI_Onboarding.Services.Interfaces;
 using AI_Onboarding.ViewModels.JWTModels;
+using Microsoft.AspNetCore.Identity;
+using AI_Onboarding.ViewModels.UserModels.Profiles;
 
 namespace AI_Onboarding.Api.Controllers
 {
@@ -12,11 +14,14 @@ namespace AI_Onboarding.Api.Controllers
     {
         private readonly IIdentityService _identityServise;
         private readonly IConfiguration _configuration;
+        private readonly SignInManager<> _signInManager;
 
-        public IdentityController(IIdentityService identityServise, IConfiguration configuration)
+        public IdentityController(IIdentityService identityServise, IConfiguration configuration, SignInManager<> signInManager)
         {
             _identityServise = identityServise;
             _configuration = configuration;
+            _signInManager = signInManager;
+
         }
 
         [HttpPost("register")]
@@ -94,5 +99,14 @@ namespace AI_Onboarding.Api.Controllers
                 return BadRequest(result.Message);
             }
         }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public Task<ActionResult> GoogleLogin([FromBody] GoogleLogInModel googleLogIn)
+        {
+
+        }
+
+       
     }
 }
