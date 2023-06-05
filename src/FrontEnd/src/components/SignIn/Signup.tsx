@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { CredentialResponse, GoogleLogin } from '@react-oauth/google';
-import { TextField } from '@mui/material';
-import Button from '@mui/material/Button';
-import PasswordField from './PasswordField';
-import './Signup.css';
+import { Link, useNavigate } from 'react-router-dom';
+import {TextField, Button, InputAdornment, IconButton} from '@mui/material';
+import { GoogleLogin } from '@react-oauth/google';
 import logoImage from '../../assets/blankfactor-logo.jpg';
+import './Signup.css';
+import {Visibility, VisibilityOff} from "@mui/icons-material";
 
 const Signup: React.FC = () => {
   const navigate = useNavigate();
   const [isSignupSuccess, setSignupSuccess] = useState(false);
-  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     const storedSuccess = localStorage.getItem('signupSuccess');
@@ -19,7 +18,7 @@ const Signup: React.FC = () => {
     }
   }, []);
 
-  const handleGoogleSignupSuccess = (credentialResponse: CredentialResponse) => {
+  const handleGoogleSignupSuccess = () => {
     setSignupSuccess(true);
     localStorage.setItem('signupSuccess', 'true');
     navigate('/home');
@@ -32,6 +31,11 @@ const Signup: React.FC = () => {
   const handleContinueClick = () => {
     // Do something with the password value
   };
+
+  const handleTogglePasswordVisibility = () => {
+    setShowPassword((prevShowPassword) => !prevShowPassword);
+  };
+
 
   return (
     <div className="signup-container">
@@ -51,10 +55,18 @@ const Signup: React.FC = () => {
               variant="outlined"
               className="email-field"
             />
-            <PasswordField
+            <TextField
               label="Password"
-              passwordValue={password}
-              onPasswordChange={(e) => setPassword(e.target.value)}
+              type={showPassword ? 'text' : 'password'}
+              InputProps={{
+                endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={handleTogglePasswordVisibility} edge="end">
+                        {showPassword ? <Visibility /> : <VisibilityOff />}
+                      </IconButton>
+                    </InputAdornment>
+                ),
+              }}
               className="password-field"
             />
             <Button
@@ -67,7 +79,7 @@ const Signup: React.FC = () => {
           </div>
           <span className="signup-noaccount">
             Don't have an account?&nbsp;
-            <Link to="/signup" className="signup-hyperlink">
+            <Link to="/register" className="signup-hyperlink">
               Sign up
             </Link>
           </span>
