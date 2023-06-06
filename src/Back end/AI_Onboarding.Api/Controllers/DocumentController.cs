@@ -18,7 +18,7 @@ namespace AI_Onboarding.Api.Controllers
         }
 
         [HttpPost("upload-file")]
-        public async Task<IActionResult> UploadFile([FromBody] DocumentViewModel document)
+        public ActionResult UploadFile([FromBody] DocumentViewModel document)
         {
             var result = _documentService.UploadDocument(document);
 

@@ -10,6 +10,9 @@ using AI_Onboarding.Services.Implementation;
 using System.Reflection;
 using AI_Onboarding.ViewModels.UserModels.UserProfiles;
 using Microsoft.AspNetCore.Identity;
+using MongoDB.Driver;
+using AI_Onboarding.Data.NoSQLDatabase.Interfaces;
+using AI_Onboarding.Data.NoSQLDatabase;
 
 public static class ServiceCollectionExtension
 {
@@ -35,9 +38,18 @@ public static class ServiceCollectionExtension
         return services;
     }
 
+    public static IServiceCollection ConfigureNoSQLDatabase(IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddSingleton<IMongoClient>(options => new MongoClient(configuration["MongoDBSettings:ConnectionString"]));
+
+        return services;
+    }
+
     public static IServiceCollection ConfigureServices(IServiceCollection services, IConfiguration configuration, IWebHostEnvironment environment)
     {
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+
+        services.AddScoped<IDocumentRepository, DocumentRepository>();
 
         services.AddScopedServiceTypes(typeof(TokenService).Assembly, typeof(IService));
 

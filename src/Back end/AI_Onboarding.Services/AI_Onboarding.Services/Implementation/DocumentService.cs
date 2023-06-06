@@ -1,17 +1,27 @@
 ﻿using System.Text;
+using AI_Onboarding.Common;
+using AI_Onboarding.Data.Models;
+using AI_Onboarding.Data.NoSQLDatabase;
+using AI_Onboarding.Data.NoSQLDatabase.Interfaces;
 using AI_Onboarding.Services.Interfaces;
 using AI_Onboarding.ViewModels.DocumentModels;
-using iTextSharp.text;
 using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.parser;
+using Microsoft.Extensions.Logging;
 using Xceed.Words.NET;
 
 namespace AI_Onboarding.Services.Implementation
 {
     public class DocumentService : IDocumentService
     {
-        public DocumentService()
+        private readonly IDocumentRepository _documentRepository;
+        private readonly ILogger<DocumentService> _logger;
+
+
+        public DocumentService(IDocumentRepository documentRepository, ILogger<DocumentService> logger)
         {
+            _documentRepository = documentRepository;
+            _logger = logger;
         }
 
         public (bool Success, string Message) UploadDocument(DocumentViewModel document)
@@ -23,9 +33,9 @@ namespace AI_Onboarding.Services.Implementation
 
             StringBuilder sb = new StringBuilder();
 
-            switch (document.FileType)
+            switch (document.FileTypeId)
             {
-                case FileType.pdf:
+                case (int)FileType.pdf:
                     using (PdfReader reader = new PdfReader(document.File.OpenReadStream()))
                     {
                         for (int page = 1; page <= reader.NumberOfPages; page++)
@@ -36,7 +46,7 @@ namespace AI_Onboarding.Services.Implementation
                     }
                     break;
 
-                case FileType.docx:
+                case (int)FileType.docx:
                     using (DocX doc = DocX.Load(document.File.OpenReadStream()))
                     {
                         foreach (var paragraph in doc.Paragraphs)
@@ -47,8 +57,17 @@ namespace AI_Onboarding.Services.Implementation
                     break;
             }
 
-
             string extractedText = sb.ToString();
+            try
+            {
+                Document dbDocument = new Document { ExtractedText = extractedText };
+                _documentRepository.Add(dbDocument);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred");
+                return (false, ex.Message);
+            }
 
             return (true, "Success");
         }

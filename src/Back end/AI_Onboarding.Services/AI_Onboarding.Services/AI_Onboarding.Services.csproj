@@ -16,10 +16,12 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.5" />
     <PackageReference Include="iTextSharp" Version="5.5.13.3" />
     <PackageReference Include="DocX" Version="2.4.0" />
+    <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\AI_Onboarding.Data\AI_Onboarding.Data.csproj" />
     <ProjectReference Include="..\..\AI_Onboarding.ViewModels\AI_Onboarding.ViewModels.csproj" />
+    <ProjectReference Include="..\..\AI_Onboarding.Common\AI_Onboarding.Common.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Abstract\" />
