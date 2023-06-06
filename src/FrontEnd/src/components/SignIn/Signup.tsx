@@ -1,15 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import {TextField, Button, InputAdornment, IconButton} from '@mui/material';
+import { TextField, Button, InputAdornment, IconButton } from '@mui/material';
 import { GoogleLogin } from '@react-oauth/google';
+import axios from 'axios';
 import logoImage from '../../assets/blankfactor-logo.jpg';
 import './Signup.css';
-import {Visibility, VisibilityOff} from "@mui/icons-material";
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { FormValues } from './typesLogin.ts';
 
 const Signup: React.FC = () => {
   const navigate = useNavigate();
   const [isSignupSuccess, setSignupSuccess] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  const [formData, setFormData] = useState<FormValues>({
+    email: '',
+    password: '',
+  });
 
   useEffect(() => {
     const storedSuccess = localStorage.getItem('signupSuccess');
@@ -18,7 +25,9 @@ const Signup: React.FC = () => {
     }
   }, []);
 
-  const handleGoogleSignupSuccess = () => {
+  const handleGoogleSignupSuccess = (credentialResponse: any) => {
+    const { credential } = credentialResponse;
+    console.log(credential);
     setSignupSuccess(true);
     localStorage.setItem('signupSuccess', 'true');
     navigate('/home');
@@ -28,14 +37,25 @@ const Signup: React.FC = () => {
     console.log('Login Failed');
   };
 
-  const handleContinueClick = () => {
-    // Do something with the password value
+  const handleContinueClick = async () => {
+    try {
+      const postData = JSON.stringify(formData, null, 2);
+      const response = await axios.post('https://localhost:7243/api/Identity/login', postData, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      console.log(response.data);
+      // Handle the response data here
+    } catch (error) {
+      console.error(error);
+      // Handle the error here
+    }
   };
 
   const handleTogglePasswordVisibility = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
   };
-
 
   return (
     <div className="signup-container">
@@ -54,20 +74,24 @@ const Signup: React.FC = () => {
               label="Email address"
               variant="outlined"
               className="email-field"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
             />
             <TextField
               label="Password"
               type={showPassword ? 'text' : 'password'}
               InputProps={{
                 endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton onClick={handleTogglePasswordVisibility} edge="end">
-                        {showPassword ? <Visibility /> : <VisibilityOff />}
-                      </IconButton>
-                    </InputAdornment>
+                  <InputAdornment position="end">
+                    <IconButton onClick={handleTogglePasswordVisibility} edge="end">
+                      {showPassword ? <Visibility /> : <VisibilityOff />}
+                    </IconButton>
+                  </InputAdornment>
                 ),
               }}
               className="password-field"
+              value={formData.password}
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
             />
             <Button
               variant="contained"
