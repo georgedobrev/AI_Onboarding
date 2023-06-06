@@ -121,8 +121,8 @@ namespace AI_Onboarding.Api.Controllers
 
             GoogleLogInModel googleLogInModel = new GoogleLogInModel
             {
-                ReturnUrl = returnUrl,
-                ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList(),
+                ReturnUrl = returnUrl
+               
             };
 
             if (remoteError != null)

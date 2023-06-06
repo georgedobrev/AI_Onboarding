@@ -8,7 +8,7 @@ namespace AI_Onboarding.ViewModels.UserModels.Profiles
 
 		public string Password { get; set; }
         public string ReturnUrl { get; set; }
-        public IList<AuthenticationScheme> ExternalLogins { get; set; }
+        
     }
 }
 
