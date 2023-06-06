@@ -2,7 +2,6 @@
 using AI_Onboarding.Data;
 using AI_Onboarding.Api.Filter;
 using Serilog;
-using AI_Onboarding.Api.Filter.IExceptionFilter;
 using AI_Onboarding.Data.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
