@@ -41,7 +41,7 @@ const Signup: React.FC = () => {
     try {
       const postData = JSON.stringify(formData, null, 2);
       const url = `${config.baseUrl}${config.loginEndpoint}`;
-      const response = await fetch('https://localhost:7243/api/Identity/login', {
+      const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
