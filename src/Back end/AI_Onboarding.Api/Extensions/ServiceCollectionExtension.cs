@@ -1,5 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using AI_Onboarding.Data;
+using AI_Onboarding.Api.Filter;
+using Serilog;
+using AI_Onboarding.Api.Filter.IExceptionFilter;
 using AI_Onboarding.Data.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -14,13 +17,13 @@ using MongoDB.Driver;
 using AI_Onboarding.Data.NoSQLDatabase.Interfaces;
 using AI_Onboarding.Data.NoSQLDatabase;
 
-public static class ServiceCollectionExtension
+public static class ServiceCollectionExtension 
 {
     public static IServiceCollection RegisterDbContext(IServiceCollection services, IConfiguration configuration, IWebHostEnvironment environment)
     {
         services.AddDbContext<DataContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("SqlConnection")));
-
+  
         services.AddIdentity<User, Role>().AddEntityFrameworkStores<DataContext>();
 
         if (environment.IsDevelopment())
@@ -98,6 +101,17 @@ public static class ServiceCollectionExtension
         return services;
     }
 
+  public static IServiceCollection RegisterFilters(this IServiceCollection services)
+    {
+
+        services.AddControllers(options =>
+        {
+            options.Filters.Add<CustomExceptionFilter>();
+        });
+
+        return services;
+    }
+  
     private static IServiceCollection AddScopedServiceTypes(this IServiceCollection services, Assembly assembly, Type fromType)
     {
         var serviceTypes = assembly.GetTypes()

@@ -1,5 +1,7 @@
 using Microsoft.OpenApi.Models;
 using Serilog;
+using Microsoft.AspNetCore.Builder;
+using AI_Onboarding.Services;
 
 namespace AI_Onboarding.Api
 {
@@ -10,6 +12,7 @@ namespace AI_Onboarding.Api
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            builder.Services.RegisterFilters();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

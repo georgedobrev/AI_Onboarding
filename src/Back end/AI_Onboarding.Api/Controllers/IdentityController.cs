@@ -64,6 +64,7 @@ namespace AI_Onboarding.Api.Controllers
         }
 
         [HttpPost("refresh-token")]
+
         [AllowAnonymous]
         public IActionResult RefreshToken([FromBody] TokenViewModel tokensModel)
         {
