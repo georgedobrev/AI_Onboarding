@@ -4,7 +4,6 @@ using AI_Onboarding.ViewModels.UserModels;
 using AI_Onboarding.Services.Interfaces;
 using AI_Onboarding.ViewModels.JWTModels;
 using Microsoft.AspNetCore.Identity;
-using AI_Onboarding.ViewModels.UserModels.Profiles;
 using AI_Onboarding.Data.Models;
 using System.Security.Claims;
 
@@ -104,74 +103,36 @@ namespace AI_Onboarding.Api.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost("google-login")]
         [AllowAnonymous]
-        public IActionResult ExternalLogin(string provider, string returnUrl)
+        public async Task<IActionResult> GoogleLoginAsync([FromBody] string token)
         {
-            var redirectUrl = Url.Action("ExternalLoginCallback", "Account", new { ReturnUrl = returnUrl });
-            var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
-            return new ChallengeResult(provider, properties);
-        }
-
-        
-        [AllowAnonymous]
-        public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null, string remoteError = null)
-        {
-            returnUrl = returnUrl ?? Url.Content("~/");
-
-            GoogleLogInModel googleLogInModel = new GoogleLogInModel
+            var result = await _identityServise.GoogleLoginAsync(token);
+            if (result.Success)
             {
-                ReturnUrl = returnUrl
-               
-            };
+                int.TryParse(_configuration["JWT:RefreshTokenValidityInDays"], out int refreshTokenValidityInDays);
+                int.TryParse(_configuration["JWT:TokenValidityInMinutes"], out int tokenValidityInMinutes);
 
-            if (remoteError != null)
-            {
-                ModelState.AddModelError(string.Empty, $"Errpr from external provider: {remoteError}");
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
-
-            var info = await _signInManager.GetExternalLoginInfoAsync();
-            if (info == null)
-            {
-                return StatusCode(StatusCodes.Status400BadRequest , new {Message = "External LogIn info not found!"});
-            }
-
-            var user = await _userManager.FindByLoginAsync(info.LoginProvider, info.ProviderKey);
-            if (user == null)
-            {
-                user = new User { UserName = info.Principal.FindFirstValue(ClaimTypes.Email), Email = info.Principal.FindFirstValue(ClaimTypes.Email) };
-                var result = await _userManager.CreateAsync(user);
-
-                if (result.Succeeded)
+                Response.Cookies.Append("Access-Token", result.Tokens.Token, new CookieOptions
                 {
-                    result = await _userManager.AddLoginAsync(user, info);
-                    if (result.Succeeded)
-                    {
-                        var randomPasswordHash = _userManager.PasswordHasher.HashPassword(user, Guid.NewGuid().ToString());
-                        user.PasswordHash = randomPasswordHash;
-                        await _userManager.UpdateAsync(user);
-                    }
-                }
+                    HttpOnly = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.Strict
+                });
 
-                if (!result.Succeeded)
+                Response.Cookies.Append("Refresh-Token", result.Tokens.RefreshToken, new CookieOptions
                 {
-                    return StatusCode(StatusCodes.Status500InternalServerError, new {Message = "User registration failed." });
-                }
-            }
+                    HttpOnly = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.Strict
+                });
 
-            await _signInManager.SignInAsync(user, isPersistent: false);
-
-            if (!string.IsNullOrEmpty(returnUrl))
-            {
-                return Redirect(returnUrl);
+                return Ok(result.Message);
             }
             else
             {
-                return Ok();
+                return BadRequest(result.Message);
             }
         }
-
-       
     }
 }

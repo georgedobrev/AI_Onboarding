@@ -4,12 +4,18 @@ using AI_Onboarding.Services.Interfaces;
 using AI_Onboarding.ViewModels.JWTModels;
 using AI_Onboarding.ViewModels.UserModels;
 using AutoMapper;
+using Azure.Core;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Linq;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http.Headers;
 using System.Security.Claims;
+using System.Security.Policy;
 using System.Text;
 
 namespace AI_Onboarding.Services.Implementation
@@ -136,6 +142,53 @@ namespace AI_Onboarding.Services.Implementation
                 _logger.LogError(ex, "An error occurred");
                 return (false, ex.Message, null);
             }
+        }
+
+       
+        public async Task<(bool Success, string Message, TokenViewModel? Tokens)> GoogleLoginAsync(string token)
+        {
+            
+            using (var httpClient = new HttpClient())
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                var response = await httpClient.GetAsync(_configuration["GoogleAuth:UserInfoEndpoint"]);
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    var userInfo = JObject.Parse(json);
+
+                    var email = userInfo["email"]?.ToString();
+
+                    var user = _repository.FindByCondition(u => u.Email == email);
+
+                    if (user != null)
+                    {
+                        await _signInManager.SignInAsync(user,false);
+                        var tokens = _tokenService.GenerateAccessToken(user.Email, user.Id);
+
+                        return (true, "Login successful", tokens);
+                    }
+                    else
+                    {
+                        var passwordHash = _configuration["GoogleAuth:DefaulfPasswordHash"];
+                        var newUser = new UserRegistrationViewModel { Email = email, Password = passwordHash };
+                        var resultRegister = await RegisterAsync(newUser);
+                        var us = new UserLoginViewModel { Email = email, Password = passwordHash };
+                        var resultLogin = await LoginAsync(us);
+                        if(resultLogin.Success && resultRegister.Success)
+                        {
+                            return (true, "Registration successful", resultLogin.Tokens);
+                        }
+                        else
+                        {
+                            return (false, "Registration failed", null);
+                        }
+                    }
+                }
+                
+                return (false,"Ivalid account",null);
+            }
+
         }
     }
 }

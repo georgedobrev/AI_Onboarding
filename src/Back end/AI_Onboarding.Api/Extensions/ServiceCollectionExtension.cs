@@ -1,8 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using AI_Onboarding.Data;
-using AI_Onboarding.Api.Filter;
-using Serilog;
-using AI_Onboarding.Api.Filter.IExceptionFilter;
 using AI_Onboarding.Data.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -13,30 +10,15 @@ using AI_Onboarding.Services.Implementation;
 using System.Reflection;
 using AI_Onboarding.ViewModels.UserModels.UserProfiles;
 using Microsoft.AspNetCore.Identity;
+using AI_Onboarding.Api.Filter;
 
-public static class ServiceCollectionExtension 
+public static class ServiceCollectionExtension
 {
     public static IServiceCollection RegisterDbContext(IServiceCollection services, IConfiguration configuration, IWebHostEnvironment environment)
     {
         services.AddDbContext<DataContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("SqlConnection")));
-    }
-
-   public static IServiceCollection RegisterFilters(this IServiceCollection services)
-    {
-
-        services.AddControllers(options =>
-        {
-            options.Filters.Add<CustomExceptionFilter>();
-        });
-
-        return services;
-    }
-
-}
-
         services.AddIdentity<User, Role>().AddEntityFrameworkStores<DataContext>();
-
         if (environment.IsDevelopment())
         {
             services.Configure<IdentityOptions>(options =>
@@ -48,18 +30,13 @@ public static class ServiceCollectionExtension
                 options.Password.RequireLowercase = false;
             });
         }
-
         return services;
     }
-
     public static IServiceCollection ConfigureServices(IServiceCollection services, IConfiguration configuration, IWebHostEnvironment environment)
     {
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-
         services.AddScopedServiceTypes(typeof(TokenService).Assembly, typeof(IService));
-
         services.AddAutoMapper(typeof(UserProfile));
-
         if (environment.IsDevelopment())
         {
             services.AddCors(options =>
@@ -72,10 +49,8 @@ public static class ServiceCollectionExtension
                 });
             });
         }
-
         return services;
     }
-
     public static IServiceCollection ConfigureAuth(IServiceCollection services, IConfiguration configuration)
     {
         services.AddAuthentication(options =>
@@ -83,7 +58,8 @@ public static class ServiceCollectionExtension
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-        }).AddJwtBearer(o =>
+        })
+        .AddJwtBearer(o =>
         {
             o.TokenValidationParameters = new TokenValidationParameters
             {
@@ -97,9 +73,7 @@ public static class ServiceCollectionExtension
                 ValidateIssuerSigningKey = true
             };
         });
-
         services.AddAuthorization();
-
         return services;
     }
 
@@ -112,11 +86,20 @@ public static class ServiceCollectionExtension
                 Interface = x.GetInterface($"I{x.Name}"),
                 Implementation = x
             });
-
         foreach (var serviceType in serviceTypes)
         {
             services.AddScoped(serviceType.Interface, serviceType.Implementation);
         }
+        return services;
+    }
+
+    public static IServiceCollection RegisterFilters(this IServiceCollection services)
+    {
+
+        services.AddControllers(options =>
+        {
+            options.Filters.Add<CustomExceptionFilter>();
+        });
 
         return services;
     }

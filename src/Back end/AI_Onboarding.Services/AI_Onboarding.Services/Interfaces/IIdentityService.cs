@@ -8,6 +8,7 @@ namespace AI_Onboarding.Services.Interfaces
     {
         public Task<(bool Success, string Message)> RegisterAsync(UserRegistrationViewModel user);
         public Task<(bool Success, string Message, TokenViewModel? Tokens)> LoginAsync(UserLoginViewModel user);
+        public Task<(bool Success, string Message, TokenViewModel? Tokens)> GoogleLoginAsync(string token);
         public (bool Success, string Message, TokenViewModel? Tokens) RefreshTokenAsync(TokenViewModel tokens);
     }
 }

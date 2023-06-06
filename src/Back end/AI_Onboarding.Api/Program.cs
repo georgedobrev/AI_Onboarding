@@ -2,6 +2,7 @@ using Microsoft.OpenApi.Models;
 using Serilog;
 using Microsoft.AspNetCore.Builder;
 using AI_Onboarding.Services;
+using AI_Onboarding.Api.Filter;
 
 namespace AI_Onboarding.Api
 {
@@ -49,12 +50,6 @@ namespace AI_Onboarding.Api
             ServiceCollectionExtension.RegisterDbContext(builder.Services, builder.Configuration, builder.Environment);
             ServiceCollectionExtension.ConfigureServices(builder.Services, builder.Configuration, builder.Environment);
             ServiceCollectionExtension.ConfigureAuth(builder.Services, builder.Configuration);
-
-            builder.Services.AddAuthentication().AddGoogle(options =>
-            {
-                options.ClientId = builder.Configuration["Google:ClientId"] ;
-                options.ClientSecret = builder.Configuration["Google:ClientServer"];
-            });
 
             var app = builder.Build();
 
