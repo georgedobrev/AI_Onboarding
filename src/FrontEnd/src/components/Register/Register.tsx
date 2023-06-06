@@ -5,6 +5,7 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useForm } from 'react-hook-form';
 import './Register.css';
 import logoImage from '../../assets/blankfactor-logo.jpg';
+import config from '../../config.json'
 import { FormValues } from './typesRegister.ts';
 
 const Register: React.FC = () => {
@@ -22,7 +23,8 @@ const Register: React.FC = () => {
     const { confirmPassword, ...formData } = data;
     try {
       const postData = JSON.stringify(formData, null, 2);
-      const response = await fetch('https://localhost:7243/api/Identity/register', {
+      const url = `${config.baseUrl}${config.registerEndpoint}`
+      const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
