@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { TextField, Button, InputAdornment, IconButton } from '@mui/material';
 import { GoogleLogin } from '@react-oauth/google';
-import axios from 'axios';
+// import axios from 'axios';
 import logoImage from '../../assets/blankfactor-logo.jpg';
 import './Signup.css';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
@@ -40,16 +40,22 @@ const Signup: React.FC = () => {
   const handleContinueClick = async () => {
     try {
       const postData = JSON.stringify(formData, null, 2);
-      const response = await axios.post('https://localhost:7243/api/Identity/login', postData, {
+      const response = await fetch('https://localhost:7243/api/Identity/login', {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
+        body: postData,
       });
-      console.log(response.data);
-      // Handle the response data here
+
+      if (!response.ok) {
+        throw new Error('Request failed');
+      }
+
+      const responseData = await response.text();
+      console.log(responseData);
     } catch (error) {
       console.error(error);
-      // Handle the error here
     }
   };
 

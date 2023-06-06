@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { Button, IconButton, InputAdornment, TextField } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useForm } from 'react-hook-form';
-import axios from 'axios';
 import './Register.css';
 import logoImage from '../../assets/blankfactor-logo.jpg';
 import { FormValues } from './typesRegister.ts';
@@ -21,22 +20,24 @@ const Register: React.FC = () => {
 
   const onSubmit = async (data: FormValues) => {
     const { confirmPassword, ...formData } = data;
-    // Perform registration logic here using the form data
-    // JSON.stringify(formData, null, 2)
-
-    const postData = JSON.stringify(formData, null, 2);
-
     try {
-      const response = await axios.post('https://localhost:7243/api/Identity/register', postData, {
+      const postData = JSON.stringify(formData, null, 2);
+      const response = await fetch('https://localhost:7243/api/Identity/register', {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
+        body: postData,
       });
-      console.log(response.data);
-      // Handle the response data here
+
+      if (!response.ok) {
+        throw new Error('Request failed');
+      }
+
+      const responseData = await response.text();
+      console.log(responseData);
     } catch (error) {
       console.error(error);
-      // Handle the error here
     }
   };
 
