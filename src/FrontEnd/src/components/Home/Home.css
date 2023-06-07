@@ -25,3 +25,7 @@
     background-color: var(--lineColor);
     margin-top: 24px;
 }
+
+.bbb {
+    display: flex;
+}

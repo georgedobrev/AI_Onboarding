@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { TextField, Button, InputAdornment, IconButton } from '@mui/material';
 import { GoogleLogin } from '@react-oauth/google';
 import logoImage from '../../assets/blankfactor-logo.jpg';
@@ -9,13 +9,16 @@ import config from '../../config.json';
 import { FormValues } from './typesLogin.ts';
 
 const Signup: React.FC = () => {
+  const location = useLocation();
+  const formDataFromRegister = location.state?.formData || {};
+
   const navigate = useNavigate();
   const [isSignupSuccess, setSignupSuccess] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   const [formData, setFormData] = useState<FormValues>({
-    email: '',
-    password: '',
+    email: formDataFromRegister.email || '',
+    password: formDataFromRegister.password || '',
   });
 
   useEffect(() => {
@@ -53,8 +56,11 @@ const Signup: React.FC = () => {
         throw new Error('Request failed');
       }
 
+      console.log(response);
+
       const responseData = await response.text();
       console.log(responseData);
+      navigate('/home');
     } catch (error) {
       console.error(error);
     }
@@ -124,6 +130,7 @@ const Signup: React.FC = () => {
                 onError={handleGoogleSignupError}
                 text="signup_with"
                 size="large"
+                hosted_domain="blankfactor.com"
               />
             )}
           </div>

@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button, IconButton, InputAdornment, TextField } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useForm } from 'react-hook-form';
 import './Register.css';
 import logoImage from '../../assets/blankfactor-logo.jpg';
-import config from '../../config.json'
+import config from '../../config.json';
 import { FormValues } from './typesRegister.ts';
 
 const Register: React.FC = () => {
@@ -16,6 +16,7 @@ const Register: React.FC = () => {
     getValues,
   } = useForm<FormValues>();
 
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -23,7 +24,7 @@ const Register: React.FC = () => {
     const { confirmPassword, ...formData } = data;
     try {
       const postData = JSON.stringify(formData, null, 2);
-      const url = `${config.baseUrl}${config.registerEndpoint}`
+      const url = `${config.baseUrl}${config.registerEndpoint}`;
       const response = await fetch(url, {
         method: 'POST',
         headers: {
@@ -38,6 +39,7 @@ const Register: React.FC = () => {
 
       const responseData = await response.text();
       console.log(responseData);
+      navigate('/signup', { state: { formData } });
     } catch (error) {
       console.error(error);
     }
