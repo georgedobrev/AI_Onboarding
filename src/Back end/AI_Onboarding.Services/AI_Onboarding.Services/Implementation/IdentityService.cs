@@ -150,18 +150,18 @@ namespace AI_Onboarding.Services.Implementation
             
             using (var httpClient = new HttpClient())
             {
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                var response = await httpClient.GetAsync(_configuration["GoogleAuth:UserInfoEndpoint"]);
-                if (response.IsSuccessStatusCode)
-                {
-                    var json = await response.Content.ReadAsStringAsync();
-                    var userInfo = JObject.Parse(json);
 
-                    var email = userInfo["email"]?.ToString();
+                var handler = new JwtSecurityTokenHandler();
+                var jwtToken = handler.ReadJwtToken(token);
+                var claims = jwtToken.Claims;
 
-                    var user = _repository.FindByCondition(u => u.Email == email);
+                var firstName = claims.FirstOrDefault(c => c.Type == "given_name")?.Value;
+                var lastName = claims.FirstOrDefault(c => c.Type == "family_name")?.Value;
+                var email = claims.FirstOrDefault(c => c.Type == "email")?.Value;
 
-                    if (user != null)
+                   var user = _repository.FindByCondition(u => u.Email == email);
+
+                if (user != null)
                     {
                         await _signInManager.SignInAsync(user,false);
                         var tokens = _tokenService.GenerateAccessToken(user.Email, user.Id);
@@ -170,10 +170,10 @@ namespace AI_Onboarding.Services.Implementation
                     }
                     else
                     {
-                        var passwordHash = _configuration["GoogleAuth:DefaulfPasswordHash"];
-                        var newUser = new UserRegistrationViewModel { Email = email, Password = passwordHash };
+                        var defaultPassword = _configuration["GoogleAuth:DefaulfPasswordHash"];
+                        var newUser = new UserRegistrationViewModel { Email = email, Password = defaultPassword, FirstName = firstName, LastName = lastName };
                         var resultRegister = await RegisterAsync(newUser);
-                        var us = new UserLoginViewModel { Email = email, Password = passwordHash };
+                        var us = new UserLoginViewModel { Email = email, Password = defaultPassword };
                         var resultLogin = await LoginAsync(us);
                         if(resultLogin.Success && resultRegister.Success)
                         {
@@ -185,10 +185,8 @@ namespace AI_Onboarding.Services.Implementation
                         }
                     }
                 }
-                
-                return (false,"Ivalid account",null);
-            }
 
+            return (false, "Ivalid account", null);
         }
     }
 }
