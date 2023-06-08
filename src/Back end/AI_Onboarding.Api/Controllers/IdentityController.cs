@@ -26,11 +26,11 @@ namespace AI_Onboarding.Api.Controllers
             var result = await _identityServise.RegisterAsync(userModel);
             if (result.Success)
             {
-                return Ok(result.Message);
+                return Ok(result.ErrorMessage);
             }
             else
             {
-                return BadRequest(result.Message);
+                return BadRequest(result.ErrorMessage);
             }
         }
 
@@ -41,29 +41,20 @@ namespace AI_Onboarding.Api.Controllers
             var result = await _identityServise.LoginAsync(userModel);
             if (result.Success)
             {
-                Response.Cookies.Append("Access-Token", result.Tokens.Token, new CookieOptions
-                {
-                    HttpOnly = true,
-                    Secure = true,
-                    SameSite = SameSiteMode.Strict
-                });
+                Response.Headers.Add("Access-Token", result.Tokens.Token);
 
-                Response.Cookies.Append("Refresh-Token", result.Tokens.RefreshToken, new CookieOptions
-                {
-                    HttpOnly = true,
-                    Secure = true,
-                    SameSite = SameSiteMode.Strict
-                });
+                Response.Headers.Add("Refresh-Token", result.Tokens.RefreshToken);
 
-                return Ok(result.Message);
+                return Ok(result.ErrorMessage);
             }
             else
             {
-                return BadRequest(result.Message);
+                return BadRequest(result.ErrorMessage);
             }
         }
 
-        [HttpPost("refreshToken")]
+        [HttpPost("refresh-token")]
+
         [AllowAnonymous]
         public IActionResult RefreshToken([FromBody] TokenViewModel tokensModel)
         {
@@ -73,25 +64,13 @@ namespace AI_Onboarding.Api.Controllers
                 int.TryParse(_configuration["JWT:RefreshTokenValidityInDays"], out int refreshTokenValidityInDays);
                 int.TryParse(_configuration["JWT:TokenValidityInMinutes"], out int tokenValidityInMinutes);
 
-                Response.Cookies.Append("Access-Token", result.Tokens.Token, new CookieOptions
-                {
-                    HttpOnly = true,
-                    Secure = true,
-                    SameSite = SameSiteMode.Strict
-                });
+                Response.Headers.Add("Access-Token", result.Tokens.Token);
 
-                Response.Cookies.Append("Refresh-Token", result.Tokens.RefreshToken, new CookieOptions
-                {
-                    HttpOnly = true,
-                    Secure = true,
-                    SameSite = SameSiteMode.Strict
-                });
-
-                return Ok(result.Message);
+                return Ok(result.ErrorMessage);
             }
             else
             {
-                return BadRequest(result.Message);
+                return BadRequest(result.ErrorMessage);
             }
         }
     }

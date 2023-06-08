@@ -47,6 +47,7 @@ namespace AI_Onboarding.Api
             builder.Host.UseSerilog((hostingContext, logger) => logger.ReadFrom.Configuration(hostingContext.Configuration));
 
             ServiceCollectionExtension.RegisterDbContext(builder.Services, builder.Configuration, builder.Environment);
+            ServiceCollectionExtension.ConfigureNoSQLDatabase(builder.Services, builder.Configuration);
             ServiceCollectionExtension.ConfigureServices(builder.Services, builder.Configuration, builder.Environment);
             ServiceCollectionExtension.ConfigureAuth(builder.Services, builder.Configuration);
 
