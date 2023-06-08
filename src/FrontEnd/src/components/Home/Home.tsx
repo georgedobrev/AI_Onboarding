@@ -13,7 +13,7 @@ const Home: React.FC = () => {
           <h1 className="header-title">Chat Bot - Blankfactor</h1>
           <div className="header-line"></div>
         </div>
-        <div className="bbb">
+        <div className="main-container">
           <Chats />
           <Messages />
         </div>

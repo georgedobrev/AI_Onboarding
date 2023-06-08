@@ -5,8 +5,8 @@ import { GoogleLogin } from '@react-oauth/google';
 import logoImage from '../../assets/blankfactor-logo.jpg';
 import './Signup.css';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import config from '../../config.json';
-import { FormValues } from './typesLogin.ts';
+import { FormValues } from './types.ts';
+import { authService } from '../../services/authService.ts';
 
 const Signup: React.FC = () => {
   const location = useLocation();
@@ -42,25 +42,8 @@ const Signup: React.FC = () => {
 
   const handleContinueClick = async () => {
     try {
-      const postData = JSON.stringify(formData, null, 2);
-      const url = `${config.baseUrl}${config.loginEndpoint}`;
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: postData,
-      });
-
-      if (!response.ok) {
-        throw new Error('Request failed');
-      }
-
-      console.log(response);
-
-      const responseData = await response.text();
-      console.log(responseData);
-      navigate('/home');
+      const response = await authService.login(formData);
+      navigate('/home', { state: { postData: response } });
     } catch (error) {
       console.error(error);
     }
