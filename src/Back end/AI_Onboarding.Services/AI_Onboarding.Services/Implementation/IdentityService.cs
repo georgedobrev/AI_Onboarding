@@ -2,6 +2,7 @@
 using AI_Onboarding.Data.Repository;
 using AI_Onboarding.Services.Interfaces;
 using AI_Onboarding.ViewModels.JWTModels;
+using AI_Onboarding.ViewModels.ResponseModels;
 using AI_Onboarding.ViewModels.UserModels;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
@@ -36,7 +37,7 @@ namespace AI_Onboarding.Services.Implementation
             _logger = logger;
         }
 
-        public async Task<(bool Success, string Message)> RegisterAsync(UserRegistrationViewModel viewUser)
+        public async Task<BaseResponseViewModel> RegisterAsync(UserRegistrationViewModel viewUser)
         {
             var messages = "";
 
@@ -47,7 +48,7 @@ namespace AI_Onboarding.Services.Implementation
 
                 if (result.Succeeded)
                 {
-                    return (true, "Register succsefull");
+                    return new BaseResponseViewModel { Success = true, ErrorMessage = "" }; ;
                 }
                 else
                 {
@@ -56,18 +57,18 @@ namespace AI_Onboarding.Services.Implementation
                         messages += $"{error.Description}%";
                     }
 
-                    return (false, messages.Remove(messages.Length - 1));
+                    return new BaseResponseViewModel { Success = false, ErrorMessage = messages.Remove(messages.Length - 1) };
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred");
                 messages += $"{ex.Message}";
-                return (false, messages);
+                return new BaseResponseViewModel { Success = false, ErrorMessage = ex.Message };
             }
         }
 
-        public async Task<(bool Success, string Message, TokenViewModel? Tokens)> LoginAsync(UserLoginViewModel user)
+        public async Task<TokensResponseViewModel> LoginAsync(UserLoginViewModel user)
         {
             var messages = "";
 
@@ -79,22 +80,22 @@ namespace AI_Onboarding.Services.Implementation
                 {
                     int id = _repository.FindByCondition(u => u.Email == user.Email).Id;
 
-                    return (true, "Login success", _tokenService.GenerateAccessToken(user.Email, id, true));
+                    return new TokensResponseViewModel { Success = true, ErrorMessage = "", Tokens = _tokenService.GenerateAccessToken(user.Email, id, true) };
                 }
                 else
                 {
-                    return (false, "Invalid email or password", null);
+                    return new TokensResponseViewModel { Success = false, ErrorMessage = "Invalid email or password", Tokens = null };
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred");
                 messages += $"{ex.Message}";
-                return (false, messages, null);
+                return new TokensResponseViewModel { Success = false, ErrorMessage = messages, Tokens = null };
             }
         }
 
-        public (bool Success, string Message, TokenViewModel? Tokens) RefreshTokenAsync(TokenViewModel tokens)
+        public TokensResponseViewModel RefreshTokenAsync(TokenViewModel tokens)
         {
             try
             {
@@ -116,7 +117,7 @@ namespace AI_Onboarding.Services.Implementation
 
                 if (validatedToken?.Header.Alg != SecurityAlgorithms.HmacSha256)
                 {
-                    return (false, "Invalid algorithm", null);
+                    return new TokensResponseViewModel { Success = false, ErrorMessage = "Invalid algorithm", Tokens = null };
                 }
 
                 var nameIdentifier = int.Parse(principal.FindFirst(ClaimTypes.NameIdentifier).Value);
@@ -125,16 +126,16 @@ namespace AI_Onboarding.Services.Implementation
 
                 if (user is null || user?.RefreshTokenExpiryTime < DateTime.UtcNow)
                 {
-                    return (false, "Invalid token", null);
+                    return new TokensResponseViewModel { Success = false, ErrorMessage = "Invalid token", Tokens = null };
                 }
 
                 var newTokens = _tokenService.GenerateAccessToken(user.Email, user.Id);
-                return (true, "Successfully generated token", newTokens);
+                return new TokensResponseViewModel { Success = true, ErrorMessage = "", Tokens = newTokens };
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred");
-                return (false, ex.Message, null);
+                return new TokensResponseViewModel { Success = false, ErrorMessage = ex.Message, Tokens = null };
             }
         }
     }
