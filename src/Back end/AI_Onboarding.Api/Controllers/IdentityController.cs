@@ -34,11 +34,11 @@ namespace AI_Onboarding.Api.Controllers
             var result = await _identityServise.RegisterAsync(userModel);
             if (result.Success)
             {
-                return Ok(result.Message);
+                return Ok(result.ErrorMessage);
             }
             else
             {
-                return BadRequest(result.Message);
+                return BadRequest(result.ErrorMessage);
             }
         }
 
@@ -52,11 +52,11 @@ namespace AI_Onboarding.Api.Controllers
                 Response.Headers.Add("Access-Token", result.Tokens.Token);
                 Response.Headers.Add("Refresh-Token", result.Tokens.RefreshToken);
 
-                return Ok(result.Message);
+                return Ok(result.ErrorMessage);
             }
             else
             {
-                return BadRequest(result.Message);
+                return BadRequest(result.ErrorMessage);
             }
         }
 
@@ -72,32 +72,11 @@ namespace AI_Onboarding.Api.Controllers
 
                 Response.Headers.Add("Access-Token", result.Tokens.Token);
 
-                return Ok(result.Message);
+                return Ok(result.ErrorMessage);
             }
             else
             {
-                return BadRequest(result.Message);
-            }
-        }
-
-        [HttpPost("google-login")]
-        [AllowAnonymous]
-        public async Task<IActionResult> GoogleLoginAsync([FromBody] string token)
-        {
-            var result = await _identityServise.GoogleLoginAsync(token);
-            if (result.Success)
-            {
-                int.TryParse(_configuration["JWT:RefreshTokenValidityInDays"], out int refreshTokenValidityInDays);
-                int.TryParse(_configuration["JWT:TokenValidityInMinutes"], out int tokenValidityInMinutes);
-
-                Response.Headers.Add("Access-Token", result.Tokens.Token);
-                Response.Headers.Add("Refresh-Token", result.Tokens.RefreshToken);
-
-                return Ok(result.Message);
-            }
-            else
-            {
-                return BadRequest(result.Message);
+                return BadRequest(result.ErrorMessage);
             }
         }
     }

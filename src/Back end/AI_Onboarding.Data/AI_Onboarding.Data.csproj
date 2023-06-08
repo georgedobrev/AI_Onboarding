@@ -17,13 +17,19 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.5" />
     <PackageReference Include="AutoMapper" Version="12.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
+    <PackageReference Include="MongoDB.Driver" Version="2.19.2" />
   </ItemGroup>
 
   <ItemGroup>
     <None Remove="Models\Abstracts\" />
+    <None Remove="NoSQLDatabase\" />
+    <None Remove="NoSQLDatabase\Interfaces\" />
+    <None Remove="NoSQLDatabase\Implementations\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\Abstracts\" />
+    <Folder Include="NoSQLDatabase\" />
+    <Folder Include="NoSQLDatabase\Interfaces\" />
+    <Folder Include="NoSQLDatabase\Implementations\" />
   </ItemGroup>
 </Project>

@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using AI_Onboarding.Data;
+using AI_Onboarding.Api.Filter;
+using Serilog;
 using AI_Onboarding.Data.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -10,7 +12,9 @@ using AI_Onboarding.Services.Implementation;
 using System.Reflection;
 using AI_Onboarding.ViewModels.UserModels.UserProfiles;
 using Microsoft.AspNetCore.Identity;
-using AI_Onboarding.Api.Filter;
+using MongoDB.Driver;
+using AI_Onboarding.Data.NoSQLDatabase.Interfaces;
+using AI_Onboarding.Data.NoSQLDatabase;
 
 public static class ServiceCollectionExtension
 {
@@ -18,6 +22,7 @@ public static class ServiceCollectionExtension
     {
         services.AddDbContext<DataContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("SqlConnection")));
+  
         services.AddIdentity<User, Role>().AddEntityFrameworkStores<DataContext>();
         if (environment.IsDevelopment())
         {
@@ -32,9 +37,20 @@ public static class ServiceCollectionExtension
         }
         return services;
     }
+
+    public static IServiceCollection ConfigureNoSQLDatabase(IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddSingleton<IMongoClient>(options => new MongoClient(configuration["MongoDBSettings:ConnectionString"]));
+
+        return services;
+    }
+
     public static IServiceCollection ConfigureServices(IServiceCollection services, IConfiguration configuration, IWebHostEnvironment environment)
     {
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+
+        services.AddScoped<IDocumentRepository, DocumentRepository>();
+
         services.AddScopedServiceTypes(typeof(TokenService).Assembly, typeof(IService));
         services.AddAutoMapper(typeof(UserProfile));
         if (environment.IsDevelopment())
@@ -77,6 +93,17 @@ public static class ServiceCollectionExtension
         return services;
     }
 
+  public static IServiceCollection RegisterFilters(this IServiceCollection services)
+    {
+
+        services.AddControllers(options =>
+        {
+            options.Filters.Add<CustomExceptionFilter>();
+        });
+
+        return services;
+    }
+  
     private static IServiceCollection AddScopedServiceTypes(this IServiceCollection services, Assembly assembly, Type fromType)
     {
         var serviceTypes = assembly.GetTypes()
