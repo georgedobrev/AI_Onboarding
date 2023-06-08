@@ -1,13 +1,14 @@
 ﻿using AI_Onboarding.Services.Abstract;
 using AI_Onboarding.ViewModels.JWTModels;
+using AI_Onboarding.ViewModels.ResponseModels;
 using AI_Onboarding.ViewModels.UserModels;
 
 namespace AI_Onboarding.Services.Interfaces
 {
     public interface IIdentityService : IService
     {
-        public Task<(bool Success, string Message)> RegisterAsync(UserRegistrationViewModel user);
-        public Task<(bool Success, string Message, TokenViewModel? Tokens)> LoginAsync(UserLoginViewModel user);
-        public (bool Success, string Message, TokenViewModel? Tokens) RefreshTokenAsync(TokenViewModel tokens);
+        public Task<BaseResponseViewModel> RegisterAsync(UserRegistrationViewModel user);
+        public Task<TokensResponseViewModel> LoginAsync(UserLoginViewModel user);
+        public TokensResponseViewModel RefreshTokenAsync(TokenViewModel tokens);
     }
 }

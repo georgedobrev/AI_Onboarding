@@ -5,6 +5,7 @@ using AI_Onboarding.Data.NoSQLDatabase;
 using AI_Onboarding.Data.NoSQLDatabase.Interfaces;
 using AI_Onboarding.Services.Interfaces;
 using AI_Onboarding.ViewModels.DocumentModels;
+using AI_Onboarding.ViewModels.ResponseModels;
 using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.parser;
 using Microsoft.Extensions.Logging;
@@ -24,11 +25,11 @@ namespace AI_Onboarding.Services.Implementation
             _logger = logger;
         }
 
-        public (bool Success, string Message) UploadDocument(DocumentViewModel document)
+        public BaseResponseViewModel UploadDocument(DocumentViewModel document)
         {
             if (document.File is null || document.File.Length == 0)
             {
-                return (false, "No file uploaded.");
+                return new BaseResponseViewModel { Success = false, ErrorMessage = "No file uploaded." };
             }
 
             StringBuilder sb = new StringBuilder();
@@ -66,10 +67,10 @@ namespace AI_Onboarding.Services.Implementation
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred");
-                return (false, ex.Message);
+                return new BaseResponseViewModel { Success = false, ErrorMessage = ex.Message };
             }
 
-            return (true, "Success");
+            return new BaseResponseViewModel { Success = true, ErrorMessage = "" };
         }
     }
 }

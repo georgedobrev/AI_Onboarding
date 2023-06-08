@@ -5,6 +5,6 @@ namespace AI_Onboarding.Services.Interfaces
 {
     public interface ITokenService : IService
     {
-        TokenViewModel GenerateAccessToken(string email, int id, bool isLogin = false);
+        public TokenViewModel GenerateAccessToken(string email, int id, bool isLogin = false);
     }
 }

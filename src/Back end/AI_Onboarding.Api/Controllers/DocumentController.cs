@@ -24,11 +24,11 @@ namespace AI_Onboarding.Api.Controllers
 
             if (result.Success)
             {
-                return Ok(result.Message);
+                return Ok(result.ErrorMessage);
             }
             else
             {
-                return BadRequest(result.Message);
+                return BadRequest(result.ErrorMessage);
             }
         }
     }

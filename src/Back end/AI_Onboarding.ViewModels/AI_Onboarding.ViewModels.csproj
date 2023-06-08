@@ -10,6 +10,7 @@
     <None Remove="JWTModels\" />
     <None Remove="UserModels\UserProfiles\" />
     <None Remove="DocumentModels\" />
+    <None Remove="ResponseModels\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="12.0.1" />
@@ -19,5 +20,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="DocumentModels\" />
+    <Folder Include="ResponseModels\" />
   </ItemGroup>
 </Project>
