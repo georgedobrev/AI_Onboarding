@@ -146,7 +146,7 @@ namespace AI_Onboarding.Services.Implementation
         }
 
        
-        public async Task<(bool Success, string Message, TokenViewModel? Tokens)> GoogleLoginAsync(string token)
+        public async Task<TokensResponseViewModel> GoogleLoginAsync(string token)
         {
             
             using (var httpClient = new HttpClient())
@@ -167,7 +167,7 @@ namespace AI_Onboarding.Services.Implementation
                         await _signInManager.SignInAsync(user,false);
                         var tokens = _tokenService.GenerateAccessToken(user.Email, user.Id);
 
-                        return (true, "Login successful", tokens);
+                        return new TokensResponseViewModel { Success=true,ErrorMessage="",Tokens=tokens};
                     }
                     else
                     {
@@ -178,16 +178,15 @@ namespace AI_Onboarding.Services.Implementation
                         var resultLogin = await LoginAsync(us);
                         if(resultLogin.Success && resultRegister.Success)
                         {
-                            return (true, "Registration successful", resultLogin.Tokens);
-                        }
+                        return new TokensResponseViewModel { Success = true, ErrorMessage = "", Tokens = resultLogin.Tokens };
+                    }
                         else
                         {
-                            return (false, "Registration failed", null);
+                        return new TokensResponseViewModel { Success = false, ErrorMessage = "Registration failed", Tokens = null };
                         }
                     }
                 }
-
-            return (false, "Ivalid account", null);
+            return new TokensResponseViewModel { Success = false, ErrorMessage = "Ivalid account", Tokens = null };
         }
     }
 }
