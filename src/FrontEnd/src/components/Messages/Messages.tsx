@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import TextField from '@mui/material/TextField';
-import AttachFileIcon from '@mui/icons-material/AttachFile';
 import SendIcon from '@mui/icons-material/Send';
 import IconButton from '@mui/material/IconButton';
+import FileUploader from './FileUploader.tsx';
 import './Messages.css';
 
 const Messages: React.FC = () => {
@@ -28,9 +28,11 @@ const Messages: React.FC = () => {
         <div className="messages-content">
           <form onSubmit={handleSearchSubmit} className="search-container">
             <div className="search-input">
-              <IconButton style={{ color: 'white' }}>
-                <AttachFileIcon style={{ marginRight: '10px' }} />
-              </IconButton>
+              <FileUploader
+                baseUrl="https://localhost:7243/api/"
+                uploadEndpoint="Document/upload-file"
+              />
+              {/* Use the FileUploader component */}
               <TextField
                 placeholder="Write a message"
                 value={searchQuery}

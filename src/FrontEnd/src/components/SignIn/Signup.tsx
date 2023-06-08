@@ -52,15 +52,34 @@ const Signup: React.FC = () => {
         body: postData,
       });
 
-      if (!response.ok) {
+      if (response.ok) {
+        const accessToken = response.headers.get('Access-Token');
+        const refreshToken = response.headers.get('Refresh-Token');
+        const expirationDate = new Date();
+        expirationDate.setUTCDate(expirationDate.getUTCDate() + 5);
+        document.cookie = `Access-Token=${accessToken}; path=/`;
+        document.cookie = `Refresh-Token=${refreshToken}; expires=${expirationDate.toUTCString()}; path=/`;
+
+        if (accessToken === null || refreshToken === null) {
+          throw new Error('Access or refresh token not found');
+        } else {
+          const tokenParts = accessToken.split('.');
+          const tokenPayload = JSON.parse(atob(tokenParts[1]));
+          const expirationTime = tokenPayload.exp * 1000;
+          const currentTime = new Date().getTime();
+          const remainingTime = expirationTime - currentTime;
+
+          setTimeout(() => {
+            console.log('Token expired');
+          }, remainingTime);
+
+          const responseData = await response.text();
+          console.log(responseData);
+          navigate('/home');
+        }
+      } else {
         throw new Error('Request failed');
       }
-
-      console.log(response);
-
-      const responseData = await response.text();
-      console.log(responseData);
-      navigate('/home');
     } catch (error) {
       console.error(error);
     }
