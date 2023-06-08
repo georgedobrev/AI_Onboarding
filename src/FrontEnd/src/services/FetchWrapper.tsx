@@ -11,11 +11,11 @@ function get<T>(url: string): Promise<T> {
   return axios.get<T>(url).then(handleResponse);
 }
 
-function post<T>(url: string, body: any): Promise<T> {
+function post<T, B>(url: string, body: B): Promise<T> {
   return axios.post<T>(url, body).then(handleResponse);
 }
 
-function put<T>(url: string, body: any): Promise<T> {
+function put<T, B>(url: string, body: B): Promise<T> {
   return axios.put<T>(url, body).then(handleResponse);
 }
 
