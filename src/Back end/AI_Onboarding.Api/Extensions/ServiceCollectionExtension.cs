@@ -119,15 +119,4 @@ public static class ServiceCollectionExtension
         }
         return services;
     }
-
-    public static IServiceCollection RegisterFilters(this IServiceCollection services)
-    {
-
-        services.AddControllers(options =>
-        {
-            options.Filters.Add<CustomExceptionFilter>();
-        });
-
-        return services;
-    }
 }
