@@ -90,24 +90,26 @@ const Signup: React.FC = () => {
   };
 
   const handleSuccessfulLogin = async (response: object) => {
-    const accessToken = response.headers.get('Access-Token');
-    const refreshToken = response.headers.get('Refresh-Token');
-    const expirationDate = new Date();
-    expirationDate.setUTCDate(expirationDate.getUTCDate() + 5);
-    document.cookie = `Access-Token=${accessToken}; path=/`;
-    document.cookie = `Refresh-Token=${refreshToken}; expires=${expirationDate.toUTCString()}; path=/`;
+    try {
+      const accessToken = response.headers.get('Access-Token');
+      const refreshToken = response.headers.get('Refresh-Token');
+      const expirationDate = new Date();
+      expirationDate.setUTCDate(expirationDate.getUTCDate() + 5);
+      document.cookie = `Access-Token=${accessToken}; path=/`;
+      document.cookie = `Refresh-Token=${refreshToken}; expires=${expirationDate.toUTCString()}; path=/`;
 
-    if (accessToken === null || refreshToken === null) {
-      throw new Error('Access or refresh token not found');
-    } else {
-      const remainingTime = calculateRemainingTime(accessToken);
-      extendSession(remainingTime);
-      navigate('/home');
-    }
+      if (accessToken === null || refreshToken === null) {
+        throw new Error('Access or refresh token not found');
+      } else {
+        const remainingTime = calculateRemainingTime(accessToken);
+        extendSession(remainingTime);
+        navigate('/home');
+      }
     } catch (error) {
       console.error(error);
     }
   };
+
 
   const handleExtendSession = async () => {
     const refreshToken = getCookie('Refresh-Token');
