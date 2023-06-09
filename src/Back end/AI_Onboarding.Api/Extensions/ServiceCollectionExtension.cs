@@ -16,7 +16,7 @@ using MongoDB.Driver;
 using AI_Onboarding.Data.NoSQLDatabase.Interfaces;
 using AI_Onboarding.Data.NoSQLDatabase;
 
-public static class ServiceCollectionExtension 
+public static class ServiceCollectionExtension
 {
     public static IServiceCollection RegisterDbContext(IServiceCollection services, IConfiguration configuration, IWebHostEnvironment environment)
     {
@@ -24,7 +24,6 @@ public static class ServiceCollectionExtension
                 options.UseSqlServer(configuration.GetConnectionString("SqlConnection")));
   
         services.AddIdentity<User, Role>().AddEntityFrameworkStores<DataContext>();
-
         if (environment.IsDevelopment())
         {
             services.Configure<IdentityOptions>(options =>
@@ -36,6 +35,12 @@ public static class ServiceCollectionExtension
                 options.Password.RequireLowercase = false;
             });
         }
+        return services;
+    }
+
+    public static IServiceCollection ConfigureNoSQLDatabase(IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddSingleton<IMongoClient>(options => new MongoClient(configuration["MongoDBSettings:ConnectionString"]));
 
         return services;
     }
@@ -54,9 +59,7 @@ public static class ServiceCollectionExtension
         services.AddScoped<IDocumentRepository, DocumentRepository>();
 
         services.AddScopedServiceTypes(typeof(TokenService).Assembly, typeof(IService));
-
         services.AddAutoMapper(typeof(UserProfile));
-
         if (environment.IsDevelopment())
         {
             services.AddCors(options =>
@@ -70,10 +73,8 @@ public static class ServiceCollectionExtension
                 });
             });
         }
-
         return services;
     }
-
     public static IServiceCollection ConfigureAuth(IServiceCollection services, IConfiguration configuration)
     {
         services.AddAuthentication(options =>
@@ -81,7 +82,8 @@ public static class ServiceCollectionExtension
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-        }).AddJwtBearer(o =>
+        })
+        .AddJwtBearer(o =>
         {
             o.TokenValidationParameters = new TokenValidationParameters
             {
@@ -95,9 +97,7 @@ public static class ServiceCollectionExtension
                 ValidateIssuerSigningKey = true
             };
         });
-
         services.AddAuthorization();
-
         return services;
     }
 
@@ -121,12 +121,10 @@ public static class ServiceCollectionExtension
                 Interface = x.GetInterface($"I{x.Name}"),
                 Implementation = x
             });
-
         foreach (var serviceType in serviceTypes)
         {
             services.AddScoped(serviceType.Interface, serviceType.Implementation);
         }
-
         return services;
     }
 }

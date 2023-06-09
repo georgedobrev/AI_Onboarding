@@ -5,12 +5,18 @@ using AI_Onboarding.ViewModels.JWTModels;
 using AI_Onboarding.ViewModels.ResponseModels;
 using AI_Onboarding.ViewModels.UserModels;
 using AutoMapper;
+using Azure.Core;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Linq;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http.Headers;
 using System.Security.Claims;
+using System.Security.Policy;
 using System.Text;
 
 namespace AI_Onboarding.Services.Implementation
@@ -136,6 +142,49 @@ namespace AI_Onboarding.Services.Implementation
             {
                 _logger.LogError(ex, "An error occurred");
                 return new TokensResponseViewModel { Success = false, ErrorMessage = ex.Message, Tokens = null };
+            }
+        }
+       
+        public async Task<TokensResponseViewModel> GoogleLoginAsync(string token)
+        {
+
+            using (var httpClient = new HttpClient())
+            {
+
+                var handler = new JwtSecurityTokenHandler();
+                var jwtToken = handler.ReadJwtToken(token);
+                var claims = jwtToken.Claims;
+
+                var firstName = claims.FirstOrDefault(c => c.Type == "given_name")?.Value;
+                var lastName = claims.FirstOrDefault(c => c.Type == "family_name")?.Value;
+                var email = claims.FirstOrDefault(c => c.Type == "email")?.Value;
+
+                var user = _repository.FindByCondition(u => u.Email == email);
+
+                if (user != null)
+                {
+                    await _signInManager.SignInAsync(user, false);
+                    var tokens = _tokenService.GenerateAccessToken(user.Email, user.Id);
+
+                    return new TokensResponseViewModel { Success = true, ErrorMessage = "", Tokens = tokens };
+                }
+                else
+                {
+                    var defaultPassword = _configuration["GoogleAuth:DefaulfPasswordHash"];
+                    var newUser = new UserRegistrationViewModel { Email = email, Password = defaultPassword, FirstName = firstName, LastName = lastName };
+                    var resultRegister = await RegisterAsync(newUser);
+                    var loginCredentials = new UserLoginViewModel { Email = email, Password = defaultPassword };
+                    var resultLogin = await LoginAsync(loginCredentials);
+
+                    if (resultLogin.Success && resultRegister.Success)
+                    {
+                        return new TokensResponseViewModel { Success = true, ErrorMessage = "", Tokens = resultLogin.Tokens };
+                    }
+                    else
+                    {
+                        return new TokensResponseViewModel { Success = false, ErrorMessage = "Registration failed", Tokens = null };
+                    }
+                }
             }
         }
     }
