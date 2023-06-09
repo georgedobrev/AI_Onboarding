@@ -29,7 +29,7 @@ export const authService = {
         throw new Error('Request failed');
       }
 
-      return response; // Return the response data
+      return response;
     } catch (error) {
       console.error(error);
       throw new Error('Registration failed');
