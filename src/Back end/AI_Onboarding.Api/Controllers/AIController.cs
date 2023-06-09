@@ -29,7 +29,7 @@ namespace AI_Onboarding.Api.Controllers
             return Content(output);
         }
 
-        [HttpGet("train-model")]
+        [HttpPost("train-model")]
         public IActionResult TrainModel()
         {
             string output = _aiService.RunScript(_configuration["PythonScript:TrainModelPath"], @"
