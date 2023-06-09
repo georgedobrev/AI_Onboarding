@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { TextField, Button, InputAdornment, IconButton } from '@mui/material';
-import { GoogleLogin } from '@react-oauth/google';
+import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
 import logoImage from '../../assets/blankfactor-logo.jpg';
 import './Signup.css';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import config from '../../config.json';
-import { FormValues } from './typesLogin.ts';
+import { FormValues } from './types.ts';
+import { authService } from '../../services/authService.ts';
 
 const Signup: React.FC = () => {
   const location = useLocation();
@@ -28,9 +28,7 @@ const Signup: React.FC = () => {
     }
   }, []);
 
-  const handleGoogleSignupSuccess = (credentialResponse: any) => {
-    const { credential } = credentialResponse;
-    console.log(credential);
+  const handleGoogleSignupSuccess = (credentialResponse: CredentialResponse) => {
     setSignupSuccess(true);
     localStorage.setItem('signupSuccess', 'true');
     navigate('/home');
@@ -42,25 +40,8 @@ const Signup: React.FC = () => {
 
   const handleContinueClick = async () => {
     try {
-      const postData = JSON.stringify(formData, null, 2);
-      const url = `${config.baseUrl}${config.loginEndpoint}`;
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: postData,
-      });
-
-      if (!response.ok) {
-        throw new Error('Request failed');
-      }
-
-      console.log(response);
-
-      const responseData = await response.text();
-      console.log(responseData);
-      navigate('/home');
+      const response = await authService.login(formData);
+      navigate('/home', { state: { postData: response } });
     } catch (error) {
       console.error(error);
     }
@@ -88,7 +69,12 @@ const Signup: React.FC = () => {
               variant="outlined"
               className="email-field"
               value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              onChange={(e) =>
+                  setFormData((prevFormData) => ({
+                    ...prevFormData,
+                    email: e.target.value,
+                  }))
+              }
             />
             <TextField
               label="Password"
@@ -104,7 +90,12 @@ const Signup: React.FC = () => {
               }}
               className="password-field"
               value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              onChange={(e) =>
+                  setFormData((prevFormData) => ({
+                    ...prevFormData,
+                    password: e.target.value,
+                  }))
+              }
             />
             <Button
               variant="contained"

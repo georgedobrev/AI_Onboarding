@@ -5,8 +5,8 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useForm } from 'react-hook-form';
 import './Register.css';
 import logoImage from '../../assets/blankfactor-logo.jpg';
-import config from '../../config.json';
-import { FormValues } from './typesRegister.ts';
+import { FormValues } from './types.ts';
+import { authService } from '../../services/authService.ts';
 
 const Register: React.FC = () => {
   const {
@@ -23,23 +23,8 @@ const Register: React.FC = () => {
   const onSubmit = async (data: FormValues) => {
     const { confirmPassword, ...formData } = data;
     try {
-      const postData = JSON.stringify(formData, null, 2);
-      const url = `${config.baseUrl}${config.registerEndpoint}`;
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: postData,
-      });
-
-      if (!response.ok) {
-        throw new Error('Request failed');
-      }
-
-      const responseData = await response.text();
-      console.log(responseData);
-      navigate('/signup', { state: { formData } });
+      await authService.register(formData);
+      navigate('/signup', { state: { formData: formData } });
     } catch (error) {
       console.error(error);
     }

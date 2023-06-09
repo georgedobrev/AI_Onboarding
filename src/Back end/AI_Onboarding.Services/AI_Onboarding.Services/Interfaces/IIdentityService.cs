@@ -9,6 +9,7 @@ namespace AI_Onboarding.Services.Interfaces
     {
         public Task<BaseResponseViewModel> RegisterAsync(UserRegistrationViewModel user);
         public Task<TokensResponseViewModel> LoginAsync(UserLoginViewModel user);
+        public Task<TokensResponseViewModel> GoogleLoginAsync(string token);
         public TokensResponseViewModel RefreshTokenAsync(TokenViewModel tokens);
     }
 }
