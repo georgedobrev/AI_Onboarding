@@ -8,14 +8,28 @@
 .header-container {
     display: flex;
     flex-direction: column;
+    justify-content: center;
+}
+
+.header-logo-title {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
     align-items: center;
+}
+
+.header-logo {
+    width: 4%;
+    margin-top: 24px;
+    margin-inline: 20px;
+    border-radius: 10px;
 }
 
 .header-title {
     color: white;
     white-space: pre-wrap;
     margin-top: 24px;
-    font-size: 30px;
+    font-size: 36px;
     text-align: center;
 }
 
