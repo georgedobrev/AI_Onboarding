@@ -7,6 +7,7 @@ import logoImage from '../../assets/blankfactor-logo.jpg';
 import './Signup.css';
 import config from '../../config.json';
 import { FormValues } from './typesLogin.ts';
+import { authService } from '../../services/authService.ts';
 
 const Signup: React.FC = () => {
   const location = useLocation();
@@ -103,6 +104,9 @@ const Signup: React.FC = () => {
       extendSession(remainingTime);
       navigate('/home');
     }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const handleExtendSession = async () => {
@@ -157,7 +161,12 @@ const Signup: React.FC = () => {
               variant="outlined"
               className="email-field"
               value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              onChange={(e) =>
+                  setFormData((prevFormData) => ({
+                    ...prevFormData,
+                    email: e.target.value,
+                  }))
+              }
             />
             <TextField
               label="Password"
@@ -173,7 +182,12 @@ const Signup: React.FC = () => {
               }}
               className="password-field"
               value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              onChange={(e) =>
+                  setFormData((prevFormData) => ({
+                    ...prevFormData,
+                    password: e.target.value,
+                  }))
+              }
             />
             <Button
               variant="contained"
