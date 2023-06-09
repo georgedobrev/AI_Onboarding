@@ -3,40 +3,36 @@ using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 using AI_Onboarding.Data.Models;
+using AI_Onboarding.Services.Interfaces;
 
 namespace AI_Onboarding.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
+    //[Authorize]
     public class AIController : ControllerBase
     {
-        [HttpPost("receive-response")]
-        public IActionResult RunPythonScript([FromBody] string question)
+        private readonly IAIService _aiService;
+        private readonly IConfiguration _configuration;
+
+        public AIController(IAIService aiService, IConfiguration configuration)
         {
-            string scriptPath = @"../AI_Onboarding.Services/AI_Onboarding.Services/PythonScripts/GenerateResponse.py";
-            string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            string fullPythonFilePath = System.IO.Path.Combine(baseDirectory, scriptPath);
+            _aiService = aiService;
+            _configuration = configuration;
+        }
 
-            string argument = $"\"{question}\"";
+        [HttpPost("receive-response")]
+        public IActionResult GenerateResponse([FromBody] string question)
+        {
+            string output = _aiService.RunScript(_configuration["PythonScript:GenerateResponsePath"], question);
 
-            var process = new Process
-            {
-                StartInfo = new ProcessStartInfo
-                {
-                    FileName = "/opt/homebrew/Cellar/python@3.11/3.11.3/bin/python3",
-                    Arguments = $"{scriptPath} {argument}",
-                    RedirectStandardOutput = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                }
-            };
+            return Content(output);
+        }
 
-            process.Start();
-
-            string output = process.StandardOutput.ReadToEnd();
-
-            process.WaitForExit();
+        [HttpGet("train-model")]
+        public IActionResult TrainModel()
+        {
+            string output = _aiService.RunScript(_configuration["PythonScript:TrainModelPath"], "The next olympics are in 2024");
 
             return Content(output);
         }

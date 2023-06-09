@@ -1,9 +1,19 @@
+import os
 import sys
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
-tokenizer = AutoTokenizer.from_pretrained("google/flan-t5-base")
+# Get the user's home directory
+home_dir = os.path.expanduser("~")
 
-model = AutoModelForSeq2SeqLM.from_pretrained("google/flan-t5-base")
+# Set the relative save path
+save_dir = os.path.join(home_dir, "Desktop", "models", "flan_t5")
+
+base_model = "google/flan-t5-base"
+
+model_path = save_dir if os.path.exists(save_dir) else base_model
+model = AutoModelForSeq2SeqLM.from_pretrained(model_path)
+
+tokenizer = AutoTokenizer.from_pretrained(base_model)
 
 argument = sys.argv[1]
 
