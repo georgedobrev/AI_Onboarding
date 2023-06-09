@@ -79,5 +79,26 @@ namespace AI_Onboarding.Api.Controllers
                 return BadRequest(result.ErrorMessage);
             }
         }
+
+        [HttpPost("google-login")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GoogleLoginAsync([FromBody] string token)
+        {
+            var result = await _identityServise.GoogleLoginAsync(token);
+            if (result.Success)
+            {
+                int.TryParse(_configuration["JWT:RefreshTokenValidityInDays"], out int refreshTokenValidityInDays);
+                int.TryParse(_configuration["JWT:TokenValidityInMinutes"], out int tokenValidityInMinutes);
+
+                Response.Headers.Add("Access-Token", result.Tokens.Token);
+                Response.Headers.Add("Refresh-Token", result.Tokens.RefreshToken);
+
+                return Ok(result.ErrorMessage);
+            }
+            else
+            {
+                return BadRequest(result.ErrorMessage);
+            }
+        }
     }
 }

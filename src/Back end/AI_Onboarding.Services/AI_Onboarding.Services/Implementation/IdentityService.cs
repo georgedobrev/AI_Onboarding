@@ -145,10 +145,10 @@ namespace AI_Onboarding.Services.Implementation
             }
         }
 
-       
+
         public async Task<TokensResponseViewModel> GoogleLoginAsync(string token)
         {
-            
+
             using (var httpClient = new HttpClient())
             {
 
@@ -160,33 +160,33 @@ namespace AI_Onboarding.Services.Implementation
                 var lastName = claims.FirstOrDefault(c => c.Type == "family_name")?.Value;
                 var email = claims.FirstOrDefault(c => c.Type == "email")?.Value;
 
-                   var user = _repository.FindByCondition(u => u.Email == email);
+                var user = _repository.FindByCondition(u => u.Email == email);
 
                 if (user != null)
-                    {
-                        await _signInManager.SignInAsync(user,false);
-                        var tokens = _tokenService.GenerateAccessToken(user.Email, user.Id);
+                {
+                    await _signInManager.SignInAsync(user, false);
+                    var tokens = _tokenService.GenerateAccessToken(user.Email, user.Id);
 
-                        return new TokensResponseViewModel { Success=true,ErrorMessage="",Tokens=tokens};
+                    return new TokensResponseViewModel { Success = true, ErrorMessage = "", Tokens = tokens };
+                }
+                else
+                {
+                    var defaultPassword = _configuration["GoogleAuth:DefaulfPasswordHash"];
+                    var newUser = new UserRegistrationViewModel { Email = email, Password = defaultPassword, FirstName = firstName, LastName = lastName };
+                    var resultRegister = await RegisterAsync(newUser);
+                    var loginCredentials = new UserLoginViewModel { Email = email, Password = defaultPassword };
+                    var resultLogin = await LoginAsync(loginCredentials);
+
+                    if (resultLogin.Success && resultRegister.Success)
+                    {
+                        return new TokensResponseViewModel { Success = true, ErrorMessage = "", Tokens = resultLogin.Tokens };
                     }
                     else
                     {
-                        var defaultPassword = _configuration["GoogleAuth:DefaulfPasswordHash"];
-                        var newUser = new UserRegistrationViewModel { Email = email, Password = defaultPassword, FirstName = firstName, LastName = lastName };
-                        var resultRegister = await RegisterAsync(newUser);
-                        var us = new UserLoginViewModel { Email = email, Password = defaultPassword };
-                        var resultLogin = await LoginAsync(us);
-                        if(resultLogin.Success && resultRegister.Success)
-                        {
-                        return new TokensResponseViewModel { Success = true, ErrorMessage = "", Tokens = resultLogin.Tokens };
-                    }
-                        else
-                        {
                         return new TokensResponseViewModel { Success = false, ErrorMessage = "Registration failed", Tokens = null };
-                        }
                     }
                 }
-            return new TokensResponseViewModel { Success = false, ErrorMessage = "Ivalid account", Tokens = null };
+            }
         }
     }
 }
