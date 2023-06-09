@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { TextField, Button, InputAdornment, IconButton } from '@mui/material';
-import { GoogleLogin } from '@react-oauth/google';
+import { CredentialResponse, GoogleLogin } from '@react-oauth/google';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import logoImage from '../../assets/blankfactor-logo.jpg';
 import './Signup.css';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
 import config from '../../config.json';
 import { FormValues } from './typesLogin.ts';
 
@@ -21,6 +21,10 @@ const Signup: React.FC = () => {
     password: formDataFromRegister.password || '',
   });
 
+  const deleteCookie = (name: string) => {
+    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+  };
+
   useEffect(() => {
     const storedSuccess = localStorage.getItem('signupSuccess');
     if (storedSuccess) {
@@ -28,9 +32,7 @@ const Signup: React.FC = () => {
     }
   }, []);
 
-  const handleGoogleSignupSuccess = (credentialResponse: any) => {
-    const { credential } = credentialResponse;
-    console.log(credential);
+  const handleGoogleSignupSuccess = (credentialResponse: CredentialResponse) => {
     setSignupSuccess(true);
     localStorage.setItem('signupSuccess', 'true');
     navigate('/home');
@@ -38,6 +40,26 @@ const Signup: React.FC = () => {
 
   const handleGoogleSignupError = () => {
     console.log('Login Failed');
+  };
+
+  const handleSessionExtensionPrompt = async () => {
+    const confirmExtend = window.confirm('Do you want to extend your session?');
+    if (confirmExtend) {
+      await handleExtendSession();
+    } else {
+      deleteCookie('Access-Token');
+      deleteCookie('Refresh-Token');
+      navigate('/signup');
+    }
+  };
+
+  const calculateRemainingTime = (accessToken: string) => {
+    const tokenParts = accessToken.split('.');
+    const tokenPayload = JSON.parse(atob(tokenParts[1]));
+    const expirationTime = tokenPayload.exp * 1000;
+    const currentTime = new Date().getTime();
+    const remainingTime = expirationTime - currentTime;
+    return remainingTime;
   };
 
   const handleContinueClick = async () => {
@@ -53,30 +75,7 @@ const Signup: React.FC = () => {
       });
 
       if (response.ok) {
-        const accessToken = response.headers.get('Access-Token');
-        const refreshToken = response.headers.get('Refresh-Token');
-        const expirationDate = new Date();
-        expirationDate.setUTCDate(expirationDate.getUTCDate() + 5);
-        document.cookie = `Access-Token=${accessToken}; path=/`;
-        document.cookie = `Refresh-Token=${refreshToken}; expires=${expirationDate.toUTCString()}; path=/`;
-
-        if (accessToken === null || refreshToken === null) {
-          throw new Error('Access or refresh token not found');
-        } else {
-          const tokenParts = accessToken.split('.');
-          const tokenPayload = JSON.parse(atob(tokenParts[1]));
-          const expirationTime = tokenPayload.exp * 1000;
-          const currentTime = new Date().getTime();
-          const remainingTime = expirationTime - currentTime;
-
-          setTimeout(() => {
-            console.log('Token expired');
-          }, remainingTime);
-
-          const responseData = await response.text();
-          console.log(responseData);
-          navigate('/home');
-        }
+        await handleSuccessfulLogin(response);
       } else {
         throw new Error('Request failed');
       }
@@ -84,6 +83,57 @@ const Signup: React.FC = () => {
       console.error(error);
     }
   };
+
+  const extendSession = (remainingTime: number) => {
+    setTimeout(handleSessionExtensionPrompt, remainingTime);
+  };
+
+  const handleSuccessfulLogin = async (response: object) => {
+    const accessToken = response.headers.get('Access-Token');
+    const refreshToken = response.headers.get('Refresh-Token');
+    const expirationDate = new Date();
+    expirationDate.setUTCDate(expirationDate.getUTCDate() + 5);
+    document.cookie = `Access-Token=${accessToken}; path=/`;
+    document.cookie = `Refresh-Token=${refreshToken}; expires=${expirationDate.toUTCString()}; path=/`;
+
+    if (accessToken === null || refreshToken === null) {
+      throw new Error('Access or refresh token not found');
+    } else {
+      const remainingTime = calculateRemainingTime(accessToken);
+      extendSession(remainingTime);
+      navigate('/home');
+    }
+  };
+
+  const handleExtendSession = async () => {
+    const refreshToken = getCookie('Refresh-Token');
+    const accessToken = getCookie('Access-Token');
+    const url = `${config.baseUrl}${config.refreshTokenEndpoint}`;
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ refreshToken: refreshToken, token: accessToken }),
+    });
+
+    if (response.ok) {
+      const newAccessToken = response.headers.get('Access-Token');
+      document.cookie = `Access-Token=${newAccessToken}; path=/`;
+      const remainingTime = calculateRemainingTime(newAccessToken);
+      extendSession(remainingTime);
+    } else {
+      deleteCookie('Access-Token');
+      deleteCookie('Refresh-Token');
+      navigate('/signup');
+    }
+  };
+
+  function getCookie(name: string) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+  }
 
   const handleTogglePasswordVisibility = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
