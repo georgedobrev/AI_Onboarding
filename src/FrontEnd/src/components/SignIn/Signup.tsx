@@ -1,15 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import {TextField, Button, InputAdornment, IconButton} from '@mui/material';
-import { GoogleLogin } from '@react-oauth/google';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { TextField, Button, InputAdornment, IconButton } from '@mui/material';
+import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
 import logoImage from '../../assets/blankfactor-logo.jpg';
 import './Signup.css';
-import {Visibility, VisibilityOff} from "@mui/icons-material";
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { FormValues } from './types.ts';
+import { authService } from '../../services/authService.ts';
 
 const Signup: React.FC = () => {
+  const location = useLocation();
+  const formDataFromRegister = location.state?.formData || {};
+
   const navigate = useNavigate();
   const [isSignupSuccess, setSignupSuccess] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  const [formData, setFormData] = useState<FormValues>({
+    email: formDataFromRegister.email || '',
+    password: formDataFromRegister.password || '',
+  });
 
   useEffect(() => {
     const storedSuccess = localStorage.getItem('signupSuccess');
@@ -18,7 +28,7 @@ const Signup: React.FC = () => {
     }
   }, []);
 
-  const handleGoogleSignupSuccess = () => {
+  const handleGoogleSignupSuccess = (credentialResponse: CredentialResponse) => {
     setSignupSuccess(true);
     localStorage.setItem('signupSuccess', 'true');
     navigate('/home');
@@ -28,14 +38,18 @@ const Signup: React.FC = () => {
     console.log('Login Failed');
   };
 
-  const handleContinueClick = () => {
-    // Do something with the password value
+  const handleContinueClick = async () => {
+    try {
+      const response = await authService.login(formData);
+      navigate('/home', { state: { postData: response } });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const handleTogglePasswordVisibility = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
   };
-
 
   return (
     <div className="signup-container">
@@ -54,20 +68,34 @@ const Signup: React.FC = () => {
               label="Email address"
               variant="outlined"
               className="email-field"
+              value={formData.email}
+              onChange={(e) =>
+                  setFormData((prevFormData) => ({
+                    ...prevFormData,
+                    email: e.target.value,
+                  }))
+              }
             />
             <TextField
               label="Password"
               type={showPassword ? 'text' : 'password'}
               InputProps={{
                 endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton onClick={handleTogglePasswordVisibility} edge="end">
-                        {showPassword ? <Visibility /> : <VisibilityOff />}
-                      </IconButton>
-                    </InputAdornment>
+                  <InputAdornment position="end">
+                    <IconButton onClick={handleTogglePasswordVisibility} edge="end">
+                      {showPassword ? <Visibility /> : <VisibilityOff />}
+                    </IconButton>
+                  </InputAdornment>
                 ),
               }}
               className="password-field"
+              value={formData.password}
+              onChange={(e) =>
+                  setFormData((prevFormData) => ({
+                    ...prevFormData,
+                    password: e.target.value,
+                  }))
+              }
             />
             <Button
               variant="contained"
@@ -93,6 +121,7 @@ const Signup: React.FC = () => {
                 onError={handleGoogleSignupError}
                 text="signup_with"
                 size="large"
+                hosted_domain="blankfactor.com"
               />
             )}
           </div>
