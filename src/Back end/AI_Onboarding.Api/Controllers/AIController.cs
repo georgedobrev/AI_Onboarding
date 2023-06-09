@@ -9,7 +9,7 @@ namespace AI_Onboarding.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    //[Authorize]
+    [Authorize]
     public class AIController : ControllerBase
     {
         private readonly IAIService _aiService;
