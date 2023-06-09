@@ -32,7 +32,32 @@ namespace AI_Onboarding.Api.Controllers
         [HttpGet("train-model")]
         public IActionResult TrainModel()
         {
-            string output = _aiService.RunScript(_configuration["PythonScript:TrainModelPath"], "The next olympics are in 2024");
+            string output = _aiService.RunScript(_configuration["PythonScript:TrainModelPath"], @"
+        [
+            {
+                ""context"": ""The Olympics is a major international sporting event..."",
+                ""qas"": [
+                    {
+                        ""question"": ""What is the frequency of the Olympic Games?"",
+                        ""answers"": [
+                            {
+                                ""text"": ""The Olympic Games take place every four years."",
+                                ""answer_start"": 44
+                            }
+                        ]
+                    },
+                    {
+                        ""question"": ""Which country hosted the ancient Olympic Games?"",
+                        ""answers"": [
+                            {
+                                ""text"": ""The ancient Olympic Games were hosted by Greece."",
+                                ""answer_start"": 94
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]");
 
             return Content(output);
         }
