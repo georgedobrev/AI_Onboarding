@@ -1,5 +1,6 @@
 import os
 import sys
+import json
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, AdamW
 from datasets import Dataset
 import torch
@@ -18,15 +19,25 @@ model = AutoModelForSeq2SeqLM.from_pretrained(model_path)
 
 tokenizer = AutoTokenizer.from_pretrained(base_model)
 
-texts = sys.argv[1]
+# Accept the dataset as a string from .NET
+dataset_str = sys.argv[1]
 
-data = {"text": texts}  # Create a dictionary with your data
+# Parse the dataset string into a Python object
+dataset = json.loads(dataset_str)
 
-# Tokenize the text using the T5 tokenizer
-data = tokenizer(data["text"], truncation=True, padding="max_length")
+# Process input data to create input_text and target_text
+texts = []
+for item in dataset:
+    document_text = item["document_text"]
+    for question in item["questions"]:
+        question_text = question["question_text"]
+        texts.append(f"document: {document_text} question: {question_text}")
+
+# Tokenize the texts using the T5 tokenizer
+tokenized_texts = tokenizer(texts, truncation=True, padding="max_length")
 
 # Create a Dataset object
-dataset = Dataset.from_dict(data)
+dataset = Dataset.from_dict(tokenized_texts)
 
 # Function to process a batch
 def process_batch(batch):
@@ -41,7 +52,7 @@ dataloader = DataLoader(dataset, batch_size=8, collate_fn=process_batch)
 optimizer = AdamW(model.parameters(), lr=1e-5)
 
 # Training loop
-num_epochs = 5
+num_epochs = 10
 for epoch in range(num_epochs):
     train_loss = 0.0
     train_steps = 0
@@ -50,9 +61,6 @@ for epoch in range(num_epochs):
     for batch in dataloader:
         input_ids = batch["input_ids"]
         attention_mask = batch["attention_mask"]
-
-        input_ids = input_ids.unsqueeze(0)
-        attention_mask = attention_mask.unsqueeze(0)
 
         # Forward pass
         outputs = model(input_ids=input_ids, attention_mask=attention_mask, decoder_input_ids=input_ids, labels=input_ids)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Diagnostics;
 using AI_Onboarding.Services.Interfaces;
 
@@ -16,7 +17,7 @@ namespace AI_Onboarding.Services.Implementation
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = "/opt/homebrew/Cellar/python@3.11/3.11.3/bin/python3",
-                    Arguments = $"{relativePath} \"{argument}\"",
+                    Arguments = $"\"{relativePath}\" \"{argument.Replace("\"", "\\\"")}\"",
                     RedirectStandardOutput = true,
                     UseShellExecute = false,
                     CreateNoWindow = true

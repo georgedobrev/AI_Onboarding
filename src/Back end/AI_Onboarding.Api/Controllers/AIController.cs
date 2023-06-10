@@ -32,32 +32,43 @@ namespace AI_Onboarding.Api.Controllers
         [HttpPost("train-model")]
         public IActionResult TrainModel()
         {
-            string output = _aiService.RunScript(_configuration["PythonScript:TrainModelPath"], @"
-        [
+            string output = _aiService.RunScript(_configuration["PythonScript:TrainModelPath"], @"[
+    {
+        ""document_id"": 1,
+        ""document_text"": ""The sun is a star."",
+        ""questions"": [
             {
-                ""context"": ""The Olympics is a major international sporting event..."",
-                ""qas"": [
+                ""question_id"": 1,
+                ""question_text"": ""What is the sun?"",
+                ""answers"": [
                     {
-                        ""question"": ""What is the frequency of the Olympic Games?"",
-                        ""answers"": [
-                            {
-                                ""text"": ""The Olympic Games take place every four years."",
-                                ""answer_start"": 44
-                            }
-                        ]
-                    },
-                    {
-                        ""question"": ""Which country hosted the ancient Olympic Games?"",
-                        ""answers"": [
-                            {
-                                ""text"": ""The ancient Olympic Games were hosted by Greece."",
-                                ""answer_start"": 94
-                            }
-                        ]
+                        ""answer_text"": ""A star."",
+                        ""start_offset"": 4,
+                        ""end_offset"": 9
                     }
                 ]
             }
-        ]");
+        ]
+    },
+    {
+        ""document_id"": 2,
+        ""document_text"": ""Water is essential for life."",
+        ""questions"": [
+            {
+                ""question_id"": 2,
+                ""question_text"": ""What is essential for life?"",
+                ""answers"": [
+                    {
+                        ""answer_text"": ""Water"",
+                        ""start_offset"": 0,
+                        ""end_offset"": 5
+                    }
+                ]
+            }
+        ]
+    }
+]
+");
 
             return Content(output);
         }
