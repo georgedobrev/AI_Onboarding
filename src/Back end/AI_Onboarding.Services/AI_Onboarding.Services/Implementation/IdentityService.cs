@@ -144,7 +144,6 @@ namespace AI_Onboarding.Services.Implementation
                 return new TokensResponseViewModel { Success = false, ErrorMessage = ex.Message, Tokens = null };
             }
         }
-
        
         public async Task<TokensResponseViewModel> GoogleLoginAsync(string token)
         {
