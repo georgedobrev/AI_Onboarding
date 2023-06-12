@@ -45,13 +45,6 @@ public static class ServiceCollectionExtension
         return services;
     }
 
-    public static IServiceCollection ConfigureNoSQLDatabase(IServiceCollection services, IConfiguration configuration)
-    {
-        services.AddSingleton<IMongoClient>(options => new MongoClient(configuration["MongoDBSettings:ConnectionString"]));
-
-        return services;
-    }
-
     public static IServiceCollection ConfigureServices(IServiceCollection services, IConfiguration configuration, IWebHostEnvironment environment)
     {
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));

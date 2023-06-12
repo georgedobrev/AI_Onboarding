@@ -1,5 +1,22 @@
 import axios, { AxiosResponse } from 'axios';
 
+function handleResponse<T>(
+  response: AxiosResponse<T>
+): Promise<{ data: T; accessToken?: string; refreshToken?: string }> {
+  if (response.status >= 400) {
+    throw new Error(response.statusText);
+  }
+
+  const accessToken = response.headers['access-token'];
+  const refreshToken = response.headers['refresh-token'];
+
+  return Promise.resolve({
+    data: response.data,
+    accessToken,
+    refreshToken,
+  });
+}
+
 export const fetchWrapper = {
   get,
   post,
@@ -7,29 +24,36 @@ export const fetchWrapper = {
   delete: _delete,
 };
 
-function get<T>(url: string): Promise<T> {
-  return axios.get<T>(url).then(handleResponse);
+function get<T>(
+  url: string,
+  headers?: Record<string, string>
+): Promise<{ data: T; accessToken?: string; refreshToken?: string }> {
+  const config = { headers };
+  return axios.get<T>(url, config).then(handleResponse);
 }
 
-function post<T, B>(url: string, body: B): Promise<T> {
-  return axios.post<T>(url, body).then(handleResponse);
+function post<T, B>(
+  url: string,
+  body: B,
+  headers?: Record<string, string>
+): Promise<{ data: T; accessToken?: string; refreshToken?: string }> {
+  const config = { headers };
+  return axios.post<T>(url, body, config).then(handleResponse);
 }
 
-function put<T, B>(url: string, body: B): Promise<T> {
-  return axios.put<T>(url, body).then(handleResponse);
+function put<T, B>(
+  url: string,
+  body: B,
+  headers?: Record<string, string>
+): Promise<{ data: T; accessToken?: string; refreshToken?: string }> {
+  const config = { headers };
+  return axios.put<T>(url, body, config).then(handleResponse);
 }
 
-function _delete<T>(url: string): Promise<T> {
-  return axios.delete<T>(url).then(handleResponse);
-}
-
-function handleResponse<T>(response: AxiosResponse<T>): Promise<T> {
-  const data = response.config.data;
-
-  if (response.status >= 400) {
-    const error = data && data.message ? data.message : response.statusText;
-    return Promise.reject(error);
-  }
-
-  return Promise.resolve(data);
+function _delete<T>(
+  url: string,
+  headers?: Record<string, string>
+): Promise<{ data: T; accessToken?: string; refreshToken?: string }> {
+  const config = { headers };
+  return axios.delete<T>(url, config).then(handleResponse);
 }

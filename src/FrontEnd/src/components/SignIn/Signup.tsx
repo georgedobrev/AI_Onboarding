@@ -40,44 +40,8 @@ const Signup: React.FC = () => {
 
   const handleContinueClick = async () => {
     try {
-      const postData = JSON.stringify(formData, null, 2);
-      const url = `${config.baseUrl}${config.loginEndpoint}`;
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: postData,
-      });
-
-      if (response.ok) {
-        const accessToken = response.headers.get('Access-Token');
-        const refreshToken = response.headers.get('Refresh-Token');
-        const expirationDate = new Date();
-        expirationDate.setUTCDate(expirationDate.getUTCDate() + 5);
-        document.cookie = `Access-Token=${accessToken}; path=/`;
-        document.cookie = `Refresh-Token=${refreshToken}; expires=${expirationDate.toUTCString()}; path=/`;
-
-        if (accessToken === null || refreshToken === null) {
-          throw new Error('Access or refresh token not found');
-        } else {
-          const tokenParts = accessToken.split('.');
-          const tokenPayload = JSON.parse(atob(tokenParts[1]));
-          const expirationTime = tokenPayload.exp * 1000;
-          const currentTime = new Date().getTime();
-          const remainingTime = expirationTime - currentTime;
-
-          setTimeout(() => {
-            console.log('Token expired');
-          }, remainingTime);
-
-          const responseData = await response.text();
-          console.log(responseData);
-          navigate('/home');
-        }
-      } else {
-        throw new Error('Request failed');
-      }
+      await authService.login(formData);
+      navigate('/home');
     } catch (error) {
       console.error(error);
     }
@@ -106,10 +70,10 @@ const Signup: React.FC = () => {
               className="email-field"
               value={formData.email}
               onChange={(e) =>
-                  setFormData((prevFormData) => ({
-                    ...prevFormData,
-                    email: e.target.value,
-                  }))
+                setFormData((prevFormData) => ({
+                  ...prevFormData,
+                  email: e.target.value,
+                }))
               }
             />
             <TextField
@@ -127,10 +91,10 @@ const Signup: React.FC = () => {
               className="password-field"
               value={formData.password}
               onChange={(e) =>
-                  setFormData((prevFormData) => ({
-                    ...prevFormData,
-                    password: e.target.value,
-                  }))
+                setFormData((prevFormData) => ({
+                  ...prevFormData,
+                  password: e.target.value,
+                }))
               }
             />
             <Button
