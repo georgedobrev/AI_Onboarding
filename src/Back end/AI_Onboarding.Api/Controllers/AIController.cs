@@ -40,13 +40,7 @@ namespace AI_Onboarding.Api.Controllers
             {
                 ""question_id"": 1,
                 ""question_text"": ""What is the sun?"",
-                ""answers"": [
-                    {
-                        ""answer_text"": ""A star."",
-                        ""start_offset"": 4,
-                        ""end_offset"": 9
-                    }
-                ]
+                ""answers"": ""A star.""       
             }
         ]
     },
@@ -57,13 +51,7 @@ namespace AI_Onboarding.Api.Controllers
             {
                 ""question_id"": 2,
                 ""question_text"": ""What is essential for life?"",
-                ""answers"": [
-                    {
-                        ""answer_text"": ""Water"",
-                        ""start_offset"": 0,
-                        ""end_offset"": 5
-                    }
-                ]
+                ""answers"": ""Water""
             }
         ]
     }
