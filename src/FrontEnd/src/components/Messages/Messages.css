@@ -72,13 +72,26 @@
     margin-inline: 24px;
 }
 
+.search-textfield.MuiInputBase-root,
+.search-textfield {
+    color: white;
+}
+
 .search-input {
     display: flex;
     align-items: center;
     background-color: var(--mainColor);
     border-radius: 5px;
     border: 1px solid var(--lineColor);
-    box-shadow:  4px 4px 10px #14afcc,
-    -4px -4px 10px #1cedff;
+    box-shadow: 4px 4px 10px var(--searchBarColor),
+    -4px -4px 10px var(--searchBarColorBox);
     margin-bottom: 20px;
 }
+
+.attach-icon.MuiButtonBase-root,
+.send-btn.MuiButtonBase-root,
+.attach-icon,
+.send-btn {
+    color: var(--whiteColor);
+}
+

@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
-import TextField from '@mui/material/TextField';
-import AttachFileIcon from '@mui/icons-material/AttachFile';
-import SendIcon from '@mui/icons-material/Send';
-import IconButton from '@mui/material/IconButton';
+import { TextField, IconButton } from '@mui/material';
+import { AttachFile, Send } from '@mui/icons-material';
 import './Messages.css';
 
 const Messages: React.FC = () => {
@@ -28,8 +26,8 @@ const Messages: React.FC = () => {
         <div className="messages-content">
           <form onSubmit={handleSearchSubmit} className="search-container">
             <div className="search-input">
-              <IconButton style={{ color: 'white' }}>
-                <AttachFileIcon style={{ marginRight: '10px' }} />
+              <IconButton className="attach-icon">
+                <AttachFile className="attach-btn" />
               </IconButton>
               <TextField
                 placeholder="Write a message"
@@ -38,13 +36,10 @@ const Messages: React.FC = () => {
                 fullWidth
                 InputProps={{
                   className: 'search-textfield',
-                  style: {
-                    color: 'white',
-                  },
                 }}
               />
-              <IconButton style={{ color: 'white' }}>
-                <SendIcon style={{ marginLeft: '10px' }} />
+              <IconButton className="send-icon">
+                <Send className="send-btn" />
               </IconButton>
             </div>
           </form>
