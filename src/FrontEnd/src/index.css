@@ -1,15 +1,16 @@
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
 
-  --lineColor: #2a2c2d;
-  --mainColor: #111315;
-  --whiteColor: #ffffff;
-  --blackColor: #000000;
-  --blankfactorLogoLightBlue: #18c1e2;
-  --blankfactorLogoDarkBlue: #080731;
-  --greyAccentColor: #c9cace;
-  background-color: #242424;
-
+    --lineColor: #2a2c2d;
+    --mainColor: #111315;
+    --whiteColor: #ffffff;
+    --blackColor: #000000;
+    --blankfactorLogoLightBlue: #18c1e2;
+    --blankfactorLogoDarkBlue: #080731;
+    --greyAccentColor: #c9cace;
+    --background-color: #242424;
+    --searchBarColor: #14afcc;
+    --searchBarColorBox: #1cedff;
 
 }
 

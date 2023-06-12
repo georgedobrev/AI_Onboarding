@@ -1,5 +1,6 @@
 {
   "baseUrl": "https://localhost:7243/api/",
   "loginEndpoint": "Identity/login",
-  "registerEndpoint": "Identity/register"
+  "registerEndpoint": "Identity/register",
+  "uploadEndpoint": "Document/upload-file"
 }
