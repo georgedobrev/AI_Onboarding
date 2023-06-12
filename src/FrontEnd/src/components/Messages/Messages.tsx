@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
-import TextField from '@mui/material/TextField';
-import SendIcon from '@mui/icons-material/Send';
-import IconButton from '@mui/material/IconButton';
-import FileUploader from './FileUploader.tsx';
+import { TextField, IconButton } from '@mui/material';
+import { AttachFile, Send } from '@mui/icons-material';
 import './Messages.css';
 
 const Messages: React.FC = () => {
@@ -28,11 +26,9 @@ const Messages: React.FC = () => {
         <div className="messages-content">
           <form onSubmit={handleSearchSubmit} className="search-container">
             <div className="search-input">
-              <FileUploader
-                baseUrl="https://localhost:7243/api/"
-                uploadEndpoint="Document/upload-file"
-              />
-              {/* Use the FileUploader component */}
+              <IconButton className="attach-icon">
+                <AttachFile className="attach-btn" />
+              </IconButton>
               <TextField
                 placeholder="Write a message"
                 value={searchQuery}
@@ -40,13 +36,10 @@ const Messages: React.FC = () => {
                 fullWidth
                 InputProps={{
                   className: 'search-textfield',
-                  style: {
-                    color: 'white',
-                  },
                 }}
               />
-              <IconButton style={{ color: 'white' }}>
-                <SendIcon style={{ marginLeft: '10px' }} />
+              <IconButton className="send-icon">
+                <Send className="send-btn" />
               </IconButton>
             </div>
           </form>
