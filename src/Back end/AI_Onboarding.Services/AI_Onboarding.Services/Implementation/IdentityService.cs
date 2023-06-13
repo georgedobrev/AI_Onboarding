@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json.Linq;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
 using System.Security.Claims;
@@ -144,7 +143,7 @@ namespace AI_Onboarding.Services.Implementation
                 return new TokensResponseViewModel { Success = false, ErrorMessage = ex.Message, Tokens = null };
             }
         }
-       
+
         public async Task<TokensResponseViewModel> GoogleLoginAsync(string token)
         {
 
