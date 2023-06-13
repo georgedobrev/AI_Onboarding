@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { TextField, Button, InputAdornment, IconButton } from '@mui/material';
 import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
-import logoImage from '../../assets/blankfactor-logo.jpg';
-import './Signup.css';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { FormValues } from './types.ts';
 import { authService } from '../../services/authService.ts';
+import { toast } from 'react-toastify';
+import logoImage from '../../assets/blankfactor-logo.jpg';
+import 'react-toastify/dist/ReactToastify.css';
+import './Signup.css';
 
 const Signup: React.FC = () => {
   const location = useLocation();
@@ -42,6 +44,16 @@ const Signup: React.FC = () => {
     try {
       await authService.login(formData);
       navigate('/home');
+      toast.success('Login Successful', {
+        position: 'top-right',
+        autoClose: 1000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: 'dark',
+      });
     } catch (error) {
       console.error(error);
     }

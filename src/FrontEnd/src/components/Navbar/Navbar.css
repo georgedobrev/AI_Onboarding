@@ -1,7 +1,5 @@
 .navbar {
-    position: relative;
     display: flex;
-    justify-content: center;
 }
 
 .navbar .MuiList-root {

@@ -6,10 +6,9 @@ import { FormValues as RegisterForms } from '../components/Register/types.ts';
 export const authService = {
   login: async (formData: SignInForms) => {
     try {
-      const postData = JSON.stringify(formData, null, 2);
       const url = `${config.baseUrl}${config.loginEndpoint}`;
-      const headers = { 'Content-Type': 'application/json' };
-      const response = await fetchWrapper.post(url, postData, headers);
+      const headers = { headers: { 'Content-Type': 'application/json' } };
+      const response = await fetchWrapper.post(url, formData, headers);
 
       const accessToken = response.accessToken;
       const refreshToken = response.refreshToken;

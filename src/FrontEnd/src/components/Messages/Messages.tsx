@@ -47,7 +47,10 @@ const Messages: React.FC = () => {
           </form>
         </div>
         <div className="vertical-messagesline"></div>
-        <div className="files-content"></div>
+        <div className="files-content">
+          <h2 className="files-title">Files</h2>
+          <div className="horizontal-filesline"></div>
+        </div>
       </div>
     </div>
   );

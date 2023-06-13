@@ -29,16 +29,16 @@ function get<T>(
   url: string,
   headers?: Record<string, string>
 ): Promise<{ data: T; accessToken?: string; refreshToken?: string }> {
-  const config = { headers };
+  const config = headers;
   return axios.get<T>(url, config).then(handleResponse);
 }
 
 function post<T, B>(
   url: string,
-  body: B,
-  headers?: Record<string, string>
+  body: FormData,
+  headers?: { headers: { Authorization: string } }
 ): Promise<{ data: T; accessToken?: string; refreshToken?: string }> {
-  const config = { headers };
+  const config = headers;
   return axios.post<T>(url, body, config).then(handleResponse);
 }
 
@@ -47,7 +47,7 @@ function put<T, B>(
   body: B,
   headers?: Record<string, string>
 ): Promise<{ data: T; accessToken?: string; refreshToken?: string }> {
-  const config = { headers };
+  const config = headers;
   return axios.put<T>(url, body, config).then(handleResponse);
 }
 
@@ -55,6 +55,6 @@ function _delete<T>(
   url: string,
   headers?: Record<string, string>
 ): Promise<{ data: T; accessToken?: string; refreshToken?: string }> {
-  const config = { headers };
+  const config = headers;
   return axios.delete<T>(url, config).then(handleResponse);
 }
