@@ -15,9 +15,9 @@ model = AutoModelForSeq2SeqLM.from_pretrained(model_path)
 
 tokenizer = AutoTokenizer.from_pretrained(base_model)
 
-argument = sys.argv[1]
+question = sys.argv[1]
 
-inputs = tokenizer(argument, return_tensors="pt")
+inputs = tokenizer(question, return_tensors="pt")
 
 outputs = model.generate(**inputs, no_repeat_ngram_size=2, min_length=30, max_new_tokens=500)
 

@@ -2,6 +2,7 @@ import os
 import sys
 import json
 import torch
+import pinecone
 from torch.utils.data import DataLoader
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, AdamW
 from datasets import Dataset
@@ -13,6 +14,12 @@ model_path = save_dir if os.path.exists(save_dir) else base_model
 model = AutoModelForSeq2SeqLM.from_pretrained(model_path)
 tokenizer = AutoTokenizer.from_pretrained(base_model)
 
+#Initializing Pinecone
+pinecone.init(api_key="ebe39065-b027-4b75-940b-aad3809f72e6", environment="us-west4-gcp")
+
+#Creating an index in Pinecone
+pinecone.create_index(index_name="flan_index", dimension=768)
+
 # Define the dataset
 dataset_str = sys.argv[1]
 dataset = json.loads(dataset_str)
@@ -20,6 +27,7 @@ dataset = json.loads(dataset_str)
 # Preprocess the input data
 texts = []
 target_answers = []
+documents = []
 for item in dataset:
     document_text = item["document_text"]
     for question in item["questions"]:
@@ -30,6 +38,13 @@ for item in dataset:
             "target_text": target_text
         })
         target_answers.append(target_text)
+
+        #Generate context embeddings
+        inputs = tokenizer(texts[-1]["input_text"], return_tensors="pt")
+        outputs = model.generate(**inputs, no_repeat_ngram_size=2,min_length=30, max_new_tokens=500)
+        context_embedding = outputs[0].tolist()
+
+        documents.append(pinecone.IndexedVector(id=None, vector=context_embedding))
 
 # Tokenize the texts using the T5 tokenizer
 tokenized_texts = tokenizer(
@@ -92,3 +107,24 @@ os.makedirs(save_dir, exist_ok=True)
 
 # Save the fine-tuned model
 model.save_pretrained(save_dir)
+
+# Retrieve context from Pinecone based on a question
+question = "YOUR_QUESTION"
+question_inputs = tokenizer(question, return_tensors="pt")
+question_outputs = model.generate(**question_inputs, no_repeat_ngram_size=2, min_length=30, max_new_tokens=500)
+question_embedding = question_outputs[0].tolist()
+
+# Perform a nearest neighbor search in Pinecone
+pinecone_index = pinecone.Index(index_name="flan_index")
+query_results = pinecone_index.query(queries=[question_embedding], top_k=5)
+
+# Get the retrieved documents and their associated answers
+retrieved_documents = [documents[idx].id for idx in query_results[0].ids]
+retrieved_answers = [target_answers[idx] for idx in retrieved_documents]
+
+# Print the retrieved answers
+for answer in retrieved_answers:
+    print(answer)
+
+# Close Pinecone connection
+pinecone.deinit()
