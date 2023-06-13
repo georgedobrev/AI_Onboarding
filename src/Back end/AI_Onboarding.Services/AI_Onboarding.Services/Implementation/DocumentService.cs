@@ -8,6 +8,7 @@ using AI_Onboarding.ViewModels.DocumentModels;
 using AI_Onboarding.ViewModels.ResponseModels;
 using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.parser;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Xceed.Words.NET;
 
@@ -17,12 +18,15 @@ namespace AI_Onboarding.Services.Implementation
     {
         private readonly IDocumentRepository _documentRepository;
         private readonly ILogger<DocumentService> _logger;
+        private readonly IAIService _aiService;
+        private readonly IConfiguration _configuration;
 
-
-        public DocumentService(IDocumentRepository documentRepository, ILogger<DocumentService> logger)
+        public DocumentService(IDocumentRepository documentRepository, ILogger<DocumentService> logger, IAIService aiService, IConfiguration configuration)
         {
             _documentRepository = documentRepository;
             _logger = logger;
+            _aiService = aiService;
+            _configuration = configuration;
         }
 
         public BaseResponseViewModel UploadDocument(DocumentViewModel document)
@@ -59,10 +63,12 @@ namespace AI_Onboarding.Services.Implementation
             }
 
             string extractedText = sb.ToString();
+            string response;
             try
             {
                 Document dbDocument = new Document { ExtractedText = extractedText };
                 _documentRepository.Add(dbDocument);
+                response = _aiService.RunScript(_configuration["PythonScript:StoreDocumentPath"], extractedText);
             }
             catch (Exception ex)
             {
@@ -70,7 +76,7 @@ namespace AI_Onboarding.Services.Implementation
                 return new BaseResponseViewModel { Success = false, ErrorMessage = ex.Message };
             }
 
-            return new BaseResponseViewModel { Success = true, ErrorMessage = "" };
+            return new BaseResponseViewModel { Success = true, ErrorMessage = response };
         }
     }
 }

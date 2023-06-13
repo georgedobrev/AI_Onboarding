@@ -19,6 +19,7 @@ namespace AI_Onboarding.Services.Implementation
                     FileName = "/opt/homebrew/Cellar/python@3.11/3.11.3/bin/python3",
                     Arguments = $"\"{relativePath}\" \"{argument.Replace("\"", "\\\"")}\"",
                     RedirectStandardOutput = true,
+                    RedirectStandardError = true,
                     UseShellExecute = false,
                     CreateNoWindow = true
                 }
@@ -27,10 +28,20 @@ namespace AI_Onboarding.Services.Implementation
             process.Start();
 
             string output = process.StandardOutput.ReadToEnd();
+            string error = process.StandardError.ReadToEnd();
 
             process.WaitForExit();
 
-            return output;
+            int exitCode = process.ExitCode;
+
+            if (exitCode == 0)
+            {
+                return output;
+            }
+            else
+            {
+                return error;
+            }
         }
     }
 }
