@@ -63,12 +63,12 @@ namespace AI_Onboarding.Services.Implementation
             }
 
             string extractedText = sb.ToString();
-            string response;
+            ScriptResponseViewModel result;
             try
             {
                 Document dbDocument = new Document { ExtractedText = extractedText };
                 _documentRepository.Add(dbDocument);
-                response = _aiService.RunScript(_configuration["PythonScript:StoreDocumentPath"], extractedText);
+                result = _aiService.RunScript(_configuration["PythonScript:StoreDocumentPath"], extractedText);
             }
             catch (Exception ex)
             {
@@ -76,7 +76,14 @@ namespace AI_Onboarding.Services.Implementation
                 return new BaseResponseViewModel { Success = false, ErrorMessage = ex.Message };
             }
 
-            return new BaseResponseViewModel { Success = true, ErrorMessage = response };
+            if (result.Success)
+            {
+                return new BaseResponseViewModel { Success = true, ErrorMessage = "" };
+            }
+            else
+            {
+                return new BaseResponseViewModel { Success = false, ErrorMessage = result.ErrorMessage };
+            }
         }
     }
 }

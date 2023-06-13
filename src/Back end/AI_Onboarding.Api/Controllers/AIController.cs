@@ -24,15 +24,23 @@ namespace AI_Onboarding.Api.Controllers
         [HttpPost("receive-response")]
         public IActionResult GenerateResponse([FromBody] string question)
         {
-            string output = _aiService.RunScript(_configuration["PythonScript:GenerateResponsePath"], question);
+            var result = _aiService.RunScript(_configuration["PythonScript:GenerateResponsePath"], question);
 
-            return Content(output);
+            if (result.Success)
+            {
+                return Content(result.Output);
+            }
+            else
+            {
+                return BadRequest(result.ErrorMessage);
+            }
+
         }
 
         [HttpPost("train-model")]
         public IActionResult TrainModel()
         {
-            string output = _aiService.RunScript(_configuration["PythonScript:TrainModelPath"], @"[
+            var result = _aiService.RunScript(_configuration["PythonScript:TrainModelPath"], @"[
     {
         ""document_id"": 1,
         ""document_text"": ""The sun is a star."",
@@ -58,7 +66,14 @@ namespace AI_Onboarding.Api.Controllers
 ]
 ");
 
-            return Content(output);
+            if (result.Success)
+            {
+                return Content(result.Output);
+            }
+            else
+            {
+                return BadRequest(result.ErrorMessage);
+            }
         }
     }
 }

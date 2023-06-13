@@ -2,12 +2,13 @@
 using System.Data;
 using System.Diagnostics;
 using AI_Onboarding.Services.Interfaces;
+using AI_Onboarding.ViewModels.ResponseModels;
 
 namespace AI_Onboarding.Services.Implementation
 {
     public class AIService : IAIService
     {
-        public string RunScript(string relativePath, string argument)
+        public ScriptResponseViewModel RunScript(string relativePath, string argument)
         {
             string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
             string fullPythonFilePath = System.IO.Path.Combine(baseDirectory, relativePath);
@@ -36,12 +37,13 @@ namespace AI_Onboarding.Services.Implementation
 
             if (exitCode == 0)
             {
-                return output;
+                return new ScriptResponseViewModel { Success = true, Output = output };
             }
             else
             {
-                return error;
+                return new ScriptResponseViewModel { Success = false, ErrorMessage = error };
             }
+
         }
     }
 }

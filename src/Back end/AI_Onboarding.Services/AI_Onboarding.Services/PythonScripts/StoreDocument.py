@@ -1,13 +1,10 @@
 import sys
 import pinecone
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 from langchain.embeddings.huggingface import HuggingFaceEmbeddings
 
 # Load the FLAN-T5 model and tokenizer
-model_name = 'google/flan-t5-base'
-tokenizer = AutoTokenizer.from_pretrained(model_name)
-model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
+model_name = "sentence-transformers/all-mpnet-base-v2"
 
 # Set up Pinecone client
 pinecone.init(api_key="ebe39065-b027-4b75-940b-aad3809f72e6", environment="us-west4-gcp")
@@ -29,7 +26,6 @@ embeddings = HuggingFaceEmbeddings(model_name = model_name,model_kwargs = {'devi
 
 # Encode text chunks to obtain vector representations
 chunk_vectors = []
-
 for chunk in chunks:
     vector = embeddings.embed_query(chunk)
     chunk_vectors.append(vector)
