@@ -2,7 +2,6 @@ import React from 'react';
 import Navbar from '../Navbar/Navbar.tsx';
 import Chats from '../Chats/Chats.tsx';
 import Messages from '../Messages/Messages.tsx';
-import FileUploader from '../Messages/FileUploader.tsx';
 import './Home.css';
 import blankfactorLogo from '../../assets/blankfactor-logo.jpg';
 

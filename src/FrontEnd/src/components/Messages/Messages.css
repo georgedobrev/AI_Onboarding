@@ -16,7 +16,7 @@
 .messages-title {
     display: flex;
     justify-content: center;
-    color: white;
+    color: var(--whiteColor);
     width: 100%;
     margin-block: 24px;
 }
@@ -74,7 +74,7 @@
 
 .search-textfield.MuiInputBase-root,
 .search-textfield {
-    color: white;
+    color: var(--whiteColor);
 }
 
 .search-input {

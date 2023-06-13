@@ -17,7 +17,7 @@
 }
 
 .navbar .MuiListItemIcon-root {
-    color: white;
+    color: var(--whiteColor);
     width: 20px;
     height: 20px;
     display: flex;
