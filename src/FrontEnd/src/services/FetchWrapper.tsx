@@ -12,6 +12,7 @@ function handleResponse<T>(
 
   return Promise.resolve({
     data: response.data,
+    error: response.status,
     accessToken,
     refreshToken,
   });

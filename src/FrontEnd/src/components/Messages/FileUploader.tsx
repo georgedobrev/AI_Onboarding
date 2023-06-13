@@ -2,6 +2,7 @@ import React, { ChangeEvent } from 'react';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import IconButton from '@mui/material/IconButton';
 import { lookup } from 'mime-types';
+import { fetchWrapper } from '../../services/FetchWrapper.tsx';
 import config from '../../config.json';
 
 interface FileUploaderProps {
@@ -40,19 +41,15 @@ const FileUploader: React.FC<FileUploaderProps> = ({ baseUrl, uploadEndpoint }) 
     formData.append('FileTypeId', fileId);
 
     try {
-      const response = await fetch(`${baseUrl}${uploadEndpoint}`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: formData,
+      const response = await fetchWrapper.post(`${baseUrl}${uploadEndpoint}`, formData, {
+        Authorization: `Bearer ${accessToken}`,
       });
 
-      if (response.ok) {
+      if (response) {
         // File uploaded successfully
       } else {
         // Error uploading file
-        console.error('Error uploading file:', response.status);
+        console.error('Error uploading file:', response);
       }
     } catch (error) {
       console.error('Error uploading file:', error);
