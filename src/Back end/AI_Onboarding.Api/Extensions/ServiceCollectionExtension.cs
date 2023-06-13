@@ -22,7 +22,7 @@ public static class ServiceCollectionExtension
     {
         services.AddDbContext<DataContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("SqlConnection")));
-  
+
         services.AddIdentity<User, Role>().AddEntityFrameworkStores<DataContext>();
         if (environment.IsDevelopment())
         {
@@ -94,7 +94,7 @@ public static class ServiceCollectionExtension
         return services;
     }
 
-  public static IServiceCollection RegisterFilters(this IServiceCollection services)
+    public static IServiceCollection RegisterFilters(this IServiceCollection services)
     {
 
         services.AddControllers(options =>
@@ -104,7 +104,7 @@ public static class ServiceCollectionExtension
 
         return services;
     }
-  
+
     private static IServiceCollection AddScopedServiceTypes(this IServiceCollection services, Assembly assembly, Type fromType)
     {
         var serviceTypes = assembly.GetTypes()
