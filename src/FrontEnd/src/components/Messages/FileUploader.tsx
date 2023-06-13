@@ -23,8 +23,6 @@ const FileUploader: React.FC<FileUploaderProps> = ({ baseUrl, uploadEndpoint }) 
       .find((cookie) => cookie.startsWith('Access-Token'))
       ?.split('=')[1];
 
-    console.log(accessToken);
-
     const mimeType = file.type || lookup(file.name);
 
     let fileId;
@@ -52,7 +50,6 @@ const FileUploader: React.FC<FileUploaderProps> = ({ baseUrl, uploadEndpoint }) 
 
       if (response.ok) {
         // File uploaded successfully
-        console.log('File uploaded successfully');
       } else {
         // Error uploading file
         console.error('Error uploading file:', response.status);
@@ -71,8 +68,8 @@ const FileUploader: React.FC<FileUploaderProps> = ({ baseUrl, uploadEndpoint }) 
   };
 
   return (
-    <IconButton style={{ color: 'white' }} onClick={handleButtonClick}>
-      <AttachFileIcon style={{ marginRight: '10px' }} />
+    <IconButton onClick={handleButtonClick} className="attach-icon">
+      <AttachFileIcon className="attach-btn" />
     </IconButton>
   );
 };
