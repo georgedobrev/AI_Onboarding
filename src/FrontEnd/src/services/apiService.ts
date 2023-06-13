@@ -4,10 +4,7 @@ import { lookup } from 'mime-types';
 import { toast } from 'react-toastify';
 
 const authHeader = () => {
-  const accessToken = document.cookie
-    .split('; ')
-    .find((cookie) => cookie.startsWith('Access-Token'))
-    ?.split('=')[1];
+  const accessToken = localStorage.getItem('accessToken');
 
   return {
     headers: {

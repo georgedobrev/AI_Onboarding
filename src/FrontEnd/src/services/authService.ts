@@ -19,9 +19,10 @@ export const authService = {
 
       const expirationDate = new Date();
       expirationDate.setUTCDate(expirationDate.getUTCDate() + 5);
-      document.cookie = `Access-Token=${accessToken}; path=/`;
-      document.cookie = `Refresh-Token=${refreshToken}; expires=${expirationDate.toUTCString()}; path=/`;
+      localStorage.setItem('accessToken', accessToken);
+      localStorage.setItem('refreshToken', refreshToken);
 
+      // TODO to be refactored
       const tokenParts = accessToken.split('.');
       const tokenPayload = JSON.parse(atob(tokenParts[1]));
       const expirationTime = tokenPayload.exp * 1000;
@@ -38,6 +39,7 @@ export const authService = {
   },
 
   register: async (formData: RegisterForms) => {
+    delete formData['confirmPassword'];
     const { confirmPassword, ...registerData } = formData;
     try {
       const url = `${config.baseUrl}${config.registerEndpoint}`;
