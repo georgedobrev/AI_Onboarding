@@ -1,7 +1,5 @@
 .navbar {
-    position: relative;
     display: flex;
-    justify-content: center;
 }
 
 .navbar .MuiList-root {
@@ -17,7 +15,7 @@
 }
 
 .navbar .MuiListItemIcon-root {
-    color: white;
+    color: var(--whiteColor);
     width: 20px;
     height: 20px;
     display: flex;

@@ -61,7 +61,8 @@ public static class ServiceCollectionExtension
                 {
                     builder.WithOrigins("http://localhost:5173")
                            .AllowAnyHeader()
-                           .AllowAnyMethod();
+                           .AllowAnyMethod()
+                           .WithExposedHeaders("*");
                 });
             });
         }
