@@ -17,12 +17,14 @@ text_splitter = RecursiveCharacterTextSplitter(
     length_function=len
 )
 
+# Read document text from command-line argument
 document_text = sys.argv[1]
 
+# Split the document into chunks
 chunks = text_splitter.split_text(text=document_text)
 
 # Initialize the HuggingFaceEmbeddings
-embeddings = HuggingFaceEmbeddings(model_name = model_name,model_kwargs = {'device': 'cpu'})
+embeddings = HuggingFaceEmbeddings(model_name=model_name, model_kwargs={'device': 'cpu'})
 
 # Encode text chunks to obtain vector representations
 chunk_vectors = []
@@ -32,9 +34,9 @@ for chunk in chunks:
 
 # Prepare data for indexing in Pinecone
 pinecone_data = []
-for idx, chunk in enumerate(chunks):
-    vector = chunk_vectors[idx]
-    pinecone_data.append({"id": str(idx), "values": vector})
+for idx, chunk_vector in enumerate(chunk_vectors):
+    chunk_metadata = {'text': chunks[idx]}
+    pinecone_data.append({"id": str(idx), "values": chunk_vector, "metadata": chunk_metadata})
 
 # Index chunks in Pinecone
 pinecone.Index(pinecone_index).upsert(pinecone_data)
