@@ -2,5 +2,7 @@
   "baseUrl": "https://localhost:7243/api/",
   "loginEndpoint": "Identity/login",
   "registerEndpoint": "Identity/register",
-  "uploadEndpoint": "Document/upload-file"
+  "uploadEndpoint": "Document/upload-file",
+  "pdfID": 1,
+  "docID": 2
 }

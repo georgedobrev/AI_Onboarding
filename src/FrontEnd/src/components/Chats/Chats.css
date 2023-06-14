@@ -19,7 +19,7 @@
 }
 
 .chats-title {
-    color: white;
+    color: var(--whiteColor);
     width: 100%;
     font-size: 24px;
     margin-block: 24px;

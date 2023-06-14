@@ -1,6 +1,5 @@
 :root {
     font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-
     --lineColor: #2a2c2d;
     --mainColor: #111315;
     --whiteColor: #ffffff;
@@ -11,6 +10,5 @@
     --background-color: #242424;
     --searchBarColor: #14afcc;
     --searchBarColorBox: #1cedff;
-
 }
 

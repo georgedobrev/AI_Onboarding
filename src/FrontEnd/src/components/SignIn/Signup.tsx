@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { TextField, Button, InputAdornment, IconButton } from '@mui/material';
 import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
-import logoImage from '../../assets/blankfactor-logo.jpg';
-import './Signup.css';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { FormValues } from './types.ts';
 import { authService } from '../../services/authService.ts';
+import { toast } from 'react-toastify';
+import logoImage from '../../assets/blankfactor-logo.jpg';
+import 'react-toastify/dist/ReactToastify.css';
+import './Signup.css';
 
 const Signup: React.FC = () => {
   const location = useLocation();
@@ -40,8 +42,18 @@ const Signup: React.FC = () => {
 
   const handleContinueClick = async () => {
     try {
-      const response = await authService.login(formData);
-      navigate('/home', { state: { postData: response } });
+      await authService.login(formData);
+      navigate('/home');
+      toast.success('Login Successful', {
+        position: 'top-right',
+        autoClose: 1000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: 'dark',
+      });
     } catch (error) {
       console.error(error);
     }
@@ -70,10 +82,10 @@ const Signup: React.FC = () => {
               className="email-field"
               value={formData.email}
               onChange={(e) =>
-                  setFormData((prevFormData) => ({
-                    ...prevFormData,
-                    email: e.target.value,
-                  }))
+                setFormData((prevFormData) => ({
+                  ...prevFormData,
+                  email: e.target.value,
+                }))
               }
             />
             <TextField
@@ -91,10 +103,10 @@ const Signup: React.FC = () => {
               className="password-field"
               value={formData.password}
               onChange={(e) =>
-                  setFormData((prevFormData) => ({
-                    ...prevFormData,
-                    password: e.target.value,
-                  }))
+                setFormData((prevFormData) => ({
+                  ...prevFormData,
+                  password: e.target.value,
+                }))
               }
             />
             <Button
