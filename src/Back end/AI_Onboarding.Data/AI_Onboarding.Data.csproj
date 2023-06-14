@@ -32,4 +32,7 @@
     <Folder Include="NoSQLDatabase\Interfaces\" />
     <Folder Include="NoSQLDatabase\Implementations\" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AI_Onboarding.Common\AI_Onboarding.Common.csproj" />
+  </ItemGroup>
 </Project>

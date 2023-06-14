@@ -19,5 +19,7 @@ namespace AI_Onboarding.Data.Models
         public ICollection<UserToken> ModifiedUserTokens { get; set; }
         public string? RefreshToken { get; set; }
         public DateTime? RefreshTokenExpiryTime { get; set; }
+        public Role Role { get; set; }
+        public int RoleId { get; set; }
     }
 }

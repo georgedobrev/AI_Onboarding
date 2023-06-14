@@ -22,6 +22,8 @@ public class UserConfigurator : IEntityTypeConfiguration<User>
 
         builder.Property(e => e.PhoneNumber).HasMaxLength(50);
 
+        builder.Property(e => e.RoleId).HasDefaultValue(2);
+
         builder.HasIndex(e => e.Email).IsUnique();
 
         builder.HasIndex(e => e.NormalizedEmail).IsUnique();
@@ -30,5 +32,10 @@ public class UserConfigurator : IEntityTypeConfiguration<User>
             .WithMany(x => x.ModifiedUsers)
             .HasForeignKey(x => x.ModifiedById)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasOne(x => x.Role)
+           .WithMany(x => x.Users)
+           .HasForeignKey(x => x.RoleId)
+           .OnDelete(DeleteBehavior.Restrict);
     }
 }
