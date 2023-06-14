@@ -3,6 +3,7 @@
   "loginEndpoint": "Identity/login",
   "registerEndpoint": "Identity/register",
   "uploadEndpoint": "Document/upload-file",
-  "pdfID": 1,
-  "docID": 2
+  "refreshTokenEndpoint": "Identity/refresh-token",
+  "pdfID": "1",
+  "docID": "2"
 }

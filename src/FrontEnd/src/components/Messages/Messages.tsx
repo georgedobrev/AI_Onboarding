@@ -27,10 +27,7 @@ const Messages: React.FC = () => {
         <div className="messages-content">
           <form onSubmit={handleSearchSubmit} className="search-container">
             <div className="search-input">
-              <FileUploader
-                baseUrl="https://localhost:7243/api/"
-                uploadEndpoint="Document/upload-file"
-              />
+              <FileUploader />
               <TextField
                 placeholder="Write a message"
                 value={searchQuery}

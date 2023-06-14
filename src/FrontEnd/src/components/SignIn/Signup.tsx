@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { TextField, Button, InputAdornment, IconButton } from '@mui/material';
-import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
+import { CredentialResponse, GoogleLogin } from '@react-oauth/google';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
+import logoImage from '../../assets/blankfactor-logo.jpg';
+import './Signup.css';
 import { FormValues } from './types.ts';
 import { authService } from '../../services/authService.ts';
 import { toast } from 'react-toastify';
-import logoImage from '../../assets/blankfactor-logo.jpg';
 import 'react-toastify/dist/ReactToastify.css';
 import './Signup.css';
 
@@ -37,25 +38,95 @@ const Signup: React.FC = () => {
   };
 
   const handleGoogleSignupError = () => {
-    console.log('Login Failed');
+    console.error('Login Failed');
+  };
+
+  const handleSessionExtensionPrompt = async () => {
+    const confirmExtend = window.confirm('Do you want to extend your session?');
+    if (confirmExtend) {
+      await handleExtendSession();
+    } else {
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      navigate('/signup');
+    }
+  };
+
+  const calculateRemainingTime = (accessToken: string) => {
+    const tokenParts = accessToken.split('.');
+    const tokenPayload = JSON.parse(atob(tokenParts[1]));
+    const expirationTime = tokenPayload.exp * 1000;
+    const currentTime = new Date().getTime();
+    const remainingTime = expirationTime - currentTime;
+    return remainingTime;
   };
 
   const handleContinueClick = async () => {
     try {
-      await authService.login(formData);
-      navigate('/home');
-      toast.success('Login Successful', {
-        position: 'top-right',
-        autoClose: 1000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: 'dark',
-      });
+      const response = await authService.login(formData);
+      if (response) {
+        await handleSuccessfulLogin(response);
+        navigate('/home');
+        toast.success('Login Successful', {
+          position: 'top-right',
+          autoClose: 1000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: 'dark',
+        });
+      } else {
+        throw new Error('Request failed');
+      }
     } catch (error) {
       console.error(error);
+    }
+  };
+
+  const extendSession = (remainingTime: number) => {
+    setTimeout(handleSessionExtensionPrompt, remainingTime);
+  };
+
+  const handleSuccessfulLogin = async (response: object) => {
+    try {
+      const accessToken = response.accessToken;
+      const refreshToken = response.refreshToken;
+      const expirationDate = new Date();
+      expirationDate.setUTCDate(expirationDate.getUTCDate() + 5);
+
+      if (accessToken === null || refreshToken === null) {
+        throw new Error('Access or refresh token not found');
+      } else {
+        const remainingTime = calculateRemainingTime(accessToken);
+        extendSession(remainingTime);
+        navigate('/home');
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleExtendSession = async () => {
+    const refreshToken = localStorage.getItem('refreshToken') || '';
+    const accessToken = localStorage.getItem('accessToken') || '';
+
+    const formData = {
+      token: accessToken,
+      refreshToken: refreshToken,
+    };
+    const response = await authService.extendSession(formData);
+
+    if (response) {
+      const newAccessToken = response.accessToken;
+      localStorage.setItem('accessToken', newAccessToken);
+      const remainingTime = calculateRemainingTime(newAccessToken);
+      extendSession(remainingTime);
+    } else {
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      navigate('/signup');
     }
   };
 
