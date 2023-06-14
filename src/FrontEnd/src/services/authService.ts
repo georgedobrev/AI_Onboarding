@@ -4,13 +4,24 @@ import { FormValues as SignInForms } from '../components/SignIn/types.ts';
 import { FormValues as RegisterForms } from '../components/Register/types.ts';
 import { extendSessionFormValues } from '../components/SignIn/types.ts';
 
+interface RequestResponse {
+  data: string;
+  accessToken?: string;
+  refreshToken?: string;
+}
+
+interface RequestBody {
+  email: string;
+  password: string;
+}
+
 export const authService = {
   login: async (formData: SignInForms) => {
     try {
       const url = `${config.baseUrl}${config.loginEndpoint}`;
       const headers = { headers: { 'Content-Type': 'application/json' } };
-      const response = await fetchWrapper.post(url, formData, headers);
-
+      const body: RequestBody = formData;
+      const response = await fetchWrapper.post<RequestResponse, RequestBody>(url, body, headers);
       const accessToken = response.accessToken;
       const refreshToken = response.refreshToken;
 
