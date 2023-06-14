@@ -5,9 +5,11 @@ import { CredentialResponse, GoogleLogin } from '@react-oauth/google';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import logoImage from '../../assets/blankfactor-logo.jpg';
 import './Signup.css';
-import config from '../../config.json';
-import { FormValues } from './typesLogin.ts';
+import { FormValues } from './types.ts';
 import { authService } from '../../services/authService.ts';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import './Signup.css';
 
 const Signup: React.FC = () => {
   const location = useLocation();
@@ -21,10 +23,6 @@ const Signup: React.FC = () => {
     email: formDataFromRegister.email || '',
     password: formDataFromRegister.password || '',
   });
-
-  const deleteCookie = (name: string) => {
-    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
-  };
 
   useEffect(() => {
     const storedSuccess = localStorage.getItem('signupSuccess');
@@ -40,7 +38,7 @@ const Signup: React.FC = () => {
   };
 
   const handleGoogleSignupError = () => {
-    console.log('Login Failed');
+    console.error('Login Failed');
   };
 
   const handleSessionExtensionPrompt = async () => {
@@ -48,8 +46,8 @@ const Signup: React.FC = () => {
     if (confirmExtend) {
       await handleExtendSession();
     } else {
-      deleteCookie('Access-Token');
-      deleteCookie('Refresh-Token');
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
       navigate('/signup');
     }
   };
@@ -65,18 +63,20 @@ const Signup: React.FC = () => {
 
   const handleContinueClick = async () => {
     try {
-      const postData = JSON.stringify(formData, null, 2);
-      const url = `${config.baseUrl}${config.loginEndpoint}`;
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: postData,
-      });
-
-      if (response.ok) {
+      const response = await authService.login(formData);
+      if (response) {
         await handleSuccessfulLogin(response);
+        navigate('/home');
+        toast.success('Login Successful', {
+          position: 'top-right',
+          autoClose: 1000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: 'dark',
+        });
       } else {
         throw new Error('Request failed');
       }
@@ -91,12 +91,10 @@ const Signup: React.FC = () => {
 
   const handleSuccessfulLogin = async (response: object) => {
     try {
-      const accessToken = response.headers.get('Access-Token');
-      const refreshToken = response.headers.get('Refresh-Token');
+      const accessToken = response.accessToken;
+      const refreshToken = response.refreshToken;
       const expirationDate = new Date();
       expirationDate.setUTCDate(expirationDate.getUTCDate() + 5);
-      document.cookie = `Access-Token=${accessToken}; path=/`;
-      document.cookie = `Refresh-Token=${refreshToken}; expires=${expirationDate.toUTCString()}; path=/`;
 
       if (accessToken === null || refreshToken === null) {
         throw new Error('Access or refresh token not found');
@@ -110,36 +108,27 @@ const Signup: React.FC = () => {
     }
   };
 
-
   const handleExtendSession = async () => {
-    const refreshToken = getCookie('Refresh-Token');
-    const accessToken = getCookie('Access-Token');
-    const url = `${config.baseUrl}${config.refreshTokenEndpoint}`;
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ refreshToken: refreshToken, token: accessToken }),
-    });
+    const refreshToken = localStorage.getItem('refreshToken') || '';
+    const accessToken = localStorage.getItem('accessToken') || '';
 
-    if (response.ok) {
-      const newAccessToken = response.headers.get('Access-Token');
-      document.cookie = `Access-Token=${newAccessToken}; path=/`;
+    const formData = {
+      token: accessToken,
+      refreshToken: refreshToken,
+    };
+    const response = await authService.extendSession(formData);
+
+    if (response) {
+      const newAccessToken = response.accessToken;
+      localStorage.setItem('accessToken', newAccessToken);
       const remainingTime = calculateRemainingTime(newAccessToken);
       extendSession(remainingTime);
     } else {
-      deleteCookie('Access-Token');
-      deleteCookie('Refresh-Token');
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
       navigate('/signup');
     }
   };
-
-  function getCookie(name: string) {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
-  }
 
   const handleTogglePasswordVisibility = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
@@ -164,10 +153,10 @@ const Signup: React.FC = () => {
               className="email-field"
               value={formData.email}
               onChange={(e) =>
-                  setFormData((prevFormData) => ({
-                    ...prevFormData,
-                    email: e.target.value,
-                  }))
+                setFormData((prevFormData) => ({
+                  ...prevFormData,
+                  email: e.target.value,
+                }))
               }
             />
             <TextField
@@ -185,10 +174,10 @@ const Signup: React.FC = () => {
               className="password-field"
               value={formData.password}
               onChange={(e) =>
-                  setFormData((prevFormData) => ({
-                    ...prevFormData,
-                    password: e.target.value,
-                  }))
+                setFormData((prevFormData) => ({
+                  ...prevFormData,
+                  password: e.target.value,
+                }))
               }
             />
             <Button

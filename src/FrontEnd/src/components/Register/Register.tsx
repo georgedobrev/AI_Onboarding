@@ -7,6 +7,7 @@ import './Register.css';
 import logoImage from '../../assets/blankfactor-logo.jpg';
 import { FormValues } from './types.ts';
 import { authService } from '../../services/authService.ts';
+import { toast } from 'react-toastify';
 
 const Register: React.FC = () => {
   const {
@@ -25,6 +26,16 @@ const Register: React.FC = () => {
     try {
       await authService.register(formData);
       navigate('/signup', { state: { formData: formData } });
+      toast.success('Register successfully', {
+        position: 'top-right',
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: 'dark',
+      });
     } catch (error) {
       console.error(error);
     }
