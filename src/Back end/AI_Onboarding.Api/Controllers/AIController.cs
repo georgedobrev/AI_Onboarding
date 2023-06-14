@@ -4,6 +4,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 using AI_Onboarding.Data.Models;
 using AI_Onboarding.Services.Interfaces;
+using AI_Onboarding.Common;
 
 namespace AI_Onboarding.Api.Controllers
 {
@@ -30,6 +31,7 @@ namespace AI_Onboarding.Api.Controllers
         }
 
         [HttpPost("train-model")]
+        [Authorize(Roles = Roles.Administrator)]
         public IActionResult TrainModel()
         {
             string output = _aiService.RunScript(_configuration["PythonScript:TrainModelPath"], @"[

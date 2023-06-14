@@ -5,12 +5,13 @@ using Microsoft.AspNetCore.Authorization;
 using iTextSharp.text.pdf.parser;
 using Xceed.Document.NET;
 using System.Diagnostics;
+using AI_Onboarding.Common;
 
 namespace AI_Onboarding.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
+    [Authorize(Roles = Roles.Administrator)]
     public class DocumentController : ControllerBase
     {
         private readonly IDocumentService _documentService;

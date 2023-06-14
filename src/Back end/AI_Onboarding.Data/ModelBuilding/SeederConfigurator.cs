@@ -14,12 +14,14 @@ namespace AI_Onboarding.Data.ModelBuilding
                 new Role
                 {
                     Id = 1,
-                    Name = Roles.Administrator
+                    Name = Roles.Administrator,
+                    NormalizedName = Roles.Administrator.ToUpper()
                 },
                 new Role
                 {
                     Id = 2,
-                    Name = Roles.Employee
+                    Name = Roles.Employee,
+                    NormalizedName = Roles.Employee.ToUpper()
                 }
             );
 
@@ -33,7 +35,6 @@ namespace AI_Onboarding.Data.ModelBuilding
                 UserName = "admin1@admin.com",
                 FirstName = "Admin1",
                 LastName = "Admin1",
-                RoleId = 1
             };
 
             var admin2 = new User
@@ -43,7 +44,6 @@ namespace AI_Onboarding.Data.ModelBuilding
                 UserName = "admin2@admin.com",
                 FirstName = "Admin2",
                 LastName = "Admin2",
-                RoleId = 1
             };
 
             var user = new User
@@ -53,7 +53,6 @@ namespace AI_Onboarding.Data.ModelBuilding
                 UserName = "user@mail.com",
                 FirstName = "User",
                 LastName = "User",
-                RoleId = 2
             };
 
             admin1.PasswordHash = passwordHasher.HashPassword(admin1, password);
@@ -79,6 +78,26 @@ namespace AI_Onboarding.Data.ModelBuilding
             };
 
             modelBuilder.Entity<User>().HasData(users);
+
+            var userRoles = new List<UserRole>();
+
+            userRoles.Add(new UserRole
+            {
+                UserId = users[0].Id,
+                RoleId = 1
+            });
+            userRoles.Add(new UserRole
+            {
+                UserId = users[1].Id,
+                RoleId = 1
+            });
+            userRoles.Add(new UserRole
+            {
+                UserId = users[2].Id,
+                RoleId = 2
+            });
+
+            modelBuilder.Entity<UserRole>().HasData(userRoles);
         }
     }
 }
