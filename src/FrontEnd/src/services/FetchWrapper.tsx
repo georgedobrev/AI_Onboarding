@@ -34,9 +34,9 @@ function get<T>(
   return axios.get<T>(url, config).then(handleResponse);
 }
 
-function post<T>(
+function post<T, B>(
   url: string,
-  body: FormValues | extendSessionFormValues | FormData,
+  body: B,
   headers?: { headers: { 'Content-Type': string } }
 ): Promise<{ data: T; accessToken?: string; refreshToken?: string }> {
   const config = headers;
