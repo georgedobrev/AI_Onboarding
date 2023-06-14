@@ -31,9 +31,18 @@ const Signup: React.FC = () => {
     }
   }, []);
 
-  const handleGoogleSignupSuccess = (credentialResponse: CredentialResponse) => {
-    setSignupSuccess(true);
-    localStorage.setItem('signupSuccess', 'true');
+  const handleGoogleSignupSuccess = async (credentialResponse: CredentialResponse) => {
+    await authService.googleLogin(credentialResponse.credential);
+    toast.success('Google login successful', {
+      position: 'top-right',
+      autoClose: 1000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: 'dark',
+    });
     navigate('/home');
   };
 

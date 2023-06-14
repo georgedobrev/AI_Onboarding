@@ -4,6 +4,7 @@
   "registerEndpoint": "Identity/register",
   "uploadEndpoint": "Document/upload-file",
   "refreshTokenEndpoint": "Identity/refresh-token",
+  "googleLoginEndpoint": "Identity/google-login",
   "pdfID": "1",
   "docID": "2"
 }
