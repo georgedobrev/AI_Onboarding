@@ -16,7 +16,7 @@
 .messages-title {
     display: flex;
     justify-content: center;
-    color: white;
+    color: var(--whiteColor);
     width: 100%;
     margin-block: 24px;
 }
@@ -65,16 +65,30 @@
     overflow: hidden;
 }
 
+.files-title {
+    display: flex;
+    justify-content: center;
+    color: var(--whiteColor);
+    width: 100%;
+    margin-block: 24px;
+}
+
+.horizontal-filesline {
+    width: 100%;
+    height: 1px;
+    background-color: var(--lineColor);
+}
+
 .search-container {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    margin-inline: 24px;
+    margin-inline: 14px;
 }
 
 .search-textfield.MuiInputBase-root,
 .search-textfield {
-    color: white;
+    color: var(--whiteColor);
 }
 
 .search-input {
@@ -94,4 +108,3 @@
 .send-btn {
     color: var(--whiteColor);
 }
-

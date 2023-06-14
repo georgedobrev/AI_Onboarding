@@ -71,7 +71,7 @@ namespace AI_Onboarding.Api.Controllers
                 int.TryParse(_configuration["JWT:TokenValidityInMinutes"], out int tokenValidityInMinutes);
 
                 Response.Headers.Add("Access-Token", result.Tokens.Token);
-
+                
                 return Ok(result.ErrorMessage);
             }
             else
