@@ -95,9 +95,9 @@ namespace AI_Onboarding.Services.Implementation
 
                     int roleId = _repositoryUserRole.FindByCondition(ur => ur.UserId == id).RoleId;
 
-                    string roleName = _repositoryRole.FindByCondition(r => r.Id == roleId).Name;
+                    string[] roleNames = _repositoryRole.FindAllByCondition(r => r.Id == roleId).Select(r => r.Name).ToArray();
 
-                    return new TokensResponseViewModel { Success = true, ErrorMessage = "", Tokens = _tokenService.GenerateAccessToken(user.Email, id, roleName, true) };
+                    return new TokensResponseViewModel { Success = true, ErrorMessage = "", Tokens = _tokenService.GenerateAccessToken(user.Email, id, roleNames, true) };
                 }
                 else
                 {
@@ -148,9 +148,9 @@ namespace AI_Onboarding.Services.Implementation
 
                 int roleId = _repositoryUserRole.FindByCondition(ur => ur.UserId == user.Id).RoleId;
 
-                string roleName = _repositoryRole.FindByCondition(r => r.Id == roleId).Name;
+                string[] roleNames = _repositoryRole.FindAllByCondition(r => r.Id == roleId).Select(r => r.Name).ToArray();
 
-                var newTokens = _tokenService.GenerateAccessToken(user.Email, user.Id, roleName, true);
+                var newTokens = _tokenService.GenerateAccessToken(user.Email, user.Id, roleNames, true);
                 return new TokensResponseViewModel { Success = true, ErrorMessage = "", Tokens = newTokens };
             }
             catch (Exception ex)
@@ -182,9 +182,9 @@ namespace AI_Onboarding.Services.Implementation
 
                     int roleId = _repositoryUserRole.FindByCondition(ur => ur.UserId == user.Id).RoleId;
 
-                    string roleName = _repositoryRole.FindByCondition(r => r.Id == roleId).Name;
+                    string[] roleNames = _repositoryRole.FindAllByCondition(r => r.Id == roleId).Select(r => r.Name).ToArray();
 
-                    var tokens = _tokenService.GenerateAccessToken(user.Email, user.Id, roleName, true);
+                    var tokens = _tokenService.GenerateAccessToken(user.Email, user.Id, roleNames, true);
 
                     return new TokensResponseViewModel { Success = true, ErrorMessage = "", Tokens = tokens };
                 }
