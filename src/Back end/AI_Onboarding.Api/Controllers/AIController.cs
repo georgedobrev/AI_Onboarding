@@ -28,7 +28,7 @@ namespace AI_Onboarding.Api.Controllers
 
             if (result.Success)
             {
-                return Content(result.Output);
+                return Ok(result.Output);
             }
             else
             {
@@ -68,7 +68,7 @@ namespace AI_Onboarding.Api.Controllers
 
             if (result.Success)
             {
-                return Content(result.Output);
+                return Ok(result.Output);
             }
             else
             {
