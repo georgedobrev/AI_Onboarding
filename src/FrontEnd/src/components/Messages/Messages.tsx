@@ -6,6 +6,7 @@ import './Messages.css';
 
 const Messages: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [messages, setMessages] = useState<string[]>([]);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
@@ -13,8 +14,10 @@ const Messages: React.FC = () => {
 
   const handleSearchSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    // Perform search logic here based on the searchQuery
-    // You can interact with your chat bot or perform any other action
+    if (searchQuery.trim() !== '') {
+      setMessages((prevMessages) => [...prevMessages, searchQuery]);
+      setSearchQuery('');
+    }
   };
 
   return (
@@ -25,6 +28,13 @@ const Messages: React.FC = () => {
       </div>
       <div className="messages-content-container">
         <div className="messages-content">
+          <div className="chat-messages">
+            {messages.map((message, index) => (
+              <div key={index} className="message">
+                {message}
+              </div>
+            ))}
+          </div>
           <form onSubmit={handleSearchSubmit} className="search-container">
             <div className="search-input">
               <FileUploader />
@@ -37,7 +47,7 @@ const Messages: React.FC = () => {
                   className: 'search-textfield',
                 }}
               />
-              <IconButton className="send-icon">
+              <IconButton className="send-icon" type="submit">
                 <Send className="send-btn" />
               </IconButton>
             </div>
