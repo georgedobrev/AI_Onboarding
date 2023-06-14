@@ -12,9 +12,7 @@ export const authService = {
       if (!response) {
         throw new Error('Request failed');
       }
-
     } catch (error) {
-      console.error(error);
       throw new Error('Login failed');
     }
   },
