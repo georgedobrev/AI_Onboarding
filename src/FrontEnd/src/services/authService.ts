@@ -4,7 +4,7 @@ import { FormValues as SignInForms } from '../components/SignIn/types.ts';
 import { FormValues as RegisterForms } from '../components/Register/types.ts';
 import { ExtendSessionFormValues } from '../components/SignIn/types.ts';
 
-interface ResponseBackend {
+interface LoginResponse {
   accessToken?: string;
   refreshToken?: string;
 }
@@ -29,11 +29,7 @@ export const authService = {
       const url = `${config.baseUrl}${config.loginEndpoint}`;
       const headers = { headers: { 'Content-Type': 'application/json' } };
       const body: RequestLoginBody = formData;
-      const response = await fetchWrapper.post<ResponseBackend, RequestLoginBody>(
-        url,
-        body,
-        headers
-      );
+      const response = await fetchWrapper.post<LoginResponse, RequestLoginBody>(url, body, headers);
       const accessToken = response.headers.get('access-token');
       const refreshToken = response.headers.get('refresh-token');
 
@@ -82,7 +78,7 @@ export const authService = {
     try {
       const url = `${config.baseUrl}${config.refreshTokenEndpoint}`;
       const headers = { headers: { 'Content-Type': 'application/json' } };
-      const response = await fetchWrapper.post<ResponseBackend, ExtendSessionRequestBody>(
+      const response = await fetchWrapper.post<LoginResponse, ExtendSessionRequestBody>(
         url,
         formData,
         headers
@@ -101,7 +97,7 @@ export const authService = {
     try {
       const headers = { headers: { 'Content-Type': 'application/json' } };
       const url = `${config.baseUrl}${config.googleLoginEndpoint}`;
-      const response = await fetchWrapper.post<ResponseBackend, GoogleLoginRequestBody>(
+      const response = await fetchWrapper.post<LoginResponse, GoogleLoginRequestBody>(
         url,
         formData,
         headers
