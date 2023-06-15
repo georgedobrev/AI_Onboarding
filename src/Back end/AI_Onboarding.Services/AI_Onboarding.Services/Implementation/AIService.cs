@@ -2,12 +2,13 @@
 using System.Data;
 using System.Diagnostics;
 using AI_Onboarding.Services.Interfaces;
+using AI_Onboarding.ViewModels.ResponseModels;
 
 namespace AI_Onboarding.Services.Implementation
 {
     public class AIService : IAIService
     {
-        public string RunScript(string relativePath, string argument)
+        public ScriptResponseViewModel RunScript(string relativePath, string argument)
         {
             string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
             string fullPythonFilePath = System.IO.Path.Combine(baseDirectory, relativePath);
@@ -19,6 +20,7 @@ namespace AI_Onboarding.Services.Implementation
                     FileName = "/opt/homebrew/Cellar/python@3.11/3.11.3/bin/python3",
                     Arguments = $"\"{relativePath}\" \"{argument.Replace("\"", "\\\"")}\"",
                     RedirectStandardOutput = true,
+                    RedirectStandardError = true,
                     UseShellExecute = false,
                     CreateNoWindow = true
                 }
@@ -27,10 +29,21 @@ namespace AI_Onboarding.Services.Implementation
             process.Start();
 
             string output = process.StandardOutput.ReadToEnd();
+            string error = process.StandardError.ReadToEnd();
 
             process.WaitForExit();
 
-            return output;
+            int exitCode = process.ExitCode;
+
+            if (exitCode == 0)
+            {
+                return new ScriptResponseViewModel { Success = true, Output = output };
+            }
+            else
+            {
+                return new ScriptResponseViewModel { Success = false, ErrorMessage = error };
+            }
+
         }
     }
 }
