@@ -172,6 +172,7 @@ namespace AI_Onboarding.Services.Implementation
                     var defaultPassword = _configuration["GoogleAuth:DefaulfPasswordHash"];
                     var newUser = new UserRegistrationViewModel { Email = email, Password = defaultPassword, FirstName = firstName, LastName = lastName };
                     var resultRegister = await RegisterAsync(newUser);
+
                     var loginCredentials = new UserLoginViewModel { Email = email, Password = defaultPassword };
                     var resultLogin = await LoginAsync(loginCredentials);
 
