@@ -4,8 +4,7 @@ import { FormValues as SignInForms } from '../components/SignIn/types.ts';
 import { FormValues as RegisterForms } from '../components/Register/types.ts';
 import { extendSessionFormValues } from '../components/SignIn/types.ts';
 
-interface RequestResponse {
-  data: string;
+interface LoginResponse {
   accessToken?: string;
   refreshToken?: string;
 }
@@ -21,9 +20,9 @@ export const authService = {
       const url = `${config.baseUrl}${config.loginEndpoint}`;
       const headers = { headers: { 'Content-Type': 'application/json' } };
       const body: RequestBody = formData;
-      const response = await fetchWrapper.post<RequestResponse, RequestBody>(url, body, headers);
-      const accessToken = response.accessToken;
-      const refreshToken = response.refreshToken;
+      const response = await fetchWrapper.post<LoginResponse, RequestBody>(url, body, headers);
+      const accessToken = response.headers.get('access-token');
+      const refreshToken = response.headers.get('refresh-token');
 
       if (!accessToken || !refreshToken) {
         throw new Error('Access or refresh token not found');
@@ -88,8 +87,8 @@ export const authService = {
       if (!response) {
         throw new Error('Request failed');
       }
-      localStorage.setItem('accessToken', response.accessToken);
-      localStorage.setItem('refreshToken', response.refreshToken);
+      localStorage.setItem('accessToken', response.headers.get('access-token'));
+      localStorage.setItem('refreshToken', response.headers.get('refresh-token'));
       return response;
     } catch (error) {
       console.error(error);
