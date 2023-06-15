@@ -27,7 +27,7 @@ namespace AI_Onboarding.Services.Implementation
             int.TryParse(_configuration["JWT:TokenValidityInMinutes"], out int tokenValidityInMinutes);
             var expiration = DateTime.UtcNow.AddMinutes(tokenValidityInMinutes);
 
-            var token = CreateJwtToken(
+            var accessToken = CreateJwtToken(
                 CreateClaims(email, id, roleNames),
                 CreateSigningCredentials(),
                 expiration
@@ -72,7 +72,7 @@ namespace AI_Onboarding.Services.Implementation
                 signingCredentials: credentials
             );
         }
-        
+
         private JwtSecurityToken CreateRefreshTokenJwt(SigningCredentials credentials, DateTime expiration)
         {
             return new JwtSecurityToken(
