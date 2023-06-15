@@ -27,21 +27,29 @@ namespace AI_Onboarding.Services.Implementation
             int.TryParse(_configuration["JWT:TokenValidityInMinutes"], out int tokenValidityInMinutes);
             var expiration = DateTime.UtcNow.AddMinutes(tokenValidityInMinutes);
 
-            var token = CreateJwtToken(
+            var accessToken = CreateJwtToken(
                 CreateClaims(email, id),
                 CreateSigningCredentials(),
                 expiration
             );
 
-            var accessToken = new JwtSecurityTokenHandler().WriteToken(token);
+            int.TryParse(_configuration["JWT:RefreshTokenValidityInDays"], out int refreshTokenValidityInDays);
+            var refreshTokenExpiration = DateTime.UtcNow.AddDays(refreshTokenValidityInDays);
+
+            var refreshToken = CreateRefreshTokenJwt(
+                CreateSigningCredentials(),
+                refreshTokenExpiration
+            );
+
+            var accessTokenString = new JwtSecurityTokenHandler().WriteToken(accessToken);
+            var refreshTokenString = new JwtSecurityTokenHandler().WriteToken(refreshToken);
 
             var dbUser = _repository.Find(id);
 
             if (dbUser.RefreshTokenExpiryTime < DateTime.UtcNow || dbUser.RefreshToken is null || isLogin)
             {
-                dbUser.RefreshToken = GenerateRefreshToken();
-                int.TryParse(_configuration["JWT:RefreshTokenValidityInDays"], out int refreshTokenValidityInDays);
-                dbUser.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(refreshTokenValidityInDays); ;
+                dbUser.RefreshToken = refreshTokenString;
+                dbUser.RefreshTokenExpiryTime = refreshTokenExpiration;
             }
 
             _repository.Update(dbUser);
@@ -49,8 +57,8 @@ namespace AI_Onboarding.Services.Implementation
 
             return new TokenViewModel
             {
-                Token = accessToken,
-                RefreshToken = dbUser.RefreshToken
+                Token = accessTokenString,
+                RefreshToken = refreshTokenString
             };
         }
 
@@ -60,6 +68,16 @@ namespace AI_Onboarding.Services.Implementation
                 _configuration["Jwt:Issuer"],
                 _configuration["Jwt:Audience"],
                 claims,
+                expires: expiration,
+                signingCredentials: credentials
+            );
+        }
+
+        private JwtSecurityToken CreateRefreshTokenJwt(SigningCredentials credentials, DateTime expiration)
+        {
+            return new JwtSecurityToken(
+                _configuration["Jwt:Issuer"],
+                _configuration["Jwt:Audience"],
                 expires: expiration,
                 signingCredentials: credentials
             );
@@ -76,21 +94,11 @@ namespace AI_Onboarding.Services.Implementation
         private SigningCredentials CreateSigningCredentials()
         {
             return new SigningCredentials(
-                    new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(_configuration["Jwt:Key"])
-                    ),
-                    SecurityAlgorithms.HmacSha256
-                );
-        }
-
-        private string GenerateRefreshToken()
-        {
-            var randomNumber = new byte[64];
-            using var rng = RandomNumberGenerator.Create();
-            rng.GetBytes(randomNumber);
-            var token = Convert.ToBase64String(randomNumber);
-
-            return token;
+                new SymmetricSecurityKey(
+                    Encoding.UTF8.GetBytes(_configuration["Jwt:Key"])
+                ),
+                SecurityAlgorithms.HmacSha256
+            );
         }
     }
 }
