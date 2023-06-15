@@ -1,5 +1,7 @@
 import os
 import sys
+import pinecone
+from langchain.embeddings.huggingface import HuggingFaceEmbeddings
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
 # Get the user's home directory
@@ -15,13 +17,35 @@ model = AutoModelForSeq2SeqLM.from_pretrained(model_path)
 
 tokenizer = AutoTokenizer.from_pretrained(base_model)
 
-argument = sys.argv[1]
+# Load the FLAN-T5 model and tokenizer
+model_name = "sentence-transformers/all-mpnet-base-v2"
 
-inputs = tokenizer(argument, return_tensors="pt")
+# Set up Pinecone client
+pinecone.init(api_key="ebe39065-b027-4b75-940b-aad3809f72e6", environment="us-west4-gcp")
+pinecone_index_name = "ai-onboarding"
+pinecone_index = pinecone.Index(index_name=pinecone_index_name)
 
-outputs = model.generate(**inputs, no_repeat_ngram_size=2, min_length=30, max_new_tokens=500)
+question = sys.argv[1]
+
+# Initialize the HuggingFaceEmbeddings
+embeddings = HuggingFaceEmbeddings(model_name=model_name, model_kwargs={'device': 'cpu'})
+
+vector = embeddings.embed_query(question)
+
+# Retrieve top 3 relevant vectors from Pinecone index
+pinecone_results = pinecone_index.query(vector, top_k=3,include_metadata=True)
+
+context = ""
+for match in pinecone_results['matches']:
+    metadata = match['metadata']
+    text = metadata['text']
+    context += text
+
+# Generate response based on the question and context
+inputs = tokenizer(f"question: {question} context: {context}", return_tensors="pt")
+
+outputs = model.generate(**inputs, max_new_tokens=5000)
 
 res = tokenizer.batch_decode(outputs, skip_special_tokens=True)
 result_string = ' '.join(res)
 print(result_string)
-
