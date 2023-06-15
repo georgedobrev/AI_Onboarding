@@ -10,9 +10,9 @@ using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.parser;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Spire.Presentation;
 using Xceed.Words.NET;
-using Aspose.Slides;
-using Aspose.Slides.Util;
+using IShape = Spire.Presentation.IShape;
 
 namespace AI_Onboarding.Services.Implementation
 {
@@ -63,20 +63,25 @@ namespace AI_Onboarding.Services.Implementation
                     }
                     break;
                 case (int)FileType.pptx:
-                    using (Presentation presentation = new Presentation(document.File.OpenReadStream()))
+                    using (Presentation presentation = new Presentation())
                     {
-                        ITextFrame[] textFramesPPTX = Aspose.Slides.Util.SlideUtil.GetAllTextFrames(presentation, true);
-                        for (int i = 0; i < textFramesPPTX.Length; i++)
+                        presentation.LoadFromStream(document.File.OpenReadStream(),FileFormat.Auto);
+
+                        foreach (ISlide slide in presentation.Slides)
                         {
-                            foreach (IParagraph paragraph in textFramesPPTX[i].Paragraphs)
+                            foreach (IShape shape in slide.Shapes)
                             {
-                                foreach (IPortion portion in paragraph.Portions)
+                                if (shape is IAutoShape autoShape)
                                 {
-                                    sb.AppendLine(portion.Text);
+                                    foreach (TextParagraph tp in autoShape.TextFrame.Paragraphs)
+                                    {
+                                        sb.AppendLine(tp.Text);
+                                    }
                                 }
                             }
                         }
                     }
+
                     break;
             }
 
