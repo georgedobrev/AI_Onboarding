@@ -71,9 +71,9 @@ namespace AI_Onboarding.Services.Implementation
                         {
                             foreach (IShape shape in slide.Shapes)
                             {
-                                if (shape is IAutoShape autoShape)
+                                if (shape is IAutoShape)
                                 {
-                                    foreach (TextParagraph tp in autoShape.TextFrame.Paragraphs)
+                                    foreach (TextParagraph tp in (shape as IAutoShape).TextFrame.Paragraphs)
                                     {
                                         sb.AppendLine(tp.Text);
                                     }
