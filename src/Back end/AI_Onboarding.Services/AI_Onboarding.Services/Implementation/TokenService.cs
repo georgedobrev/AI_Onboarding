@@ -72,7 +72,7 @@ namespace AI_Onboarding.Services.Implementation
                 signingCredentials: credentials
             );
         }
-
+        
         private JwtSecurityToken CreateRefreshTokenJwt(SigningCredentials credentials, DateTime expiration)
         {
             return new JwtSecurityToken(
