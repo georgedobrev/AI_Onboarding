@@ -79,4 +79,21 @@ export const authService = {
       throw new Error('Session extension failed');
     }
   },
+
+  googleLogin: async (formData: string | undefined) => {
+    try {
+      const headers = { headers: { 'Content-Type': 'application/json' } };
+      const url = `${config.baseUrl}${config.googleLoginEndpoint}`;
+      const response = await fetchWrapper.post(url, formData, headers);
+      if (!response) {
+        throw new Error('Request failed');
+      }
+      localStorage.setItem('accessToken', response.accessToken);
+      localStorage.setItem('refreshToken', response.refreshToken);
+      return response;
+    } catch (error) {
+      console.error(error);
+      throw new Error('Google login failed');
+    }
+  },
 };
