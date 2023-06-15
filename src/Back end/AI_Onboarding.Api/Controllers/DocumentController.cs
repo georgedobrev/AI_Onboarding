@@ -2,9 +2,6 @@ using AI_Onboarding.Services.Interfaces;
 using AI_Onboarding.ViewModels.DocumentModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using iTextSharp.text.pdf.parser;
-using Xceed.Document.NET;
-using System.Diagnostics;
 
 namespace AI_Onboarding.Api.Controllers
 {

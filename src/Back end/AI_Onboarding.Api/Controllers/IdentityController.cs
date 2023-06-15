@@ -5,7 +5,6 @@ using AI_Onboarding.Services.Interfaces;
 using AI_Onboarding.ViewModels.JWTModels;
 using Microsoft.AspNetCore.Identity;
 using AI_Onboarding.Data.Models;
-using System.Security.Claims;
 
 namespace AI_Onboarding.Api.Controllers
 {
@@ -71,7 +70,7 @@ namespace AI_Onboarding.Api.Controllers
                 int.TryParse(_configuration["JWT:TokenValidityInMinutes"], out int tokenValidityInMinutes);
 
                 Response.Headers.Add("Access-Token", result.Tokens.Token);
-                
+
                 return Ok(result.ErrorMessage);
             }
             else

@@ -1,8 +1,5 @@
-﻿using System;
-using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using AI_Onboarding.Data.Models;
 using AI_Onboarding.Services.Interfaces;
 
 namespace AI_Onboarding.Api.Controllers
