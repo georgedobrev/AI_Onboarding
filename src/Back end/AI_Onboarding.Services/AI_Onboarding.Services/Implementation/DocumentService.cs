@@ -11,6 +11,8 @@ using iTextSharp.text.pdf.parser;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Xceed.Words.NET;
+using Aspose.Slides;
+using Aspose.Slides.Util;
 
 namespace AI_Onboarding.Services.Implementation
 {
@@ -57,6 +59,22 @@ namespace AI_Onboarding.Services.Implementation
                         foreach (var paragraph in doc.Paragraphs)
                         {
                             sb.AppendLine(paragraph.Text);
+                        }
+                    }
+                    break;
+                case (int)FileType.pptx:
+                    using (Presentation presentation = new Presentation(document.File.OpenReadStream()))
+                    {
+                        ITextFrame[] textFramesPPTX = Aspose.Slides.Util.SlideUtil.GetAllTextFrames(presentation, true);
+                        for (int i = 0; i < textFramesPPTX.Length; i++)
+                        {
+                            foreach (IParagraph paragraph in textFramesPPTX[i].Paragraphs)
+                            {
+                                foreach (IPortion portion in paragraph.Portions)
+                                {
+                                    sb.AppendLine(portion.Text);
+                                }
+                            }
                         }
                     }
                     break;
