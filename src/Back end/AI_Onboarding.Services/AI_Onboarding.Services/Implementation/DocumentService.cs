@@ -82,7 +82,7 @@ namespace AI_Onboarding.Services.Implementation
 
                 if (document.QuestionsAnswers is not null)
                 {
-                    var datasetObject = new DatasetModel { DocumentText = extractedText, QuestionAnswer = document.QuestionsAnswers };
+                    var datasetObject = new DatasetModel { DocumentText = extractedText, QuestionsAnswers = document.QuestionsAnswers };
                     string datasetString = JsonConvert.SerializeObject(datasetObject, Formatting.Indented);
 
                     return new BaseResponseViewModel

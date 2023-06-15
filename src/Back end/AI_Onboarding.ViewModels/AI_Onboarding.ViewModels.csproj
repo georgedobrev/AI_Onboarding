@@ -11,9 +11,11 @@
     <None Remove="UserModels\UserProfiles\" />
     <None Remove="DocumentModels\" />
     <None Remove="ResponseModels\" />
+    <None Remove="DocumentModels\Binders\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="12.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AI_Onboarding.Data\AI_Onboarding.Data.csproj" />
@@ -21,5 +23,6 @@
   <ItemGroup>
     <Folder Include="DocumentModels\" />
     <Folder Include="ResponseModels\" />
+    <Folder Include="DocumentModels\Binders\" />
   </ItemGroup>
 </Project>
