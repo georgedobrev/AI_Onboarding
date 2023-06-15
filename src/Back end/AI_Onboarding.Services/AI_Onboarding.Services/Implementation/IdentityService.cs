@@ -150,7 +150,7 @@ namespace AI_Onboarding.Services.Implementation
 
                 string[] roleNames = _repositoryRole.FindAllByCondition(r => r.Id == roleId).Select(r => r.Name).ToArray();
 
-                var newTokens = _tokenService.GenerateAccessToken(user.Email, user.Id, roleNames, true);
+                var newTokens = _tokenService.GenerateAccessToken(user.Email, user.Id, roleNames);
                 return new TokensResponseViewModel { Success = true, ErrorMessage = "", Tokens = newTokens };
             }
             catch (Exception ex)
