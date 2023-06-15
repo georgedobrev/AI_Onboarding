@@ -8,8 +8,10 @@ using AI_Onboarding.ViewModels.DocumentModels;
 using AI_Onboarding.ViewModels.ResponseModels;
 using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.parser;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Xceed.Words.NET;
 
 namespace AI_Onboarding.Services.Implementation
@@ -29,13 +31,9 @@ namespace AI_Onboarding.Services.Implementation
             _configuration = configuration;
         }
 
-        public BaseResponseViewModel UploadDocument(DocumentViewModel document)
-        {
-            if (document.File is null || document.File.Length == 0)
-            {
-                return new BaseResponseViewModel { Success = false, ErrorMessage = "No file uploaded." };
-            }
 
+        private string ExtractText(DocumentViewModel document)
+        {
             StringBuilder sb = new StringBuilder();
 
             switch (document.FileTypeId)
@@ -62,13 +60,37 @@ namespace AI_Onboarding.Services.Implementation
                     break;
             }
 
-            string extractedText = sb.ToString();
+            return sb.ToString();
+        }
+
+
+        public BaseResponseViewModel UploadDocument(DocumentViewModel document)
+        {
+            if (document.File is null || document.File.Length == 0)
+            {
+                return new BaseResponseViewModel { Success = false, ErrorMessage = "No file uploaded." };
+            }
+
+            var extractedText = ExtractText(document);
+
             ScriptResponseViewModel result;
             try
             {
                 Document dbDocument = new Document { ExtractedText = extractedText };
                 _documentRepository.Add(dbDocument);
                 result = _aiService.RunScript(_configuration["PythonScript:StoreDocumentPath"], extractedText);
+
+                if (document.QuestionsAnswers is not null)
+                {
+                    var datasetObject = new DatasetModel { DocumentText = extractedText, QuestionAnswer = document.QuestionsAnswers };
+                    string datasetString = JsonConvert.SerializeObject(datasetObject, Formatting.Indented);
+
+                    return new BaseResponseViewModel
+                    {
+                        Success = true,
+                        ErrorMessage = datasetString
+                    };
+                }
             }
             catch (Exception ex)
             {
