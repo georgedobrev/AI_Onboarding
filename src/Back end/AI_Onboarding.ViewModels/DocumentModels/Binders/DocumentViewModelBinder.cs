@@ -1,10 +1,6 @@
-﻿using System.Threading.Tasks;
-using AI_Onboarding.ViewModels.DocumentModels;
-using Microsoft.AspNetCore.Http;
+﻿using AI_Onboarding.ViewModels.DocumentModels;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.Linq;
 
 public class DocumentViewModelBinder : IModelBinder
 {

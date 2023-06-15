@@ -1,14 +1,12 @@
 ﻿using System.Text;
 using AI_Onboarding.Common;
 using AI_Onboarding.Data.Models;
-using AI_Onboarding.Data.NoSQLDatabase;
 using AI_Onboarding.Data.NoSQLDatabase.Interfaces;
 using AI_Onboarding.Services.Interfaces;
 using AI_Onboarding.ViewModels.DocumentModels;
 using AI_Onboarding.ViewModels.ResponseModels;
 using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.parser;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -64,7 +62,7 @@ namespace AI_Onboarding.Services.Implementation
         }
 
 
-        public BaseResponseViewModel UploadDocument(DocumentViewModel document)
+        public BaseResponseViewModel ExtractTextAndFinetuneModel(DocumentViewModel document)
         {
             if (document.File is null || document.File.Length == 0)
             {
@@ -73,38 +71,43 @@ namespace AI_Onboarding.Services.Implementation
 
             var extractedText = ExtractText(document);
 
-            ScriptResponseViewModel result;
+            ScriptResponseViewModel resultStoreDocument;
             try
             {
                 Document dbDocument = new Document { ExtractedText = extractedText };
                 _documentRepository.Add(dbDocument);
-                result = _aiService.RunScript(_configuration["PythonScript:StoreDocumentPath"], extractedText);
+                resultStoreDocument = _aiService.RunScript(_configuration["PythonScript:StoreDocumentPath"], extractedText);
 
-                if (document.QuestionsAnswers is not null)
+                if (resultStoreDocument.Success)
                 {
-                    var datasetObject = new DatasetModel { DocumentText = extractedText, QuestionsAnswers = document.QuestionsAnswers };
-                    string datasetString = JsonConvert.SerializeObject(datasetObject, Formatting.Indented);
-
-                    return new BaseResponseViewModel
+                    if (document.QuestionsAnswers.Count > 0)
                     {
-                        Success = true,
-                        ErrorMessage = datasetString
-                    };
+                        var datasetObject = new DatasetModel { DocumentText = extractedText, QuestionsAnswers = document.QuestionsAnswers };
+                        string datasetString = JsonConvert.SerializeObject(datasetObject, Formatting.Indented);
+
+                        var resultTrainModel = _aiService.RunScript(_configuration["PythonScript:TrainModelPath"], datasetString);
+
+                        if (resultTrainModel.Success)
+                        {
+                            return new BaseResponseViewModel { Success = true, ErrorMessage = resultTrainModel.Output };
+                        }
+                        else
+                        {
+                            return new BaseResponseViewModel { Success = false, ErrorMessage = resultTrainModel.ErrorMessage };
+                        }
+                    }
+
+                    return new BaseResponseViewModel { Success = true, ErrorMessage = "" };
+                }
+                else
+                {
+                    return new BaseResponseViewModel { Success = false, ErrorMessage = resultStoreDocument.ErrorMessage };
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred");
                 return new BaseResponseViewModel { Success = false, ErrorMessage = ex.Message };
-            }
-
-            if (result.Success)
-            {
-                return new BaseResponseViewModel { Success = true, ErrorMessage = "" };
-            }
-            else
-            {
-                return new BaseResponseViewModel { Success = false, ErrorMessage = result.ErrorMessage };
             }
         }
     }

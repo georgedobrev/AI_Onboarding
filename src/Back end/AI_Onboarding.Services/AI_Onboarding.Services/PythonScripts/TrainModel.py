@@ -15,21 +15,20 @@ tokenizer = AutoTokenizer.from_pretrained(base_model)
 
 # Define the dataset
 dataset_str = sys.argv[1]
+
 dataset = json.loads(dataset_str)
 
 # Preprocess the input data
 texts = []
 target_answers = []
-for item in dataset:
-    document_text = item["document_text"]
-    for question in item["questions"]:
-        question_text = question["question_text"]
-        target_text = question["answers"]
-        texts.append({
-            "input_text": f"document: {document_text} question: {question_text}",
-            "target_text": target_text
-        })
-        target_answers.append(target_text)
+for item in dataset["QuestionsAnswers"]:
+    question_text = item["Question"]
+    target_text = item["Answer"]
+    texts.append({
+        "input_text": f"document: {dataset['DocumentText']} question: {question_text}",
+        "target_text": target_text
+    })
+    target_answers.append(target_text)
 
 # Tokenize the texts using the T5 tokenizer
 tokenized_texts = tokenizer(
