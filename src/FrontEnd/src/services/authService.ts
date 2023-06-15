@@ -14,6 +14,11 @@ interface RequestBody {
   password: string;
 }
 
+interface ExtendSessionRequestBody {
+  token: string;
+  refreshToken: string;
+}
+
 export const authService = {
   login: async (formData: SignInForms) => {
     try {
@@ -68,7 +73,10 @@ export const authService = {
   extendSession: async (formData: extendSessionFormValues) => {
     try {
       const url = `${config.baseUrl}${config.refreshTokenEndpoint}`;
-      const response = await fetchWrapper.post(url, formData);
+      const response = await fetchWrapper.post<LoginResponse, ExtendSessionRequestBody>(
+        url,
+        formData
+      );
       if (!response) {
         throw new Error('Request failed');
       }

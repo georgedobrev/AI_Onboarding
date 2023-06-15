@@ -106,8 +106,8 @@ const Signup: React.FC = () => {
 
   const handleSuccessfulLogin = async (response: object) => {
     try {
-      const accessToken = response.accessToken;
-      const refreshToken = response.refreshToken;
+      const accessToken = response.headers.get('access-token');
+      const refreshToken = response.headers.get('refresh-token');
       const remainingTime = calculateRemainingTime(refreshToken);
 
       setTimeout(() => {
@@ -138,7 +138,7 @@ const Signup: React.FC = () => {
     const response = await authService.extendSession(formData);
 
     if (response) {
-      const newAccessToken = response.accessToken;
+      const newAccessToken = response.headers.get('access-token');
       localStorage.setItem('accessToken', newAccessToken);
       const remainingTime = calculateRemainingTime(newAccessToken);
       extendSession(remainingTime);
