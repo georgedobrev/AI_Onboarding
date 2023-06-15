@@ -2,16 +2,25 @@ import { fetchWrapper } from './FetchWrapper.tsx';
 import config from '../config.json';
 import {FormValues as SignInForms} from '../components/SignIn/types.ts';
 import { FormValues as RegisterForms } from '../components/Register/types.ts';
-import { extendSessionFormValues } from '../components/SignIn/types.ts';
-interface RequestResponse {
-  data: string;
+import { ExtendSessionFormValues } from '../components/SignIn/types.ts';
+
+interface LoginResponse {
   accessToken?: string;
   refreshToken?: string;
 }
 
-interface RequestBody {
+interface RequestLoginBody {
   email: string;
   password: string;
+}
+
+interface ExtendSessionRequestBody {
+  token: string;
+  refreshToken: string;
+}
+
+interface GoogleLoginRequestBody {
+  token: string;
 }
 
 export const authService = {
@@ -19,10 +28,10 @@ export const authService = {
     try {
       const url = `${config.baseUrl}${config.loginEndpoint}`;
       const headers = { headers: { 'Content-Type': 'application/json' } };
-      const body: RequestBody = formData;
-      const response = await fetchWrapper.post<RequestResponse, RequestBody>(url, body, headers);
-      const accessToken = response.accessToken;
-      const refreshToken = response.refreshToken;
+      const body: RequestLoginBody = formData;
+      const response = await fetchWrapper.post<LoginResponse, RequestLoginBody>(url, body, headers);
+      const accessToken = response.headers.get('access-token');
+      const refreshToken = response.headers.get('refresh-token');
 
       if (!accessToken || !refreshToken) {
         throw new Error('Access or refresh token not found');
@@ -64,10 +73,15 @@ export const authService = {
     }
   },
 
-  extendSession: async (formData: extendSessionFormValues) => {
+  extendSession: async (formData: ExtendSessionFormValues) => {
     try {
       const url = `${config.baseUrl}${config.refreshTokenEndpoint}`;
-      const response = await fetchWrapper.post(url, formData);
+      const headers = { headers: { 'Content-Type': 'application/json' } };
+      const response = await fetchWrapper.post<LoginResponse, ExtendSessionRequestBody>(
+        url,
+        formData,
+        headers
+      );
       if (!response) {
         throw new Error('Request failed');
       }
@@ -82,12 +96,16 @@ export const authService = {
     try {
       const headers = { headers: { 'Content-Type': 'application/json' } };
       const url = `${config.baseUrl}${config.googleLoginEndpoint}`;
-      const response = await fetchWrapper.post(url, formData, headers);
+      const response = await fetchWrapper.post<LoginResponse, GoogleLoginRequestBody>(
+        url,
+        formData,
+        headers
+      );
       if (!response) {
         throw new Error('Request failed');
       }
-      localStorage.setItem('accessToken', response.accessToken);
-      localStorage.setItem('refreshToken', response.refreshToken);
+      localStorage.setItem('accessToken', response.headers.get('access-token'));
+      localStorage.setItem('refreshToken', response.headers.get('refresh-token'));
       return response;
     } catch (error) {
       console.error(error);
