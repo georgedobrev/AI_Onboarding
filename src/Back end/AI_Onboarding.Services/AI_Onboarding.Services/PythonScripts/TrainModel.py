@@ -2,7 +2,6 @@ import os
 import sys
 import json
 import torch
-import pinecone
 from torch.utils.data import DataLoader
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, AdamW
 from datasets import Dataset
@@ -13,12 +12,6 @@ base_model = "google/flan-t5-base"
 model_path = save_dir if os.path.exists(save_dir) else base_model
 model = AutoModelForSeq2SeqLM.from_pretrained(model_path)
 tokenizer = AutoTokenizer.from_pretrained(base_model)
-
-#Initializing Pinecone
-pinecone.init(api_key="ebe39065-b027-4b75-940b-aad3809f72e6", environment="us-west4-gcp")
-
-#Creating an index in Pinecone
-pinecone_index=pinecone.Index(index_name="ai_onboarding")
 
 # Define the dataset
 dataset_str = sys.argv[1]
