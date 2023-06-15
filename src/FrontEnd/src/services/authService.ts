@@ -2,14 +2,14 @@ import { fetchWrapper } from './FetchWrapper.tsx';
 import config from '../config.json';
 import { FormValues as SignInForms } from '../components/SignIn/types.ts';
 import { FormValues as RegisterForms } from '../components/Register/types.ts';
-import { extendSessionFormValues } from '../components/SignIn/types.ts';
+import { ExtendSessionFormValues } from '../components/SignIn/types.ts';
 
-interface LoginResponse {
+interface ResponseBackend {
   accessToken?: string;
   refreshToken?: string;
 }
 
-interface RequestBody {
+interface RequestLoginBody {
   email: string;
   password: string;
 }
@@ -19,13 +19,21 @@ interface ExtendSessionRequestBody {
   refreshToken: string;
 }
 
+interface GoogleLoginRequestBody {
+  token: string;
+}
+
 export const authService = {
   login: async (formData: SignInForms) => {
     try {
       const url = `${config.baseUrl}${config.loginEndpoint}`;
       const headers = { headers: { 'Content-Type': 'application/json' } };
-      const body: RequestBody = formData;
-      const response = await fetchWrapper.post<LoginResponse, RequestBody>(url, body, headers);
+      const body: RequestLoginBody = formData;
+      const response = await fetchWrapper.post<ResponseBackend, RequestLoginBody>(
+        url,
+        body,
+        headers
+      );
       const accessToken = response.headers.get('access-token');
       const refreshToken = response.headers.get('refresh-token');
 
@@ -70,12 +78,14 @@ export const authService = {
     }
   },
 
-  extendSession: async (formData: extendSessionFormValues) => {
+  extendSession: async (formData: ExtendSessionFormValues) => {
     try {
       const url = `${config.baseUrl}${config.refreshTokenEndpoint}`;
-      const response = await fetchWrapper.post<LoginResponse, ExtendSessionRequestBody>(
+      const headers = { headers: { 'Content-Type': 'application/json' } };
+      const response = await fetchWrapper.post<ResponseBackend, ExtendSessionRequestBody>(
         url,
-        formData
+        formData,
+        headers
       );
       if (!response) {
         throw new Error('Request failed');
@@ -91,7 +101,11 @@ export const authService = {
     try {
       const headers = { headers: { 'Content-Type': 'application/json' } };
       const url = `${config.baseUrl}${config.googleLoginEndpoint}`;
-      const response = await fetchWrapper.post(url, formData, headers);
+      const response = await fetchWrapper.post<ResponseBackend, GoogleLoginRequestBody>(
+        url,
+        formData,
+        headers
+      );
       if (!response) {
         throw new Error('Request failed');
       }

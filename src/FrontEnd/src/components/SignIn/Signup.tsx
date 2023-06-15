@@ -5,7 +5,7 @@ import { CredentialResponse, GoogleLogin } from '@react-oauth/google';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import logoImage from '../../assets/blankfactor-logo.jpg';
 import './Signup.css';
-import { FormValues } from './types.ts';
+import { FormValues, ExtendSessionFormValues } from './types.ts';
 import { authService } from '../../services/authService.ts';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -131,7 +131,7 @@ const Signup: React.FC = () => {
     const refreshToken = localStorage.getItem('refreshToken') || '';
     const accessToken = localStorage.getItem('accessToken') || '';
 
-    const formData = {
+    const formData: ExtendSessionFormValues = {
       token: accessToken,
       refreshToken: refreshToken,
     };
