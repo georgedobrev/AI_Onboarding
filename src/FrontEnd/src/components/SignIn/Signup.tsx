@@ -31,10 +31,21 @@ const Signup: React.FC = () => {
     }
   }, []);
 
-  const handleGoogleSignupSuccess = (credentialResponse: CredentialResponse) => {
-    setSignupSuccess(true);
-    localStorage.setItem('signupSuccess', 'true');
-    navigate('/home');
+  const handleGoogleSignupSuccess = async (credentialResponse: CredentialResponse) => {
+    const response = await authService.googleLogin(credentialResponse.credential);
+    await handleSuccessfulLogin(response);
+
+    toast.success('Google login successful', {
+      position: 'top-right',
+      autoClose: 1000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: 'dark',
+    });
+    return navigate('/home');
   };
 
   const handleGoogleSignupError = () => {
@@ -42,18 +53,22 @@ const Signup: React.FC = () => {
   };
 
   const handleSessionExtensionPrompt = async () => {
+    if (!localStorage.getItem('refreshToken')) {
+      localStorage.removeItem('accessToken');
+      return navigate('/signup');
+    }
     const confirmExtend = window.confirm('Do you want to extend your session?');
     if (confirmExtend) {
       await handleExtendSession();
     } else {
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
-      navigate('/signup');
+      return navigate('/signup');
     }
   };
 
-  const calculateRemainingTime = (accessToken: string) => {
-    const tokenParts = accessToken.split('.');
+  const calculateRemainingTime = (token: string) => {
+    const tokenParts = token.split('.');
     const tokenPayload = JSON.parse(atob(tokenParts[1]));
     const expirationTime = tokenPayload.exp * 1000;
     const currentTime = new Date().getTime();
@@ -93,8 +108,12 @@ const Signup: React.FC = () => {
     try {
       const accessToken = response.accessToken;
       const refreshToken = response.refreshToken;
-      const expirationDate = new Date();
-      expirationDate.setUTCDate(expirationDate.getUTCDate() + 5);
+      const remainingTime = calculateRemainingTime(refreshToken);
+
+      setTimeout(() => {
+        localStorage.removeItem('refreshToken');
+        navigate('/signup');
+      }, remainingTime);
 
       if (accessToken === null || refreshToken === null) {
         throw new Error('Access or refresh token not found');
@@ -126,7 +145,7 @@ const Signup: React.FC = () => {
     } else {
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
-      navigate('/signup');
+      return navigate('/signup');
     }
   };
 
