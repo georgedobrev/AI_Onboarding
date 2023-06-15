@@ -3,7 +3,7 @@ export type FormValues = {
   password: string;
 };
 
-export type extendSessionFormValues = {
+export type ExtendSessionFormValues = {
   token: string;
   refreshToken: string;
 };
