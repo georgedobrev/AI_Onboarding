@@ -6,6 +6,8 @@ using AI_Onboarding.ViewModels.JWTModels;
 using Microsoft.AspNetCore.Identity;
 using AI_Onboarding.Data.Models;
 using System.Security.Claims;
+using SendGrid;
+
 
 namespace AI_Onboarding.Api.Controllers
 {
@@ -60,6 +62,25 @@ namespace AI_Onboarding.Api.Controllers
             }
         }
 
+        [HttpPost("forgot-password")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ForgotPassword([FromBody] string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user != null)
+            {
+                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                var link = Url.Action("ResetPassword", "Authentication", new { token, email = user.Email }, Request.Scheme);
+                var message = new Message(new string[] { user.Email! }, "link", link!);
+                var sendGridClient = new SendGridClient(_configuration["sendGrid:ApiKey"]);
+
+                return StatusCode(StatusCodes.Status200OK);
+
+            }
+            return StatusCode(StatusCodes.Status400BadRequest);
+
+        }
+
         [HttpPost("refresh-token")]
         [AllowAnonymous]
         public IActionResult RefreshToken([FromBody] TokenViewModel tokensModel)
@@ -71,7 +92,7 @@ namespace AI_Onboarding.Api.Controllers
                 int.TryParse(_configuration["JWT:TokenValidityInMinutes"], out int tokenValidityInMinutes);
 
                 Response.Headers.Add("Access-Token", result.Tokens.Token);
-                
+
                 return Ok(result.ErrorMessage);
             }
             else
