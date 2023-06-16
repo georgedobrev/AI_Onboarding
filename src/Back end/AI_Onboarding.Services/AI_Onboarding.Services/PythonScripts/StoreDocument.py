@@ -14,7 +14,7 @@ index_name = "ai-onboarding"
 # Split documents into chunks using LangChain
 text_splitter = RecursiveCharacterTextSplitter(
     chunk_size=500,
-    chunk_overlap=0
+    chunk_overlap=100
 )
 
 # Read document text from command-line argument
