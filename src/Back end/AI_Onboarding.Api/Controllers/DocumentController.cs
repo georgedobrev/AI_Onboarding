@@ -7,7 +7,7 @@ namespace AI_Onboarding.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize]
+    [Authorize(Roles = Roles.Administrator)]
     public class DocumentController : ControllerBase
     {
         private readonly IDocumentService _documentService;

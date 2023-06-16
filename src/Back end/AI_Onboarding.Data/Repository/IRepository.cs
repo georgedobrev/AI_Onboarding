@@ -12,6 +12,7 @@ namespace AI_Onboarding.Data.Repository
         T? Remove(int id);
         bool SaveChanges();
         T? FindByCondition(Expression<Func<T, bool>> predicate);
+        IQueryable<T> FindAllByCondition(Expression<Func<T, bool>> predicate);
     }
 }
 

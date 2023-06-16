@@ -1,12 +1,12 @@
-import React, { ChangeEvent } from 'react';
+import React from 'react';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import IconButton from '@mui/material/IconButton';
 import { apiService } from '../../services/apiService.ts';
 import config from '../../config.json';
 
 const FileUploader: React.FC = () => {
-  const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0] || null;
+  const handleFileChange = async (event: Event) => {
+    const file = (event.target as HTMLInputElement)?.files?.[0] || null;
 
     if (!file) return;
 
@@ -29,7 +29,7 @@ const FileUploader: React.FC = () => {
     const fileInput = document.createElement('input');
     fileInput.type = 'file';
     fileInput.accept = '.pdf,.docx';
-    fileInput.addEventListener('change', handleFileChange);
+    fileInput.addEventListener('change', (event) => handleFileChange(event));
     fileInput.click();
   };
 
@@ -39,4 +39,5 @@ const FileUploader: React.FC = () => {
     </IconButton>
   );
 };
+
 export default FileUploader;

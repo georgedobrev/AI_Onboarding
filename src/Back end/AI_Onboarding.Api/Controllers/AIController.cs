@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using AI_Onboarding.Services.Interfaces;
+using AI_Onboarding.Common;
 
 namespace AI_Onboarding.Api.Controllers
 {

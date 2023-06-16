@@ -1,4 +1,5 @@
-﻿using AI_Onboarding.Data.Models;
+﻿using AI_Onboarding.Common;
+using AI_Onboarding.Data.Models;
 using AI_Onboarding.Data.Repository;
 using AI_Onboarding.Services.Interfaces;
 using AI_Onboarding.ViewModels.JWTModels;
@@ -6,6 +7,7 @@ using AI_Onboarding.ViewModels.ResponseModels;
 using AI_Onboarding.ViewModels.UserModels;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
@@ -18,6 +20,8 @@ namespace AI_Onboarding.Services.Implementation
     public class IdentityService : IIdentityService
     {
         private readonly IRepository<User> _repository;
+        private readonly IRepository<Role> _repositoryRole;
+        private readonly IRepository<UserRole> _repositoryUserRole;
         private readonly IMapper _mapper;
         private readonly SignInManager<User> _signInManager;
         private readonly UserManager<User> _userManager;
@@ -26,7 +30,8 @@ namespace AI_Onboarding.Services.Implementation
         private readonly ILogger<IdentityService> _logger;
 
         public IdentityService(IRepository<User> repository, IMapper mapper, UserManager<User> userManager, SignInManager<User> signInManager,
-            ITokenService tokenService, IConfiguration configuration, ILogger<IdentityService> logger)
+            ITokenService tokenService, IConfiguration configuration, ILogger<IdentityService> logger, IRepository<Role> repositoryRole,
+            IRepository<UserRole> repositoryUserRole)
         {
             _repository = repository;
             _mapper = mapper;
@@ -35,6 +40,8 @@ namespace AI_Onboarding.Services.Implementation
             _tokenService = tokenService;
             _configuration = configuration;
             _logger = logger;
+            _repositoryRole = repositoryRole;
+            _repositoryUserRole = repositoryUserRole;
         }
 
         public async Task<BaseResponseViewModel> RegisterAsync(UserRegistrationViewModel viewUser)
@@ -48,6 +55,7 @@ namespace AI_Onboarding.Services.Implementation
 
                 if (result.Succeeded)
                 {
+                    await _userManager.AddToRoleAsync(user, Roles.Employee);
                     return new BaseResponseViewModel { Success = true, ErrorMessage = "" }; ;
                 }
                 else
@@ -80,7 +88,11 @@ namespace AI_Onboarding.Services.Implementation
                 {
                     int id = _repository.FindByCondition(u => u.Email == user.Email).Id;
 
-                    return new TokensResponseViewModel { Success = true, ErrorMessage = "", Tokens = _tokenService.GenerateAccessToken(user.Email, id, true) };
+                    int roleId = _repositoryUserRole.FindByCondition(ur => ur.UserId == id).RoleId;
+
+                    string[] roleNames = _repositoryRole.FindAllByCondition(r => r.Id == roleId).Select(r => r.Name).ToArray();
+
+                    return new TokensResponseViewModel { Success = true, ErrorMessage = "", Tokens = _tokenService.GenerateAccessToken(user.Email, id, roleNames, true) };
                 }
                 else
                 {
@@ -129,7 +141,11 @@ namespace AI_Onboarding.Services.Implementation
                     return new TokensResponseViewModel { Success = false, ErrorMessage = "Invalid token", Tokens = null };
                 }
 
-                var newTokens = _tokenService.GenerateAccessToken(user.Email, user.Id);
+                int roleId = _repositoryUserRole.FindByCondition(ur => ur.UserId == user.Id).RoleId;
+
+                string[] roleNames = _repositoryRole.FindAllByCondition(r => r.Id == roleId).Select(r => r.Name).ToArray();
+
+                var newTokens = _tokenService.GenerateAccessToken(user.Email, user.Id, roleNames);
                 return new TokensResponseViewModel { Success = true, ErrorMessage = "", Tokens = newTokens };
             }
             catch (Exception ex)
@@ -158,7 +174,12 @@ namespace AI_Onboarding.Services.Implementation
                 if (user != null)
                 {
                     await _signInManager.SignInAsync(user, false);
-                    var tokens = _tokenService.GenerateAccessToken(user.Email, user.Id);
+
+                    int roleId = _repositoryUserRole.FindByCondition(ur => ur.UserId == user.Id).RoleId;
+
+                    string[] roleNames = _repositoryRole.FindAllByCondition(r => r.Id == roleId).Select(r => r.Name).ToArray();
+
+                    var tokens = _tokenService.GenerateAccessToken(user.Email, user.Id, roleNames, true);
 
                     return new TokensResponseViewModel { Success = true, ErrorMessage = "", Tokens = tokens };
                 }
@@ -167,6 +188,7 @@ namespace AI_Onboarding.Services.Implementation
                     var defaultPassword = _configuration["GoogleAuth:DefaulfPasswordHash"];
                     var newUser = new UserRegistrationViewModel { Email = email, Password = defaultPassword, FirstName = firstName, LastName = lastName };
                     var resultRegister = await RegisterAsync(newUser);
+
                     var loginCredentials = new UserLoginViewModel { Email = email, Password = defaultPassword };
                     var resultLogin = await LoginAsync(loginCredentials);
 

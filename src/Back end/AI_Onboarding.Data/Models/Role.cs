@@ -8,5 +8,6 @@ namespace AI_Onboarding.Data.Models
         public DateTime? ModifiedAt { get; set; }
         public User? ModifiedBy { get; set; }
         public int? ModifiedById { get; set; }
+        public ICollection<User>? Users { get; set; }
     }
 }

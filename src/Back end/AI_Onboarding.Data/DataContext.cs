@@ -1,6 +1,7 @@
 ﻿using AI_Onboarding.Data.ModelBuilding;
 using AI_Onboarding.Data.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -26,6 +27,7 @@ namespace AI_Onboarding.Data
             new UserTokensConfigurator().Configure(modelBuilder.Entity<UserToken>());
             new RoleConfigurator().Configure(modelBuilder.Entity<Role>());
             new RoleClaimsConfigurator().Configure(modelBuilder.Entity<RoleClaim>());
+            SeederConfigurator.Seed(modelBuilder);
         }
 
         public override int SaveChanges()

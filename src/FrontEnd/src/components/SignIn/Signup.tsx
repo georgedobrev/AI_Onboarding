@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { TextField, Button, InputAdornment, IconButton } from '@mui/material';
-import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
+import { CredentialResponse, GoogleLogin } from '@react-oauth/google';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { FormValues } from './types.ts';
+import logoImage from '../../assets/blankfactor-logo.jpg';
+import './Signup.css';
+import { FormValues, ExtendSessionFormValues } from './types.ts';
 import { authService } from '../../services/authService.ts';
 import { toast } from 'react-toastify';
-import logoImage from '../../assets/blankfactor-logo.jpg';
 import 'react-toastify/dist/ReactToastify.css';
 import './Signup.css';
 
@@ -30,32 +31,121 @@ const Signup: React.FC = () => {
     }
   }, []);
 
-  const handleGoogleSignupSuccess = (credentialResponse: CredentialResponse) => {
-    setSignupSuccess(true);
-    localStorage.setItem('signupSuccess', 'true');
-    navigate('/home');
+  const handleGoogleSignupSuccess = async (credentialResponse: CredentialResponse) => {
+    const response = await authService.googleLogin(credentialResponse.credential);
+    await handleSuccessfulLogin(response);
+
+    toast.success('Google login successful', {
+      position: 'top-right',
+      autoClose: 1000,
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: 'dark',
+    });
+    return navigate('/home');
   };
 
   const handleGoogleSignupError = () => {
-    console.log('Login Failed');
+    console.error('Login Failed');
+  };
+
+  const handleSessionExtensionPrompt = async () => {
+    if (!localStorage.getItem('refreshToken')) {
+      localStorage.removeItem('accessToken');
+      return navigate('/signup');
+    }
+    const confirmExtend = window.confirm('Do you want to extend your session?');
+    if (confirmExtend) {
+      await handleExtendSession();
+    } else {
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      return navigate('/signup');
+    }
+  };
+
+  const calculateRemainingTime = (token: string) => {
+    const tokenParts = token.split('.');
+    const tokenPayload = JSON.parse(atob(tokenParts[1]));
+    const expirationTime = tokenPayload.exp * 1000;
+    const currentTime = new Date().getTime();
+    const remainingTime = expirationTime - currentTime;
+    return remainingTime;
   };
 
   const handleContinueClick = async () => {
     try {
-      await authService.login(formData);
-      navigate('/home');
-      toast.success('Login Successful', {
-        position: 'top-right',
-        autoClose: 1000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: 'dark',
-      });
+      const response = await authService.login(formData);
+      if (response) {
+        await handleSuccessfulLogin(response);
+        navigate('/home');
+        toast.success('Login Successful', {
+          position: 'top-right',
+          autoClose: 1000,
+          hideProgressBar: true,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: 'dark',
+        });
+      } else {
+        throw new Error('Request failed');
+      }
     } catch (error) {
       console.error(error);
+    }
+  };
+
+  const extendSession = (remainingTime: number) => {
+    setTimeout(handleSessionExtensionPrompt, remainingTime);
+  };
+
+  const handleSuccessfulLogin = async (response: object) => {
+    try {
+      const accessToken = response.headers.get('access-token');
+      const refreshToken = response.headers.get('refresh-token');
+      const remainingTime = calculateRemainingTime(refreshToken);
+
+      setTimeout(() => {
+        localStorage.removeItem('refreshToken');
+        navigate('/signup');
+      }, remainingTime);
+
+      if (accessToken === null || refreshToken === null) {
+        throw new Error('Access or refresh token not found');
+      } else {
+        const remainingTime = calculateRemainingTime(accessToken);
+        extendSession(remainingTime);
+        navigate('/home');
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleExtendSession = async () => {
+    const refreshToken = localStorage.getItem('refreshToken') || '';
+    const accessToken = localStorage.getItem('accessToken') || '';
+
+    const formData: ExtendSessionFormValues = {
+      token: accessToken,
+      refreshToken: refreshToken,
+    };
+    const response = await authService.extendSession(formData);
+
+    if (response) {
+      const newAccessToken = response.headers.get('access-token');
+      localStorage.setItem('accessToken', newAccessToken);
+      const remainingTime = calculateRemainingTime(newAccessToken);
+      extendSession(remainingTime);
+    } else {
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      return navigate('/signup');
     }
   };
 
