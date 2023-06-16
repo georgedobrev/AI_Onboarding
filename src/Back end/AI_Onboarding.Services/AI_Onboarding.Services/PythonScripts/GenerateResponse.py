@@ -44,7 +44,7 @@ for match in pinecone_results['matches']:
 # Generate response based on the question and context
 inputs = tokenizer(f"question: {question} context: {context}", return_tensors="pt")
 
-outputs = model.generate(**inputs, max_new_tokens=5000)
+outputs = model.generate(**inputs, max_new_tokens=512)
 
 res = tokenizer.batch_decode(outputs, skip_special_tokens=True)
 result_string = ' '.join(res)

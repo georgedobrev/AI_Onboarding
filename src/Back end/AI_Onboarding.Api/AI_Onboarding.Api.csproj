@@ -18,11 +18,14 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.5" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <Folder Include="Controllers\" />
-    <Folder Include="Filter\" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.6" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <Folder Include="Infrastructure\" />
+    <Folder Include="Infrastructure\Binders\" />
+    <Folder Include="Infrastructure\Extensions\" />
+    <Folder Include="Infrastructure\Filter\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -44,6 +47,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Filter\" />
+    <None Remove="Infrastructure\" />
+    <None Remove="Infrastructure\Binders\" />
+    <None Remove="Infrastructure\Extensions\" />
+    <None Remove="Infrastructure\Filter\" />
   </ItemGroup>
 </Project>
