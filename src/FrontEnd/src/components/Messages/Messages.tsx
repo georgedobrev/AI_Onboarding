@@ -2,22 +2,33 @@ import React, { useState } from 'react';
 import { TextField, IconButton } from '@mui/material';
 import { Send } from '@mui/icons-material';
 import FileUploader from './FileUploader.tsx';
+import { authService } from '../../services/authService.ts';
 import './Messages.css';
 
 const Messages: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [messages, setMessages] = useState<string[]>([]);
+  const [messages, setMessages] = useState<
+    { text: string; isAnswer: boolean; isTyping?: boolean }[]
+  >([]);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
   };
 
-  const handleSearchSubmit = (event: React.FormEvent) => {
+  const handleSearchSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (searchQuery.trim() !== '') {
-      setMessages((prevMessages) => [...prevMessages, searchQuery]);
+      setMessages((prevMessages) => [...prevMessages, { text: searchQuery, isAnswer: false }]);
       setSearchQuery('');
     }
+    setMessages((prevMessages) => [...prevMessages, { text: '', isAnswer: true, isTyping: true }]);
+    setTimeout(async () => {
+      const response = await authService.AISearchResponse(searchQuery);
+      setMessages((prevMessages) => [
+        ...prevMessages.slice(0, -1),
+        { text: response.data, isAnswer: true },
+      ]);
+    }, 1000);
   };
 
   return (
@@ -29,9 +40,14 @@ const Messages: React.FC = () => {
       <div className="messages-content-container">
         <div className="messages-content">
           <div className="chat-messages">
-            {messages.map((message, index) => (
-              <div key={index} className="message">
-                {message}
+            {messages.map((message) => (
+              <div
+                className={`message ${message.isAnswer ? 'answer' : ''} ${
+                  message.isTyping ? 'typing' : ''
+                }`}
+              >
+                {message.isAnswer && <div className="logo-container" />}
+                {message.text}
               </div>
             ))}
           </div>

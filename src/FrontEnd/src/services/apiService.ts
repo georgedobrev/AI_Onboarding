@@ -3,12 +3,13 @@ import config from '../config.json';
 import { lookup } from 'mime-types';
 import { toast } from 'react-toastify';
 
-const authHeader = () => {
+export const authHeader = () => {
   const accessToken = localStorage.getItem('accessToken');
 
   return {
     headers: {
       Authorization: `Bearer ${accessToken}`,
+      'Content-Type': 'application/json',
     },
   };
 };

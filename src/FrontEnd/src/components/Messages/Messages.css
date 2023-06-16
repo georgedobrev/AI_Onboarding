@@ -21,6 +21,7 @@
     overflow-y: auto;
     overflow-x: hidden;
     padding: 0px 10px;
+    z-index: 0;
 }
 
 .message {
@@ -30,13 +31,52 @@
     margin-block: 20px;
     border-radius: 20px;
     max-width: 70%;
+    align-self: flex-end;
+}
+
+.message.answer {
+    background-color: var(--answerColor);
     align-self: flex-start;
+    position: relative;
+
+}
+
+.message.answer::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    left: 14px;
+    width: 24px;
+    height: 24px;
+    background-image: url('src/assets/blankfactor-logo.jpg');
+    background-size: cover;
+    border-radius: 10%;
+    transform: translate(-50%, -50%);
 }
 
 .message.sent {
     align-self: flex-end;
 }
 
+@keyframes dot {
+    0% {
+        content: '•';
+    }
+    33% {
+        content: '•';
+    }
+    66% {
+        content: '••';
+    }
+    100% {
+        content: '•••';
+    }
+}
+
+.message.typing::after {
+    content: '•';
+    animation: dot 2s infinite;
+}
 
 .messages-title {
     display: flex;
@@ -125,6 +165,7 @@
     box-shadow: 4px 4px 10px var(--searchBarColor),
     -4px -4px 10px var(--searchBarColorBox);
     margin-bottom: 20px;
+    z-index: 1;
 }
 
 .attach-icon.MuiButtonBase-root,

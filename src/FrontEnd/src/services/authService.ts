@@ -1,8 +1,9 @@
 import { fetchWrapper } from './FetchWrapper.tsx';
 import config from '../config.json';
-import {FormValues as SignInForms} from '../components/SignIn/types.ts';
+import { FormValues as SignInForms } from '../components/SignIn/types.ts';
 import { FormValues as RegisterForms } from '../components/Register/types.ts';
 import { ExtendSessionFormValues } from '../components/SignIn/types.ts';
+import { authHeader } from './apiService.ts';
 
 interface LoginResponse {
   accessToken?: string;
@@ -21,6 +22,14 @@ interface ExtendSessionRequestBody {
 
 interface GoogleLoginRequestBody {
   token: string;
+}
+
+interface AISearchRequestBody {
+  searchQuery: string;
+}
+
+interface AISearchResponse {
+  answerQuery: string;
 }
 
 export const authService = {
@@ -110,6 +119,26 @@ export const authService = {
     } catch (error) {
       console.error(error);
       throw new Error('Google login failed');
+    }
+  },
+
+  AISearchResponse: async (formData: string | undefined) => {
+    try {
+      const accessToken = localStorage.getItem('accessToken');
+      const headers = authHeader();
+      const url = `${config.baseUrl}${config.AISearchEndpoint}`;
+      const response = await fetchWrapper.post<AISearchResponse, AISearchRequestBody>(
+        url,
+        formData,
+        headers
+      );
+      if (!response) {
+        throw new Error('Request failed');
+      }
+      return response;
+    } catch (error) {
+      console.error(error);
+      throw new Error('AI Search failed');
     }
   },
 };

@@ -5,6 +5,7 @@
   "uploadEndpoint": "Document/upload-file",
   "refreshTokenEndpoint": "Identity/refresh-token",
   "googleLoginEndpoint": "Identity/google-login",
+  "AISearchEndpoint": "AI/receive-response",
   "pdfID": "1",
   "docID": "2"
 }
