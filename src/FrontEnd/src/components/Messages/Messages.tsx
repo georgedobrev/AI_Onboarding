@@ -22,13 +22,11 @@ const Messages: React.FC = () => {
       setSearchQuery('');
     }
     setMessages((prevMessages) => [...prevMessages, { text: '', isAnswer: true, isTyping: true }]);
-    setTimeout(async () => {
-      const response = await authService.AISearchResponse(searchQuery);
-      setMessages((prevMessages) => [
-        ...prevMessages.slice(0, -1),
-        { text: response.data, isAnswer: true },
-      ]);
-    }, 1000);
+    const response = await authService.AISearchResponse(searchQuery);
+    setMessages((prevMessages) => [
+      ...prevMessages.slice(0, -1),
+      { text: response.data, isAnswer: true },
+    ]);
   };
 
   return (

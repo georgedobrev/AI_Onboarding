@@ -38,7 +38,6 @@
     background-color: var(--answerColor);
     align-self: flex-start;
     position: relative;
-
 }
 
 .message.answer::before {
