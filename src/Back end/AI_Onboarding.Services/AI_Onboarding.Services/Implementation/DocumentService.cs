@@ -10,7 +10,9 @@ using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.parser;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Spire.Presentation;
 using Xceed.Words.NET;
+using IShape = Spire.Presentation.IShape;
 
 namespace AI_Onboarding.Services.Implementation
 {
@@ -59,6 +61,27 @@ namespace AI_Onboarding.Services.Implementation
                             sb.AppendLine(paragraph.Text);
                         }
                     }
+                    break;
+                case (int)FileType.pptx:
+                    using (Presentation presentation = new Presentation())
+                    {
+                        presentation.LoadFromStream(document.File.OpenReadStream(),FileFormat.Auto);
+
+                        foreach (ISlide slide in presentation.Slides)
+                        {
+                            foreach (IShape shape in slide.Shapes)
+                            {
+                                if (shape is IAutoShape)
+                                {
+                                    foreach (TextParagraph tp in (shape as IAutoShape).TextFrame.Paragraphs)
+                                    {
+                                        sb.AppendLine(tp.Text);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
                     break;
             }
 

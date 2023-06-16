@@ -53,6 +53,13 @@ namespace AI_Onboarding.Data.Repository
             return entity;
         }
 
+        public IQueryable<T> FindAllByCondition(Expression<Func<T, bool>> predicate)
+        {
+            var entities = _entities.Where(predicate);
+
+            return entities.AsQueryable();
+        }
+
         public T? Remove(int id)
         {
             T? entity = Find(id);
