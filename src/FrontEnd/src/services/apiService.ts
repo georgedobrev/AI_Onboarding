@@ -2,16 +2,7 @@ import { fetchWrapper } from './FetchWrapper.tsx';
 import config from '../config.json';
 import { lookup } from 'mime-types';
 import { toast } from 'react-toastify';
-
-const authHeader = () => {
-  const accessToken = localStorage.getItem('accessToken');
-
-  return {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  };
-};
+import { authHeader } from './commonConfig.ts';
 
 const uploadFile = async (baseUrl: string, uploadEndpoint: string, file: File) => {
   const formData = new FormData();

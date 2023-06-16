@@ -34,7 +34,6 @@ const Signup: React.FC = () => {
   const handleGoogleSignupSuccess = async (credentialResponse: CredentialResponse) => {
     const response = await authService.googleLogin(credentialResponse.credential);
     await handleSuccessfulLogin(response);
-
     toast.success('Google login successful', {
       position: 'top-right',
       autoClose: 1000,
@@ -45,6 +44,7 @@ const Signup: React.FC = () => {
       progress: undefined,
       theme: 'dark',
     });
+
     return navigate('/home');
   };
 
