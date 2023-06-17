@@ -3,7 +3,7 @@ import AttachFileIcon from '@mui/icons-material/AttachFile';
 import IconButton from '@mui/material/IconButton';
 import { Document, Page } from 'react-pdf';
 import {apiService} from "../../services/apiService.ts";
-import con
+import config from "../../config.json"
 import './uploaded-file.css'
 
 const FileUploader: React.FC = () => {
@@ -12,7 +12,7 @@ const FileUploader: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0] || null;
+    const file = (event.target as HTMLInputElement)?.files?.[0] || null;
 
     if (file) {
       setPdfFile(file);
