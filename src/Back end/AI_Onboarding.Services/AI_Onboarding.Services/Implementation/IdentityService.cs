@@ -5,20 +5,29 @@ using AI_Onboarding.Services.Interfaces;
 using AI_Onboarding.ViewModels.JWTModels;
 using AI_Onboarding.ViewModels.ResponseModels;
 using AI_Onboarding.ViewModels.UserModels;
+using Amazon.Runtime.Internal.Endpoints.StandardLibrary;
 using AutoMapper;
 using Azure.Core;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using SendGrid;
+using SendGrid.Helpers.Mail;
+using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
+using System.Net.Mail;
 using System.Security.Claims;
 using System.Security.Policy;
 using System.Text;
+
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace AI_Onboarding.Services.Implementation
 {
@@ -206,6 +215,45 @@ namespace AI_Onboarding.Services.Implementation
                         return new TokensResponseViewModel { Success = false, ErrorMessage = "Registration failed", Tokens = null };
                     }
                 }
+            }
+        }
+
+        public async Task<BaseResponseViewModel> SendPasswordResetEmailAsync(string email)
+        {
+            try
+            {
+                var user = await _userManager.FindByEmailAsync(email);
+                if (user != null)
+                {
+                    var emailSettings = _configuration.GetSection("EmailSettings");
+                    var apiKey = emailSettings["ApiKey"];
+                    var senderEmail = emailSettings["SenderEmail"];
+                    var senderName = emailSettings["SenderName"];
+
+                    var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+                    var resetUrl = Url.Action("ResetPassword", "Authentication", new { token, email = user.Email }, Request.Scheme);
+
+                    var client = new SendGridClient(apiKey);
+                    var from = new EmailAddress(senderEmail, senderName);
+                    var to = new EmailAddress(user.Email);
+                    var subject = "Password Reset";
+
+                    var msg = MailHelper.CreateSingleEmail(from, to, subject, string.Empty, resetUrl);
+
+                    await client.SendEmailAsync(msg);
+
+                    return new BaseResponseViewModel { Success = true, ErrorMessage = string.Empty };
+                }
+                else
+                {
+                    return new BaseResponseViewModel { Success = false, ErrorMessage = "User not found" }; 
+                }
+            }
+
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while sending the password reset email.");
+                return new BaseResponseViewModel { Success = false, ErrorMessage = ex.Message };
             }
         }
     }

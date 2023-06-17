@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using AI_Onboarding.Data.Models;
 using System.Security.Claims;
 using SendGrid;
-
+using System.ComponentModel.DataAnnotations;
 
 namespace AI_Onboarding.Api.Controllers
 {
@@ -66,18 +66,15 @@ namespace AI_Onboarding.Api.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> ForgotPassword([FromBody] string email)
         {
-            var user = await _userManager.FindByEmailAsync(email);
-            if (user != null)
+            var result = await _identityServise.SendPasswordResetEmailAsync(email);
+            if (result.Success)
             {
-                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-                var link = Url.Action("ResetPassword", "Authentication", new { token, email = user.Email }, Request.Scheme);
-                var message = new Message(new string[] { user.Email! }, "link", link!);
-                var sendGridClient = new SendGridClient(_configuration["sendGrid:ApiKey"]);
-
-                return StatusCode(StatusCodes.Status200OK);
-
+                return Ok("Password reset email sent successfully.");
             }
-            return StatusCode(StatusCodes.Status400BadRequest);
+            else
+            {
+                return BadRequest(result.ErrorMessage);
+            }
 
         }
 
