@@ -42,6 +42,7 @@ const Messages: React.FC = () => {
       </div>
       <div className="messages-content-container">
         <div className="messages-content">
+          {!(location.pathname === '/account' && userRole === 'Administrator') && (
           <div className="chat-messages">
             {messages.map((message) => (
               <div
@@ -54,6 +55,7 @@ const Messages: React.FC = () => {
               </div>
             ))}
           </div>
+          )}
           {location.pathname === '/account' && userRole === 'Administrator' && <FileUploader />}
           {location.pathname === '/home' && (
             <form onSubmit={handleSearchSubmit} className="search-container">
@@ -74,11 +76,15 @@ const Messages: React.FC = () => {
             </form>
           )}
         </div>
+        {location.pathname === '/home' && (
+            <>
         <div className="vertical-messagesline"></div>
         <div className="files-content">
           <h2 className="files-title">Files</h2>
           <div className="horizontal-filesline"></div>
         </div>
+            </>
+        )}
       </div>
     </div>
   );

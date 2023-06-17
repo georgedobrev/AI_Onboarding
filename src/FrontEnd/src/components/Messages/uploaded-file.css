@@ -20,3 +20,74 @@
     font-weight: bold;
     color: #333333;
 }
+
+
+.pdf-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.pdf-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 80%; /* Set the desired width */
+    height: 80%; /* Set the desired height */
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    overflow-y: auto; /* Enable vertical scrolling */
+}
+
+
+.pdf-page {
+    width: 100% !important;
+}
+
+.pdf-main {
+    position: relative;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.pdf-main::before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color: var(--lineColor);
+}
+
+.pdf-navigation {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    color: var(--whiteColor);
+}
+
+.pdf-previous-page.MuiButtonBase-root,
+.pdf-previous-page.MuiIconButton-root.Mui-disabled,
+.pdf-previous-page {
+    color: var(--whiteColor)
+}
+
+.pdf-next-page.MuiButtonBase-root,
+.pdf-next-page.MuiIconButton-root.Mui-disabled,
+.pdf-next-page {
+    color: var(--whiteColor)
+}
+
+.attach-icon.MuiButtonBase-root,
+.attach-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}

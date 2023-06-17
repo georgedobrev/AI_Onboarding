@@ -98,11 +98,11 @@
     background-color: var(--lineColor);
 }
 
-.vertical-messagesline {
-    width: 1px;
-    height: 100%;
-    background-color: var(--lineColor);
-}
+/*.vertical-messagesline {*/
+/*    width: 1px;*/
+/*    height: 100%;*/
+/*    background-color: var(--lineColor);*/
+/*}*/
 
 .messages-content-container {
     position: relative;
@@ -116,32 +116,32 @@
 .messages-content {
     display: flex;
     height: 100vh;
-    width: 80%;
+    width: 100%;
     justify-content: end;
     z-index: 0;
 }
 
-.files-content {
-    display: flex;
-    flex-direction: column;
-    width: 25%;
-    height: 100%;
-    overflow: hidden;
-}
+/*.files-content {*/
+/*    display: flex;*/
+/*    flex-direction: column;*/
+/*    width: 25%;*/
+/*    height: 100%;*/
+/*    overflow: hidden;*/
+/*}*/
 
-.files-title {
-    display: flex;
-    justify-content: center;
-    color: var(--whiteColor);
-    width: 100%;
-    margin-block: 24px;
-}
+/*.files-title {*/
+/*    display: flex;*/
+/*    justify-content: center;*/
+/*    color: var(--whiteColor);*/
+/*    width: 100%;*/
+/*    margin-block: 24px;*/
+/*}*/
 
-.horizontal-filesline {
-    width: 100%;
-    height: 1px;
-    background-color: var(--lineColor);
-}
+/*.horizontal-filesline {*/
+/*    width: 100%;*/
+/*    height: 1px;*/
+/*    background-color: var(--lineColor);*/
+/*}*/
 
 .search-container {
     display: flex;
@@ -172,20 +172,4 @@
 .attach-icon,
 .send-btn {
     color: var(--whiteColor);
-}
-
-.attach-icon.MuiButtonBase-root,
-.attach-icon {
-    margin-block: 5px;
-    position: relative;
-}
-
-.attach-icon::before {
-    content: '';
-    position: absolute;
-    top: -6px;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background-color: var(--lineColor);
 }
