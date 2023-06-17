@@ -4,7 +4,6 @@ import { TextField, Button, InputAdornment, IconButton } from '@mui/material';
 import { CredentialResponse, GoogleLogin } from '@react-oauth/google';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import logoImage from '../../assets/blankfactor-logo.jpg';
-import './Signup.css';
 import { FormValues, ExtendSessionFormValues } from './types.ts';
 import { authService } from '../../services/authService.ts';
 import { toast } from 'react-toastify';

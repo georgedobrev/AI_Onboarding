@@ -3,7 +3,7 @@ import config from '../config.json';
 import { FormValues as SignInForms } from '../components/SignIn/types.ts';
 import { FormValues as RegisterForms } from '../components/Register/types.ts';
 import { ExtendSessionFormValues } from '../components/SignIn/types.ts';
-import { authHeader } from './commonConfig.ts';
+import { authHeaderAI } from './commonConfig.ts';
 
 interface LoginResponse {
   accessToken?: string;
@@ -33,6 +33,7 @@ interface AISearchResponse {
 }
 
 export const authService = {
+
   login: async (formData: SignInForms) => {
     try {
       const url = `${config.baseUrl}${config.loginEndpoint}`;
@@ -53,10 +54,15 @@ export const authService = {
       // TODO to be refactored
       const tokenParts = accessToken.split('.');
       const tokenPayload = JSON.parse(atob(tokenParts[1]));
+
+      const userRole = tokenPayload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+      localStorage.setItem('userRole', userRole);
+
       const expirationTime = tokenPayload.exp * 1000;
       const currentTime = new Date().getTime();
       const remainingTime = expirationTime - currentTime;
 
+      const role =
       setTimeout(() => {
         // TODO in next branch
       }, remainingTime);
@@ -124,7 +130,7 @@ export const authService = {
 
   AISearchResponse: async (formData: string | undefined) => {
     try {
-      const headers = authHeader();
+      const headers = authHeaderAI();
       const url = `${config.baseUrl}${config.AISearchEndpoint}`;
       const response = await fetchWrapper.post<AISearchResponse, AISearchRequestBody>(
         url,

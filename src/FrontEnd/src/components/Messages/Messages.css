@@ -173,3 +173,19 @@
 .send-btn {
     color: var(--whiteColor);
 }
+
+.attach-icon.MuiButtonBase-root,
+.attach-icon {
+    margin-block: 5px;
+    position: relative;
+}
+
+.attach-icon::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color: var(--lineColor);
+}

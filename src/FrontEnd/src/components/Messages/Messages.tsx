@@ -1,11 +1,16 @@
 import React, { useState } from 'react';
 import { TextField, IconButton } from '@mui/material';
 import { Send } from '@mui/icons-material';
+import { useLocation } from 'react-router-dom';
 import FileUploader from './FileUploader.tsx';
 import { authService } from '../../services/authService.ts';
 import './Messages.css';
 
+const userRole = localStorage.getItem('userRole');
+console.log(userRole);
+
 const Messages: React.FC = () => {
+  const location = useLocation();
   const [searchQuery, setSearchQuery] = useState('');
   const [messages, setMessages] = useState<
     { text: string; isAnswer: boolean; isTyping?: boolean }[]
@@ -49,23 +54,25 @@ const Messages: React.FC = () => {
               </div>
             ))}
           </div>
-          <form onSubmit={handleSearchSubmit} className="search-container">
-            <div className="search-input">
-              <FileUploader />
-              <TextField
-                placeholder="Write a message"
-                value={searchQuery}
-                onChange={handleSearchChange}
-                fullWidth
-                InputProps={{
-                  className: 'search-textfield',
-                }}
-              />
-              <IconButton className="send-icon" type="submit">
-                <Send className="send-btn" />
-              </IconButton>
-            </div>
-          </form>
+          {location.pathname === '/account' && userRole === 'Administrator' && <FileUploader />}
+          {location.pathname === '/home' && (
+            <form onSubmit={handleSearchSubmit} className="search-container">
+              <div className="search-input">
+                <TextField
+                  placeholder="Write a message"
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  fullWidth
+                  InputProps={{
+                    className: 'search-textfield',
+                  }}
+                />
+                <IconButton className="send-icon" type="submit">
+                  <Send className="send-btn" />
+                </IconButton>
+              </div>
+            </form>
+          )}
         </div>
         <div className="vertical-messagesline"></div>
         <div className="files-content">
