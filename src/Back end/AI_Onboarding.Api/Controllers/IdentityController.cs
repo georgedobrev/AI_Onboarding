@@ -8,6 +8,7 @@ using AI_Onboarding.Data.Models;
 using System.Security.Claims;
 using SendGrid;
 using System.ComponentModel.DataAnnotations;
+using AI_Onboarding.ViewModels.UserModels.TokenValidationModel;
 
 namespace AI_Onboarding.Api.Controllers
 {
@@ -75,7 +76,23 @@ namespace AI_Onboarding.Api.Controllers
             {
                 return BadRequest(result.ErrorMessage);
             }
+        }
 
+        [HttpPost("validate-reset-token")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ValidateResetToken([FromBody] ValidateTokenViewModel model)
+        {
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            var isTokenValid = await _userManager.VerifyUserTokenAsync(user, _userManager.Options.Tokens.PasswordResetTokenProvider, "ResetPassword", model.Token);
+
+            if (isTokenValid)
+            {
+                return Ok("Token is valid!");
+            }
+            else
+            {
+                return BadRequest("Token is invalid or expired!");
+            }
         }
 
         [HttpPost("refresh-token")]
