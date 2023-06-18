@@ -11,5 +11,6 @@ namespace AI_Onboarding.Services.Interfaces
         public Task<TokensResponseViewModel> LoginAsync(UserLoginViewModel user);
         public Task<TokensResponseViewModel> GoogleLoginAsync(string token);
         public TokensResponseViewModel RefreshTokenAsync(TokenViewModel tokens);
+        public Task<BaseResponseViewModel> SendPasswordResetEmailAsync(string email);
     }
 }

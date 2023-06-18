@@ -42,10 +42,12 @@ namespace AI_Onboarding.Services.Implementation
         private readonly ITokenService _tokenService;
         private readonly IConfiguration _configuration;
         private readonly ILogger<IdentityService> _logger;
+        private readonly IUrlHelper _urlHelper;
+        private readonly IHttpContextAccessor _contextAccessor;
 
         public IdentityService(IRepository<User> repository, IMapper mapper, UserManager<User> userManager, SignInManager<User> signInManager,
             ITokenService tokenService, IConfiguration configuration, ILogger<IdentityService> logger, IRepository<Role> repositoryRole,
-            IRepository<UserRole> repositoryUserRole)
+            IRepository<UserRole> repositoryUserRole, IUrlHelper urlHelper, IHttpContextAccessor httpContextAccessor)
         {
             _repository = repository;
             _mapper = mapper;
@@ -56,6 +58,8 @@ namespace AI_Onboarding.Services.Implementation
             _logger = logger;
             _repositoryRole = repositoryRole;
             _repositoryUserRole = repositoryUserRole;
+            _urlHelper = urlHelper;
+            _contextAccessor = _contextAccessor;
         }
 
         public async Task<BaseResponseViewModel> RegisterAsync(UserRegistrationViewModel viewUser)
@@ -231,7 +235,7 @@ namespace AI_Onboarding.Services.Implementation
                     var senderName = emailSettings["SenderName"];
 
                     var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-                    var resetUrl = Url.Action("ResetPassword", "Authentication", new { token, email = user.Email }, Request.Scheme);
+                    var resetUrl = _urlHelper.Action("ResetPassword", "Authentication", new { token, email = user.Email }, _contextAccessor.HttpContext.Request.Scheme);
 
                     var client = new SendGridClient(apiKey);
                     var from = new EmailAddress(senderEmail, senderName);

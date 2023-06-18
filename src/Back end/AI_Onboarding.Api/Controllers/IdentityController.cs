@@ -64,7 +64,7 @@ namespace AI_Onboarding.Api.Controllers
 
         [HttpPost("forgot-password")]
         [AllowAnonymous]
-        public async Task<IActionResult> ForgotPassword([FromBody] string email)
+        public async Task<IActionResult> SendPasswordResetEmailAsync([FromBody] string email)
         {
             var result = await _identityServise.SendPasswordResetEmailAsync(email);
             if (result.Success)
