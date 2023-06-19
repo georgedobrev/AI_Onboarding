@@ -44,6 +44,11 @@ const Signup: React.FC = () => {
       theme: 'dark',
     });
 
+    const accessToken = localStorage.getItem('accessToken');
+    const tokenParts = accessToken.split('.');
+    const tokenPayload = JSON.parse(atob(tokenParts[1]));
+    const userRole = tokenPayload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+    localStorage.setItem('userRole', userRole);
     return navigate('/home');
   };
 
