@@ -28,6 +28,7 @@ using System.Security.Policy;
 using System.Text;
 
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.AspNetCore.Routing;
 
 namespace AI_Onboarding.Services.Implementation
 {
@@ -44,10 +45,11 @@ namespace AI_Onboarding.Services.Implementation
         private readonly ILogger<IdentityService> _logger;
         private readonly IUrlHelper _urlHelper;
         private readonly IHttpContextAccessor _contextAccessor;
+        private readonly LinkGenerator _linkGenerator;
 
         public IdentityService(IRepository<User> repository, IMapper mapper, UserManager<User> userManager, SignInManager<User> signInManager,
             ITokenService tokenService, IConfiguration configuration, ILogger<IdentityService> logger, IRepository<Role> repositoryRole,
-            IRepository<UserRole> repositoryUserRole, IUrlHelper urlHelper, IHttpContextAccessor httpContextAccessor)
+            IRepository<UserRole> repositoryUserRole, IUrlHelper urlHelper, IHttpContextAccessor httpContextAccessor, LinkGenerator link)
         {
             _repository = repository;
             _mapper = mapper;
@@ -59,7 +61,8 @@ namespace AI_Onboarding.Services.Implementation
             _repositoryRole = repositoryRole;
             _repositoryUserRole = repositoryUserRole;
             _urlHelper = urlHelper;
-            _contextAccessor = _contextAccessor;
+            _contextAccessor = httpContextAccessor;
+            _linkGenerator = link;
         }
 
         public async Task<BaseResponseViewModel> RegisterAsync(UserRegistrationViewModel viewUser)
@@ -235,7 +238,11 @@ namespace AI_Onboarding.Services.Implementation
                     var senderName = emailSettings["SenderName"];
 
                     var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-                    var resetUrl = _urlHelper.Action("ResetPassword", "Authentication", new { token, email = user.Email }, _contextAccessor.HttpContext.Request.Scheme);
+                    var resetUrl = _linkGenerator.GetUriByAction(_contextAccessor.HttpContext,
+                                 action: "ResetPassword",
+                                 controller: "Authentication",
+                                 values: new { token, email = user.Email },
+                                 scheme: _contextAccessor.HttpContext.Request.Scheme);
 
                     var client = new SendGridClient(apiKey);
                     var from = new EmailAddress(senderEmail, senderName);
@@ -250,7 +257,7 @@ namespace AI_Onboarding.Services.Implementation
                 }
                 else
                 {
-                    return new BaseResponseViewModel { Success = false, ErrorMessage = "User not found" }; 
+                    return new BaseResponseViewModel { Success = false, ErrorMessage = "User not found" };
                 }
             }
 

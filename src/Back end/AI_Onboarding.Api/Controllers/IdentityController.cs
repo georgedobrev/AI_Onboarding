@@ -9,6 +9,7 @@ using System.Security.Claims;
 using SendGrid;
 using System.ComponentModel.DataAnnotations;
 using AI_Onboarding.ViewModels.UserModels.TokenValidationModel;
+using AI_Onboarding.ViewModels.UserModels.PasswordResetModels;
 
 namespace AI_Onboarding.Api.Controllers
 {
@@ -92,6 +93,24 @@ namespace AI_Onboarding.Api.Controllers
             else
             {
                 return BadRequest("Token is invalid or expired!");
+            }
+        }
+
+        [HttpPost("change-password")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ChangePassword([FromBody] ResetPasswordViewModel model)
+        {
+            var user = await _userManager.FindByEmailAsync(model.Email);
+
+            var result = await _userManager.ResetPasswordAsync(user, model.Token, model.NewPassword);
+
+            if (result.Succeeded)
+            {
+                return Ok("Password changed successfully!");
+            }
+            else
+            {
+                return BadRequest("Failed to change password!");
             }
         }
 

@@ -48,7 +48,8 @@ namespace AI_Onboarding.Api
             });
             builder.Host.UseSerilog((hostingContext, logger) => logger.ReadFrom.Configuration(hostingContext.Configuration));
             builder.Services.Configure<DataProtectionTokenProviderOptions>(opts => opts.TokenLifespan = TimeSpan.FromHours(10));
-            builder.Services.AddHttpContextAccessor();
+            builder.Services.RegisterUrlHelper();
+            builder.Services.RegisterHttpContextAccessor();
 
             ServiceCollectionExtension.RegisterDbContext(builder.Services, builder.Configuration, builder.Environment);
             ServiceCollectionExtension.ConfigureNoSQLDatabase(builder.Services, builder.Configuration);
