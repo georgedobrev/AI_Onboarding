@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
-import IconButton from '@mui/material/IconButton';
 import { Document, Page } from 'react-pdf';
-import {apiService} from "../../services/apiService.ts";
-import config from "../../config.json"
-import './uploaded-file.css'
+import { apiService } from '../../services/apiService.ts';
+import config from '../../config.json';
+import './uploaded-file.css';
+import { Button, CircularProgress } from '@mui/material';
 
 const FileUploader: React.FC = () => {
   const [pdfFile, setPdfFile] = useState<File | null>(null);
   const [numPages, setNumPages] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [loading, setLoading] = useState<boolean>(false); // Added loading state
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = (event.target as HTMLInputElement)?.files?.[0] || null;
@@ -17,6 +18,7 @@ const FileUploader: React.FC = () => {
     if (file) {
       setPdfFile(file);
       setCurrentPage(1);
+      setLoading(true); // Show loading spinner when file is selected
     }
 
     try {
@@ -31,6 +33,8 @@ const FileUploader: React.FC = () => {
       }
     } catch (error) {
       console.error('Error uploading file:', error);
+    } finally {
+      setLoading(false); // Hide loading spinner after API response
     }
   };
 
@@ -50,52 +54,65 @@ const FileUploader: React.FC = () => {
     <div className="pdf-main">
       {pdfFile ? (
         <div className="pdf-container">
-          <div className="pdf-wrapper">
-            <Document
+          {loading ? ( // Display loading spinner while waiting for API response
+            <div className="loading-spinner">
+              <CircularProgress size={24} />
+            </div>
+          ) : (
+            <div className="pdf-wrapper">
+              <Document
                 file={pdfFile}
                 onLoadSuccess={handleDocumentLoadSuccess}
                 onLoadError={(error) => console.error('Error loading PDF:', error)}
-            >
-              <Page
+              >
+                <Page
                   pageNumber={currentPage}
                   className="pdf-page"
                   renderMode="canvas"
                   renderTextLayer={false}
                   renderAnnotationLayer={false}
                   renderInteractiveForms={false}
-              />
-            </Document>
-          </div>
+                />
+              </Document>
+            </div>
+          )}
           <div className="pdf-navigation">
-            <IconButton
+            <Button
               onClick={handlePreviousPage}
               disabled={currentPage === 1}
               className="pdf-previous-page"
+              variant="contained"
             >
               Previous Page
-            </IconButton>
+            </Button>
             <span>{`${currentPage} / ${numPages}`}</span>
-            <IconButton
+            <Button
               onClick={handleNextPage}
               disabled={currentPage === numPages}
               className="pdf-next-page"
+              variant="contained"
             >
               Next Page
-            </IconButton>
+            </Button>
           </div>
         </div>
-      ) : (
-        <IconButton component="label" htmlFor="file-input" className="attach-icon">
-          <input
-            type="file"
-            id="file-input"
-            accept=".pdf"
-            style={{ display: 'none' }}
-            onChange={handleFileChange}
-          />
-          <AttachFileIcon className="attach-btn" />
-        </IconButton>
-      )}
+      ) : null}
+
+      <div className="attach-icon">
+        <input
+          type="file"
+          id="file-input"
+          accept=".pdf"
+          style={{ display: 'none' }}
+          onChange={handleFileChange}
+        />
+        <label htmlFor="file-input">
+          <Button variant="contained" component="span" className="attach-btn">
+            <AttachFileIcon />
+            <p>UPLOAD FILE</p>
+          </Button>
+        </label>
+      </div>
     </div>
   );
 };
