@@ -5,10 +5,6 @@ using AI_Onboarding.Services.Interfaces;
 using AI_Onboarding.ViewModels.JWTModels;
 using Microsoft.AspNetCore.Identity;
 using AI_Onboarding.Data.Models;
-using System.Security.Claims;
-using SendGrid;
-using System.ComponentModel.DataAnnotations;
-using AI_Onboarding.ViewModels.UserModels.TokenValidationModel;
 using AI_Onboarding.ViewModels.UserModels.PasswordResetModels;
 
 namespace AI_Onboarding.Api.Controllers
@@ -66,9 +62,9 @@ namespace AI_Onboarding.Api.Controllers
 
         [HttpPost("forgot-password")]
         [AllowAnonymous]
-        public async Task<IActionResult> SendPasswordResetEmailAsync([FromBody] string email)
+        public async Task<IActionResult> SendPasswordResetEmailAsync([FromBody] SendEmailViewModel model)
         {
-            var result = await _identityServise.SendPasswordResetEmailAsync(email);
+            var result = await _identityServise.SendPasswordResetEmailAsync(model.Email);
             if (result.Success)
             {
                 return Ok("Password reset email sent successfully.");
@@ -100,6 +96,11 @@ namespace AI_Onboarding.Api.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> ChangePassword([FromBody] ResetPasswordViewModel model)
         {
+            if (model == null || string.IsNullOrEmpty(model.Email) || string.IsNullOrEmpty(model.Token) || string.IsNullOrEmpty(model.NewPassword))
+            {
+                return BadRequest("Invalid input.");
+            }
+
             var user = await _userManager.FindByEmailAsync(model.Email);
 
             var result = await _userManager.ResetPasswordAsync(user, model.Token, model.NewPassword);

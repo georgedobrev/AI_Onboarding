@@ -22,6 +22,5 @@
   <ItemGroup>
     <Folder Include="DocumentModels\" />
     <Folder Include="ResponseModels\" />
-    <Folder Include="UserModels\PasswordResetModels\" />
   </ItemGroup>
 </Project>

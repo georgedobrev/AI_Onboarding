@@ -5,29 +5,18 @@ using AI_Onboarding.Services.Interfaces;
 using AI_Onboarding.ViewModels.JWTModels;
 using AI_Onboarding.ViewModels.ResponseModels;
 using AI_Onboarding.ViewModels.UserModels;
-using Amazon.Runtime.Internal.Endpoints.StandardLibrary;
 using AutoMapper;
-using Azure.Core;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Routing;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using SendGrid;
 using SendGrid.Helpers.Mail;
-using System;
 using System.IdentityModel.Tokens.Jwt;
-using System.Net.Http.Headers;
-using System.Net.Mail;
 using System.Security.Claims;
-using System.Security.Policy;
 using System.Text;
-
-using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.AspNetCore.Routing;
 
 namespace AI_Onboarding.Services.Implementation
@@ -244,12 +233,18 @@ namespace AI_Onboarding.Services.Implementation
                                  values: new { token, email = user.Email },
                                  scheme: _contextAccessor.HttpContext.Request.Scheme);
 
+                    var emailTemplatePath = Path.Combine(Directory.GetCurrentDirectory(), "src", "Back end", "AI_Onboarding.Common", "PasswordResetEmailTemplate.html");
+                    var emailTemplate = await File.ReadAllTextAsync(emailTemplatePath);
+
+                    var emailBody = emailTemplate.Replace("{RESET_LINK}", resetUrl);
+
+
                     var client = new SendGridClient(apiKey);
                     var from = new EmailAddress(senderEmail, senderName);
                     var to = new EmailAddress(user.Email);
                     var subject = "Password Reset";
 
-                    var msg = MailHelper.CreateSingleEmail(from, to, subject, string.Empty, resetUrl);
+                    var msg = MailHelper.CreateSingleEmail(from, to, subject, string.Empty, emailBody);
 
                     await client.SendEmailAsync(msg);
 
