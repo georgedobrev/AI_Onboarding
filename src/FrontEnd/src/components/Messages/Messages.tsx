@@ -7,7 +7,6 @@ import { authService } from '../../services/authService.ts';
 import './Messages.css';
 
 const userRole = localStorage.getItem('userRole');
-console.log(userRole);
 
 const Messages: React.FC = () => {
   const location = useLocation();

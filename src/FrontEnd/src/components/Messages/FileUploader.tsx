@@ -10,7 +10,8 @@ const FileUploader: React.FC = () => {
   const [pdfFile, setPdfFile] = useState<File | null>(null);
   const [numPages, setNumPages] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [loading, setLoading] = useState<boolean>(false); // Added loading state
+  const [loading, setLoading] = useState<boolean>(false);
+  const [responseReceived, setResponseReceived] = useState<boolean>(false);
 
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = (event.target as HTMLInputElement)?.files?.[0] || null;
@@ -18,7 +19,8 @@ const FileUploader: React.FC = () => {
     if (file) {
       setPdfFile(file);
       setCurrentPage(1);
-      setLoading(true); // Show loading spinner when file is selected
+      setLoading(true);
+      setResponseReceived(false); // Reset responseReceived state
     }
 
     try {
@@ -27,6 +29,7 @@ const FileUploader: React.FC = () => {
       const response = await apiService.uploadFile(baseUrl, uploadEndpoint, file);
       if (response) {
         // File uploaded successfully
+        setResponseReceived(true); // Set responseReceived state to true
       } else {
         // Error uploading file
         console.error('Error uploading file:', response);
@@ -34,7 +37,7 @@ const FileUploader: React.FC = () => {
     } catch (error) {
       console.error('Error uploading file:', error);
     } finally {
-      setLoading(false); // Hide loading spinner after API response
+      setLoading(false);
     }
   };
 
@@ -43,18 +46,22 @@ const FileUploader: React.FC = () => {
   };
 
   const handlePreviousPage = () => {
-    setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
+    if (responseReceived) {
+      setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
+    }
   };
 
   const handleNextPage = () => {
-    setCurrentPage((prevPage) => Math.min(prevPage + 1, numPages));
+    if (responseReceived) {
+      setCurrentPage((prevPage) => Math.min(prevPage + 1, numPages));
+    }
   };
 
   return (
     <div className="pdf-main">
       {pdfFile ? (
         <div className="pdf-container">
-          {loading ? ( // Display loading spinner while waiting for API response
+          {loading ? (
             <div className="loading-spinner">
               <CircularProgress size={24} />
             </div>
@@ -71,30 +78,31 @@ const FileUploader: React.FC = () => {
                   renderMode="canvas"
                   renderTextLayer={false}
                   renderAnnotationLayer={false}
-                  renderInteractiveForms={false}
                 />
               </Document>
             </div>
           )}
-          <div className="pdf-navigation">
-            <Button
-              onClick={handlePreviousPage}
-              disabled={currentPage === 1}
-              className="pdf-previous-page"
-              variant="contained"
-            >
-              Previous Page
-            </Button>
-            <span>{`${currentPage} / ${numPages}`}</span>
-            <Button
-              onClick={handleNextPage}
-              disabled={currentPage === numPages}
-              className="pdf-next-page"
-              variant="contained"
-            >
-              Next Page
-            </Button>
-          </div>
+          {responseReceived && (
+            <div className="pdf-navigation">
+              <Button
+                onClick={handlePreviousPage}
+                disabled={currentPage === 1}
+                className="pdf-previous-page"
+                variant="contained"
+              >
+                Previous Page
+              </Button>
+              <span>{`${currentPage} / ${numPages}`}</span>
+              <Button
+                onClick={handleNextPage}
+                disabled={currentPage === numPages}
+                className="pdf-next-page"
+                variant="contained"
+              >
+                Next Page
+              </Button>
+            </div>
+          )}
         </div>
       ) : null}
 
