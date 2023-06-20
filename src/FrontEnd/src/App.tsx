@@ -92,12 +92,9 @@ const App = () => {
                   redirectTo="/signup"
                 />
               }
-            <Route
-              path="/home"
-              element={<ProtectedRouteHome element={<Home />} redirectTo="/signup" />}
             />
             <Route
-              path="/account/*"
+              path="/account/"
               element={
                 <ProtectedRouteAccount
                   element={<Account />}
