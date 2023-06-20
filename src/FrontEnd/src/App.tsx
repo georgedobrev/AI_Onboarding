@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from 'react-router-dom';
-import './App.css';
 import Home from './components/Home/Home.tsx';
 import Signup from './components/SignIn/Signup.tsx';
 import Register from './components/Register/Register.tsx';
 import Account from './components/Account/Account.tsx';
 import ResetPassword from './components/ResetPassword/ResetPassword.tsx';
 import { ToastContainer } from 'react-toastify';
+import config from './config.json';
 import 'react-toastify/dist/ReactToastify.css';
 import { pdfjs } from 'react-pdf';
 import { GoogleOAuthProvider } from '@react-oauth/google';
+import './App.css';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 const clientId = '87684702779-3ju9p8rrlfrbpq18e18ldd79eooph69g.apps.googleusercontent.com';
@@ -30,9 +31,8 @@ const ProtectedRouteHome: React.FC<ProtectedRouteHomeProps> = ({ element, redire
 
   if (!accessToken) {
     return <Navigate to={redirectTo} replace />;
-  } else {
-    return element;
   }
+  return element;
 };
 
 const ProtectedRouteAccount: React.FC<ProtectedRouteAccountProps> = ({
@@ -45,13 +45,12 @@ const ProtectedRouteAccount: React.FC<ProtectedRouteAccountProps> = ({
 
   if (!accessToken) {
     return <Navigate to={redirectTo} replace />;
-  } else {
-    const tokenParts = accessToken.split('.');
-    const tokenPayload = JSON.parse(atob(tokenParts[1]));
-    const userRole = tokenPayload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
-    if (userRole === 'Administrator') {
-      return element;
-    }
+  }
+  const tokenParts = accessToken.split('.');
+  const tokenPayload = JSON.parse(atob(tokenParts[1]));
+  const userRole = tokenPayload[config.JWTUserRole];
+  if (userRole === 'Administrator') {
+    return element;
   }
 
   if (!allowedPaths.includes(location.pathname)) {
@@ -93,6 +92,9 @@ const App = () => {
                   redirectTo="/signup"
                 />
               }
+            <Route
+              path="/home"
+              element={<ProtectedRouteHome element={<Home />} redirectTo="/signup" />}
             />
             <Route
               path="/account/*"
