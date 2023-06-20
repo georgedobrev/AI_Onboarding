@@ -25,13 +25,21 @@ const Messages: React.FC = () => {
       setMessages((prevMessages) => [...prevMessages, { text: searchQuery, isAnswer: false }]);
       setSearchQuery('');
     }
-    setMessages((prevMessages) => [...prevMessages, { text: '', isAnswer: true, isTyping: true }]);
-    const response = await authService.AISearchResponse(searchQuery);
-    setMessages((prevMessages) => [
-      ...prevMessages.slice(0, -1),
-      { text: response.data, isAnswer: true },
-    ]);
+
+    if (!messages.some((message) => message.isTyping)) {
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { text: '', isAnswer: true, isTyping: true },
+      ]);
+      const response = await authService.AISearchResponse(searchQuery);
+      setMessages((prevMessages) => [
+        ...prevMessages.slice(0, -1),
+        { text: response.data, isAnswer: true },
+      ]);
+    }
   };
+
+  const isMessageInProgress = messages.some((message) => message.isTyping);
 
   return (
     <div className="messages-container">
@@ -68,7 +76,7 @@ const Messages: React.FC = () => {
                     className: 'search-textfield',
                   }}
                 />
-                <IconButton className="send-icon" type="submit">
+                <IconButton className="send-icon" type="submit" disabled={isMessageInProgress}>
                   <Send className="send-btn" />
                 </IconButton>
               </div>

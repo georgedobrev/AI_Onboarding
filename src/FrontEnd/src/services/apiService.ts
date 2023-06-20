@@ -21,11 +21,13 @@ const uploadFile = async (baseUrl: string, uploadEndpoint: string, file: File) =
     console.error('Unsupported file type:', mimeType);
     return;
   }
-
   formData.append('FileTypeId', fileId);
-
   try {
-    const response = await fetchWrapper.post(`${baseUrl}${uploadEndpoint}`, formData, authHeaderFile());
+    const response = await fetchWrapper.post(
+      `${baseUrl}${uploadEndpoint}`,
+      formData,
+      authHeaderFile()
+    );
 
     if (response) {
       // File uploaded successfully
@@ -50,5 +52,5 @@ const uploadFile = async (baseUrl: string, uploadEndpoint: string, file: File) =
 };
 
 export const apiService = {
-  uploadFile,
+    uploadFile,
 };
