@@ -10,16 +10,22 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@cyntler/react-doc-viewer": "^1.13.0",
     "@emotion/react": "^11.11.0",
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.11.16",
     "@mui/material": "^5.13.3",
     "@react-oauth/google": "^0.11.0",
     "axios": "^1.4.0",
+    "docx": "^8.0.4",
     "mime-types": "^2.1.35",
+    "pdfjs-dist": "^3.7.107",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-file-viewer": "^0.5.0",
     "react-hook-form": "^7.44.3",
+    "react-pdf": "^7.1.2",
+    "react-pptx": "^2.18.0",
     "react-router-dom": "^6.11.2",
     "react-toastify": "^9.1.3"
   },

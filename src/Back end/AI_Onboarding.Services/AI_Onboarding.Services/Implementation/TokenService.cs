@@ -21,13 +21,13 @@ namespace AI_Onboarding.Services.Implementation
             _configuration = configuration;
         }
 
-        public TokenViewModel GenerateAccessToken(string email, int id, string[] roleNames, bool isLogin = false)
+        public TokenViewModel GenerateAccessToken(string email, string name, int id, string[] roleNames, bool isLogin = false)
         {
             int.TryParse(_configuration["JWT:TokenValidityInMinutes"], out int tokenValidityInMinutes);
             var expiration = DateTime.UtcNow.AddMinutes(tokenValidityInMinutes);
 
             var accessToken = CreateJwtToken(
-                CreateClaims(email, id, roleNames),
+                CreateClaims(email, name, id, roleNames),
                 CreateSigningCredentials(),
                 expiration
             );
@@ -82,12 +82,13 @@ namespace AI_Onboarding.Services.Implementation
             );
         }
 
-        private Claim[] CreateClaims(string email, int id, string[] roleNames)
+        private Claim[] CreateClaims(string email, string name, int id, string[] roleNames)
         {
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Email, email),
-                new Claim(ClaimTypes.NameIdentifier, id.ToString())
+                new Claim(ClaimTypes.NameIdentifier, id.ToString()),
+                new Claim(ClaimTypes.Name, name)
             };
 
             foreach (var roleName in roleNames)

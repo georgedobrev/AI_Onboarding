@@ -42,7 +42,7 @@ embedding = HuggingFaceEmbeddings(model_name=model_name, model_kwargs={'device':
 
 question = sys.argv[1]
 
-retriever = Pinecone.from_existing_index(index_name=index_name, embedding=embedding).as_retriever(search_kwargs={"k":5})
+retriever = Pinecone.from_existing_index(index_name=index_name, embedding=embedding).as_retriever(search_kwargs={"k":3})
 
 qa = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff", retriever = retriever)
 
@@ -63,4 +63,3 @@ def process_llm_response(llm_response):
 
 llm_response = qa(question)
 process_llm_response(llm_response)
-
