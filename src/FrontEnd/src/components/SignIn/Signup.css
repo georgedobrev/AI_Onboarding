@@ -83,23 +83,15 @@
     margin-bottom: 2.6rem;
 }
 
-.email-field,
-.password-field,
-.signup-continue-btn {
+.email-field, .password-field, .signup-continue-btn {
     width: 320px;
-    top: 50px;
 }
 
-.email-field {
-    top: 30px;
+.email-field, .password-field {
+    margin-block: 20px;
 }
 
-.password-field {
-    top: 40px;
-}
-
-.signup-continue-btn,
-.signup-continue-btn.MuiButton-root {
+.signup-continue-btn, .signup-continue-btn.MuiButton-root {
     width: 320px;
     background-color: var(--blankfactorLogoDarkBlue);
     color: var(--whiteColor);
@@ -136,7 +128,7 @@
     align-items: center;
     margin-top: 14px;
     margin-bottom: 24px;
-    font-size: 14px;
+    font-size: 16px;
 }
 
 .signup-header-forms {
@@ -144,7 +136,9 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin-bottom: 60px;
+    margin-bottom: 10px;
+    margin-top: 20px;
+    gap: 5px
 }
 
 .signup-header-container {
@@ -155,6 +149,22 @@
 }
 
 .signup-hyperlink {
+    color: var(--blankfactorLogoLightBlue);
+    text-decoration: none;
+    margin-left: 6px;
+}
+
+.forgot-password {
+    width: 320px;
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: center;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.forgot-password-hyperlink {
     color: var(--blankfactorLogoLightBlue);
     text-decoration: none;
     margin-left: 6px;

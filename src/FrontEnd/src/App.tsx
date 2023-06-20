@@ -5,6 +5,7 @@ import Home from './components/Home/Home.tsx';
 import Signup from './components/SignIn/Signup.tsx';
 import Register from './components/Register/Register.tsx';
 import Account from './components/Account/Account.tsx';
+import ResetPassword from './components/ResetPassword/ResetPassword.tsx';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { pdfjs } from 'react-pdf';
@@ -78,6 +79,8 @@ const App = () => {
             <Route path="/" element={<Navigate to="/signup" />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/account/reset-password" element={<ResetPassword />} />
+            <Route path="/account/reset-password/success" element={<ResetPassword />} />
             <Route
               path="/home"
               element={
