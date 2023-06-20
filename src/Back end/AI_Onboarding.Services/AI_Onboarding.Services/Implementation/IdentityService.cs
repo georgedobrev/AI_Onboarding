@@ -18,6 +18,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Routing;
+using System.Web;
 
 namespace AI_Onboarding.Services.Implementation
 {
@@ -224,19 +225,20 @@ namespace AI_Onboarding.Services.Implementation
                     var emailSettings = _configuration.GetSection("EmailSettings");
                     var apiKey = emailSettings["ApiKey"];
                     var senderEmail = emailSettings["SenderEmail"];
-                    var senderName = emailSettings["SenderName"];
+                    var senderName = emailSettings["Sendername"];
 
                     var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-                    var resetUrl = _linkGenerator.GetUriByAction(_contextAccessor.HttpContext,
-                                 action: "ResetPassword",
-                                 controller: "Authentication",
-                                 values: new { token, email = user.Email },
-                                 scheme: _contextAccessor.HttpContext.Request.Scheme);
 
-                    var emailTemplatePath = Path.Combine(Directory.GetCurrentDirectory(), "src", "Back end", "AI_Onboarding.Common", "PasswordResetEmailTemplate.html");
+                    string baseUrl = "https://localhost:7243/account/reset-password";
+                    string resetUrl = $"{baseUrl}?token={HttpUtility.UrlEncode(token)}&email={HttpUtility.UrlEncode(email)}";
+
+                    var emailTemplatePath = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..", "..", "src", "Back end", "AI_Onboarding.Common", "EmailTemplate", "PasswordResetEmailTemplate.html");
+                    emailTemplatePath = Path.GetFullPath(emailTemplatePath);
+
                     var emailTemplate = await File.ReadAllTextAsync(emailTemplatePath);
 
-                    var emailBody = emailTemplate.Replace("{RESET_LINK}", resetUrl);
+                    var emailBodyWithUrl = emailTemplate.Replace("{{action_url}}", resetUrl);
+                    var emailBody = emailBodyWithUrl.Replace("{{name}}", user.FirstName);
 
 
                     var client = new SendGridClient(apiKey);
@@ -244,9 +246,11 @@ namespace AI_Onboarding.Services.Implementation
                     var to = new EmailAddress(user.Email);
                     var subject = "Password Reset";
 
-                    var msg = MailHelper.CreateSingleEmail(from, to, subject, string.Empty, emailBody);
+                    var msg = MailHelper.CreateSingleEmail(from, to, subject, " ", emailBody);
+                    var response = await client.SendEmailAsync(msg);
+                    _logger.LogInformation($"SendGrid Response Status Code: {response.StatusCode}");
+                    _logger.LogInformation($"SendGrid Response Body: {await response.Body.ReadAsStringAsync()}");
 
-                    await client.SendEmailAsync(msg);
 
                     return new BaseResponseViewModel { Success = true, ErrorMessage = string.Empty };
                 }

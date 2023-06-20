@@ -60,6 +60,26 @@ namespace AI_Onboarding.Api.Controllers
             }
         }
 
+        [HttpPost("refresh-token")]
+        [AllowAnonymous]
+        public IActionResult RefreshToken([FromBody] TokenViewModel tokensModel)
+        {
+            var result = _identityServise.RefreshTokenAsync(tokensModel);
+            if (result.Success)
+            {
+                int.TryParse(_configuration["JWT:RefreshTokenValidityInDays"], out int refreshTokenValidityInDays);
+                int.TryParse(_configuration["JWT:TokenValidityInMinutes"], out int tokenValidityInMinutes);
+
+                Response.Headers.Add("Access-Token", result.Tokens.Token);
+
+                return Ok(result.ErrorMessage);
+            }
+            else
+            {
+                return BadRequest(result.ErrorMessage);
+            }
+        }
+
         [HttpPost("forgot-password")]
         [AllowAnonymous]
         public async Task<IActionResult> SendPasswordResetEmailAsync([FromBody] SendEmailViewModel model)
@@ -105,6 +125,7 @@ namespace AI_Onboarding.Api.Controllers
 
             var result = await _userManager.ResetPasswordAsync(user, model.Token, model.NewPassword);
 
+
             if (result.Succeeded)
             {
                 return Ok("Password changed successfully!");
@@ -112,26 +133,6 @@ namespace AI_Onboarding.Api.Controllers
             else
             {
                 return BadRequest("Failed to change password!");
-            }
-        }
-
-        [HttpPost("refresh-token")]
-        [AllowAnonymous]
-        public IActionResult RefreshToken([FromBody] TokenViewModel tokensModel)
-        {
-            var result = _identityServise.RefreshTokenAsync(tokensModel);
-            if (result.Success)
-            {
-                int.TryParse(_configuration["JWT:RefreshTokenValidityInDays"], out int refreshTokenValidityInDays);
-                int.TryParse(_configuration["JWT:TokenValidityInMinutes"], out int tokenValidityInMinutes);
-
-                Response.Headers.Add("Access-Token", result.Tokens.Token);
-
-                return Ok(result.ErrorMessage);
-            }
-            else
-            {
-                return BadRequest(result.ErrorMessage);
             }
         }
 
