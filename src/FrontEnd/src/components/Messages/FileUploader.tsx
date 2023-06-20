@@ -35,15 +35,9 @@ const FileUploader: React.FC = () => {
 
       if (responses.every((response) => response)) {
         const extension = files[0].name.split('.').pop()?.toLowerCase();
-        if (extension === 'pdf') {
-          setDocumentType('pdf');
-        } else if (extension === 'docx' || extension === 'pptx') {
+        if (extension === 'pdf' || extension === 'docx' || extension === 'pptx') {
           setDocumentType(extension);
-        } else {
-          setDocumentType(null);
-          console.error('Unsupported file type:', extension);
         }
-
         setResponseReceived(true);
       } else {
         console.error('Error uploading files:', responses);

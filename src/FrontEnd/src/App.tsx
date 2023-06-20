@@ -28,7 +28,6 @@ const ProtectedRouteHome: React.FC<ProtectedRouteHomeProps> = ({ element, redire
   const accessToken = localStorage.getItem('accessToken');
 
   if (!accessToken) {
-    // Redirect to the specified route if there is no access token
     return <Navigate to={redirectTo} replace />;
   } else {
     return element;
@@ -44,7 +43,6 @@ const ProtectedRouteAccount: React.FC<ProtectedRouteAccountProps> = ({
   const location = useLocation();
 
   if (!accessToken) {
-    // Redirect to the specified route if there is no access token
     return <Navigate to={redirectTo} replace />;
   } else {
     const tokenParts = accessToken.split('.');
@@ -56,11 +54,8 @@ const ProtectedRouteAccount: React.FC<ProtectedRouteAccountProps> = ({
   }
 
   if (!allowedPaths.includes(location.pathname)) {
-    // Redirect to the specified route if the current path is not allowed
     return <Navigate to={redirectTo} replace />;
   }
-
-  // Allow access to the current path without any checks
   return <Navigate to={redirectTo} replace />;
 };
 
@@ -68,14 +63,11 @@ const App = () => {
   const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
-    // Perform any initialization logic here
-    // For example, check if the user has an access token in local storage
-
     setIsInitialized(true);
   }, []);
 
   if (!isInitialized) {
-    return null; // Render a loading state or splash screen while initializing
+    return null;
   }
 
   return (
