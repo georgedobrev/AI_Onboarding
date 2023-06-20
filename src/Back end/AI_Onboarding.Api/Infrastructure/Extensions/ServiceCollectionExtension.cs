@@ -14,7 +14,6 @@ using Microsoft.AspNetCore.Identity;
 using MongoDB.Driver;
 using AI_Onboarding.Data.NoSQLDatabase.Interfaces;
 using AI_Onboarding.Data.NoSQLDatabase;
-using Microsoft.AspNetCore.Mvc;
 
 public static class ServiceCollectionExtension
 {
@@ -50,11 +49,6 @@ public static class ServiceCollectionExtension
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
         services.AddScoped<IDocumentRepository, DocumentRepository>();
-
-        services.Configure<MvcOptions>(options =>
-        {
-            options.ModelBinderProviders.Insert(0, new DocumentViewModelBinderProvider());
-        });
 
         services.AddScopedServiceTypes(typeof(TokenService).Assembly, typeof(IService));
         services.AddAutoMapper(typeof(UserProfile));

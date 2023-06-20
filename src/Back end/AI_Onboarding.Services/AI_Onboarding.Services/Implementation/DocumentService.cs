@@ -61,7 +61,7 @@ namespace AI_Onboarding.Services.Implementation
                 case (int)FileType.pptx:
                     using (Presentation presentation = new Presentation())
                     {
-                        presentation.LoadFromStream(document.File.OpenReadStream(),FileFormat.Auto);
+                        presentation.LoadFromStream(document.File.OpenReadStream(), FileFormat.Auto);
 
                         foreach (ISlide slide in presentation.Slides)
                         {
@@ -77,15 +77,13 @@ namespace AI_Onboarding.Services.Implementation
                             }
                         }
                     }
-
                     break;
             }
 
             return sb.ToString();
         }
 
-
-        public BaseResponseViewModel ExtractTextAndFinetuneModel(DocumentViewModel document)
+        public BaseResponseViewModel UploadFile(DocumentViewModel document)
         {
             if (document.File is null || document.File.Length == 0)
             {
@@ -103,23 +101,6 @@ namespace AI_Onboarding.Services.Implementation
 
                 if (resultStoreDocument.Success)
                 {
-                    if (document.QuestionsAnswers.Count > 0)
-                    {
-                        var datasetObject = new DatasetModel { DocumentText = extractedText, QuestionsAnswers = document.QuestionsAnswers };
-                        string datasetString = JsonConvert.SerializeObject(datasetObject, Formatting.Indented);
-
-                        var resultTrainModel = _aiService.RunScript(_configuration["PythonScript:TrainModelPath"], datasetString);
-
-                        if (resultTrainModel.Success)
-                        {
-                            return new BaseResponseViewModel { Success = true, ErrorMessage = resultTrainModel.Output };
-                        }
-                        else
-                        {
-                            return new BaseResponseViewModel { Success = false, ErrorMessage = resultTrainModel.ErrorMessage };
-                        }
-                    }
-
                     return new BaseResponseViewModel { Success = true, ErrorMessage = "" };
                 }
                 else

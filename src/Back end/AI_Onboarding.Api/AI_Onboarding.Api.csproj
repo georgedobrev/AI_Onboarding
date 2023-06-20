@@ -23,7 +23,6 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.6" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <Folder Include="Infrastructure\" />
-    <Folder Include="Infrastructure\Binders\" />
     <Folder Include="Infrastructure\Extensions\" />
     <Folder Include="Infrastructure\Filter\" />
     <PackageReference Include="Spire.Presentation" Version="8.6.0" />
@@ -49,7 +48,6 @@
 
   <ItemGroup>
     <None Remove="Infrastructure\" />
-    <None Remove="Infrastructure\Binders\" />
     <None Remove="Infrastructure\Extensions\" />
     <None Remove="Infrastructure\Filter\" />
   </ItemGroup>

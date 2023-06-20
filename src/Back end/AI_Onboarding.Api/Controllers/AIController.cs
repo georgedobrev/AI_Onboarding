@@ -19,7 +19,7 @@ namespace AI_Onboarding.Api.Controllers
             _configuration = configuration;
         }
 
-        [HttpPost("receive-response")]
+        [HttpPost("response")]
         public IActionResult GenerateResponse([FromBody] string question)
         {
             var result = _aiService.RunScript(_configuration["PythonScript:GenerateResponsePath"], question);

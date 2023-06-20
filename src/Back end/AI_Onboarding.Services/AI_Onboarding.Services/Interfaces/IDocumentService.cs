@@ -6,7 +6,7 @@ namespace AI_Onboarding.Services.Interfaces
 {
     public interface IDocumentService : IService
     {
-        public BaseResponseViewModel ExtractTextAndFinetuneModel(DocumentViewModel document);
+        public BaseResponseViewModel UploadFile(DocumentViewModel document);
     }
 }
 

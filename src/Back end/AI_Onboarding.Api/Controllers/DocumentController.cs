@@ -18,10 +18,10 @@ namespace AI_Onboarding.Api.Controllers
             _documentService = documentService;
         }
 
-        [HttpPost("file-upload-finetune")]
-        public ActionResult ExtractTextAndFinetuneModel([FromForm] DocumentViewModel document)
+        [HttpPost("upload")]
+        public ActionResult UploadFile([FromForm] DocumentViewModel document)
         {
-            var result = _documentService.ExtractTextAndFinetuneModel(document);
+            var result = _documentService.UploadFile(document);
 
             if (result.Success)
             {
