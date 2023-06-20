@@ -7,6 +7,7 @@ import logoImage from '../../assets/blankfactor-logo.jpg';
 import { FormValues, ExtendSessionFormValues } from './types.ts';
 import { authService } from '../../services/authService.ts';
 import { toast } from 'react-toastify';
+import config from '../../config.json';
 import 'react-toastify/dist/ReactToastify.css';
 import './Signup.css';
 
@@ -44,6 +45,11 @@ const Signup: React.FC = () => {
       theme: 'dark',
     });
 
+    const accessToken = localStorage.getItem('accessToken');
+    const tokenParts = accessToken.split('.');
+    const tokenPayload = JSON.parse(atob(tokenParts[1]));
+    const userRole = tokenPayload[config.JWTUserRole];
+    localStorage.setItem('userRole', userRole);
     return navigate('/home');
   };
 
