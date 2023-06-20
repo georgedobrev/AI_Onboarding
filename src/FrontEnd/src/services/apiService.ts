@@ -2,7 +2,7 @@ import { fetchWrapper } from './FetchWrapper.tsx';
 import config from '../config.json';
 import { lookup } from 'mime-types';
 import { toast } from 'react-toastify';
-import { authHeader } from './commonConfig.ts';
+import { authHeaderFile } from './commonConfig.ts';
 
 const uploadFile = async (baseUrl: string, uploadEndpoint: string, file: File) => {
   const formData = new FormData();
@@ -21,11 +21,13 @@ const uploadFile = async (baseUrl: string, uploadEndpoint: string, file: File) =
     console.error('Unsupported file type:', mimeType);
     return;
   }
-
   formData.append('FileTypeId', fileId);
-
   try {
-    const response = await fetchWrapper.post(`${baseUrl}${uploadEndpoint}`, formData, authHeader());
+    const response = await fetchWrapper.post(
+      `${baseUrl}${uploadEndpoint}`,
+      formData,
+      authHeaderFile()
+    );
 
     if (response) {
       // File uploaded successfully
@@ -50,5 +52,5 @@ const uploadFile = async (baseUrl: string, uploadEndpoint: string, file: File) =
 };
 
 export const apiService = {
-  uploadFile,
+    uploadFile,
 };

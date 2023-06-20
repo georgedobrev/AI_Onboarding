@@ -1,4 +1,4 @@
-export const authHeader = () => {
+export const authHeaderAI = () => {
     const accessToken = localStorage.getItem('accessToken');
 
     return {
@@ -8,3 +8,14 @@ export const authHeader = () => {
         },
     };
 };
+
+export const authHeaderFile = () => {
+    const accessToken = localStorage.getItem('accessToken');
+
+    return {
+        headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'multipart/form-data',
+        },
+    };
+}
