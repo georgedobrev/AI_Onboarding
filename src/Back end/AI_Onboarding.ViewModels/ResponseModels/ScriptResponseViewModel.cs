@@ -1,5 +1,4 @@
-﻿using System;
-namespace AI_Onboarding.ViewModels.ResponseModels
+﻿namespace AI_Onboarding.ViewModels.ResponseModels
 {
     public class ScriptResponseViewModel : BaseResponseViewModel
     {

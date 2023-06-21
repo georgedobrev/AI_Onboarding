@@ -3,6 +3,8 @@ using Serilog;
 using Microsoft.AspNetCore.Builder;
 using AI_Onboarding.Services;
 using AI_Onboarding.Api.Filter;
+using AI_Onboarding.ViewModels.DocumentModels;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 
 namespace AI_Onboarding.Api
 {

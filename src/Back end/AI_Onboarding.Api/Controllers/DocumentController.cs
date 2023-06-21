@@ -2,9 +2,6 @@ using AI_Onboarding.Services.Interfaces;
 using AI_Onboarding.ViewModels.DocumentModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using iTextSharp.text.pdf.parser;
-using Xceed.Document.NET;
-using System.Diagnostics;
 using AI_Onboarding.Common;
 
 namespace AI_Onboarding.Api.Controllers
@@ -21,10 +18,10 @@ namespace AI_Onboarding.Api.Controllers
             _documentService = documentService;
         }
 
-        [HttpPost("upload-file")]
+        [HttpPost("upload")]
         public ActionResult UploadFile([FromForm] DocumentViewModel document)
         {
-            var result = _documentService.UploadDocument(document);
+            var result = _documentService.UploadFile(document);
 
             if (result.Success)
             {
