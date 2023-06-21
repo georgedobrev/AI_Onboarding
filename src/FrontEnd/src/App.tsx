@@ -5,6 +5,7 @@ import Signup from './components/SignIn/Signup.tsx';
 import Register from './components/Register/Register.tsx';
 import Upload from './components/Upload/Upload.tsx';
 import ResetPassword from './components/ResetPassword/ResetPassword.tsx';
+import Account from './components/Account/Account.tsx';
 import { ToastContainer } from 'react-toastify';
 import config from './config.json';
 import 'react-toastify/dist/ReactToastify.css';
@@ -23,6 +24,11 @@ interface ProtectedRouteHomeProps {
 interface ProtectedRouteAccountProps {
   element: JSX.Element;
   redirectTo: string;
+}
+
+interface ProtectedRouteUploadProps {
+  element: JSX.Element;
+  redirectTo: string;
   allowedPaths: string[];
 }
 
@@ -35,7 +41,16 @@ const ProtectedRouteHome: React.FC<ProtectedRouteHomeProps> = ({ element, redire
   return element;
 };
 
-const ProtectedRouteAccount: React.FC<ProtectedRouteAccountProps> = ({
+const ProtectedRouteAccount: React.FC<ProtectedRouteAccountProps> = ({ element, redirectTo }) => {
+  const accessToken = localStorage.getItem('accessToken');
+
+  if (!accessToken) {
+    return <Navigate to={redirectTo} replace />;
+  }
+  return element;
+};
+
+const ProtectedRouteUpload: React.FC<ProtectedRouteUploadProps> = ({
   element,
   redirectTo,
   allowedPaths,
@@ -85,9 +100,13 @@ const App = () => {
               element={<ProtectedRouteHome element={<Home />} redirectTo="/signup" />}
             />
             <Route
+              path="/account"
+              element={<ProtectedRouteAccount element={<Account />} redirectTo="/signup" />}
+            />
+            <Route
               path="/upload/"
               element={
-                <ProtectedRouteAccount
+                <ProtectedRouteUpload
                   element={<Upload />}
                   redirectTo="/signup"
                   allowedPaths={['/upload']}
