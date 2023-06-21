@@ -124,26 +124,6 @@ public static class ServiceCollectionExtension
         return services;
     }
 
-    public static IServiceCollection RegisterUrlHelper(this IServiceCollection services)
-    {
-        services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
-
-        services.AddScoped<IUrlHelper>(x =>
-        {
-            var actionContext = x.GetRequiredService<IActionContextAccessor>().ActionContext;
-            return new UrlHelper(actionContext);
-        });
-
-        return services;
-    }
-
-    public static IServiceCollection RegisterHttpContextAccessor(this IServiceCollection services)
-    {
-        services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-
-        return services;
-    }
-
     public static IServiceCollection ConfigureTokenLifspam(this IServiceCollection services)
     {
 

@@ -31,12 +31,10 @@ namespace AI_Onboarding.Services.Implementation
         private readonly ITokenService _tokenService;
         private readonly IConfiguration _configuration;
         private readonly ILogger<IdentityService> _logger;
-        private readonly IUrlHelper _urlHelper;
-        private const string baseUrl = "localhost:5173/account/reset-password";
 
         public IdentityService(IRepository<User> repository, IMapper mapper, UserManager<User> userManager, SignInManager<User> signInManager,
             ITokenService tokenService, IConfiguration configuration, ILogger<IdentityService> logger, IRepository<Role> repositoryRole,
-            IRepository<UserRole> repositoryUserRole, IUrlHelper urlHelper)
+            IRepository<UserRole> repositoryUserRole)
         {
             _repository = repository;
             _mapper = mapper;
@@ -47,7 +45,6 @@ namespace AI_Onboarding.Services.Implementation
             _logger = logger;
             _repositoryRole = repositoryRole;
             _repositoryUserRole = repositoryUserRole;
-            _urlHelper = urlHelper;
         }
 
         public async Task<BaseResponseViewModel> RegisterAsync(UserRegistrationViewModel viewUser)
@@ -232,7 +229,7 @@ namespace AI_Onboarding.Services.Implementation
 
                     var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
-                    string resetUrl = $"{baseUrl}?token={HttpUtility.UrlEncode(token)}&email={HttpUtility.UrlEncode(email)}";
+                    string resetUrl = $"{Constants.ResetPasswordBaseUrl}?token={HttpUtility.UrlEncode(token)}&email={HttpUtility.UrlEncode(email)}";
 
                     var emailTemplatePath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../../../../AI_Onboarding.Common/EmailTemplate/PasswordResetEmailTemplate.html");
                     emailTemplatePath = Path.GetFullPath(emailTemplatePath);

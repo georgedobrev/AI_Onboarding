@@ -43,13 +43,12 @@ namespace AI_Onboarding.Api
                 });
             });
             builder.Host.UseSerilog((hostingContext, logger) => logger.ReadFrom.Configuration(hostingContext.Configuration));
-            builder.Services.RegisterUrlHelper();
-            builder.Services.ConfigureTokenLifspam();
+
+            ServiceCollectionExtension.ConfigureTokenLifspam(builder.Services);
             ServiceCollectionExtension.RegisterDbContext(builder.Services, builder.Configuration, builder.Environment);
             ServiceCollectionExtension.ConfigureNoSQLDatabase(builder.Services, builder.Configuration);
             ServiceCollectionExtension.ConfigureServices(builder.Services, builder.Configuration, builder.Environment);
             ServiceCollectionExtension.ConfigureAuth(builder.Services, builder.Configuration);
-
 
             var app = builder.Build();
 
