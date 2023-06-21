@@ -6,6 +6,7 @@
   "refreshTokenEndpoint": "Identity/refresh-token",
   "googleLoginEndpoint": "Identity/google-login",
   "AISearchEndpoint": "AI/receive-response",
+  "JWTUserRole": "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
   "pdfID": "1",
   "docID": "2"
 }

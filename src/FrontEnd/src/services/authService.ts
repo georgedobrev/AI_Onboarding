@@ -33,7 +33,6 @@ interface AISearchResponse {
 }
 
 export const authService = {
-
   login: async (formData: SignInForms) => {
     try {
       const url = `${config.baseUrl}${config.loginEndpoint}`;
@@ -55,15 +54,14 @@ export const authService = {
       const tokenParts = accessToken.split('.');
       const tokenPayload = JSON.parse(atob(tokenParts[1]));
 
-      const userRole = tokenPayload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+      const userRole = tokenPayload[config.JWTUserRole];
       localStorage.setItem('userRole', userRole);
 
       const expirationTime = tokenPayload.exp * 1000;
       const currentTime = new Date().getTime();
       const remainingTime = expirationTime - currentTime;
 
-      const role =
-      setTimeout(() => {
+      const role = setTimeout(() => {
         // TODO in next branch
       }, remainingTime);
 
