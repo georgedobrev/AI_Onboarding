@@ -1,9 +1,5 @@
 using Microsoft.OpenApi.Models;
 using Serilog;
-using Microsoft.AspNetCore.Builder;
-using AI_Onboarding.Services;
-using AI_Onboarding.Api.Filter;
-using Microsoft.AspNetCore.Identity;
 
 namespace AI_Onboarding.Api
 {

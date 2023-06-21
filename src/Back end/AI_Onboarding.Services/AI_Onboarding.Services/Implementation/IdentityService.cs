@@ -6,7 +6,6 @@ using AI_Onboarding.ViewModels.JWTModels;
 using AI_Onboarding.ViewModels.ResponseModels;
 using AI_Onboarding.ViewModels.UserModels;
 using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -17,11 +16,7 @@ using SendGrid.Helpers.Mail;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.AspNetCore.Routing;
 using System.Web;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 
 namespace AI_Onboarding.Services.Implementation
 {
