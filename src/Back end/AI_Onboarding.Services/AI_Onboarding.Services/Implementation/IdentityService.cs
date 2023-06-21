@@ -6,7 +6,6 @@ using AI_Onboarding.ViewModels.JWTModels;
 using AI_Onboarding.ViewModels.ResponseModels;
 using AI_Onboarding.ViewModels.UserModels;
 using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -17,11 +16,7 @@ using SendGrid.Helpers.Mail;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.AspNetCore.Routing;
 using System.Web;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 
 namespace AI_Onboarding.Services.Implementation
 {
@@ -240,10 +235,9 @@ namespace AI_Onboarding.Services.Implementation
 
                     var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
-                    string baseUrl = "https://localhost:7243/account/reset-password";
-                    string resetUrl = $"{baseUrl}?token={HttpUtility.UrlEncode(token)}&email={HttpUtility.UrlEncode(email)}";
+                    string resetUrl = $"{Constants.ResetPasswordBaseUrl}?token={HttpUtility.UrlEncode(token)}&email={HttpUtility.UrlEncode(email)}";
 
-                    var emailTemplatePath = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..", "..", "src", "Back end", "AI_Onboarding.Common", "EmailTemplate", "PasswordResetEmailTemplate.html");
+                    var emailTemplatePath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../../../../AI_Onboarding.Common/EmailTemplate/PasswordResetEmailTemplate.html");
                     emailTemplatePath = Path.GetFullPath(emailTemplatePath);
 
                     var emailTemplate = await File.ReadAllTextAsync(emailTemplatePath);
@@ -259,9 +253,6 @@ namespace AI_Onboarding.Services.Implementation
 
                     var msg = MailHelper.CreateSingleEmail(from, to, subject, " ", emailBody);
                     var response = await client.SendEmailAsync(msg);
-                    _logger.LogInformation($"SendGrid Response Status Code: {response.StatusCode}");
-                    _logger.LogInformation($"SendGrid Response Body: {await response.Body.ReadAsStringAsync()}");
-
 
                     return new BaseResponseViewModel { Success = true, ErrorMessage = string.Empty };
                 }

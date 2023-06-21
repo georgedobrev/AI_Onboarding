@@ -17,6 +17,8 @@ using AI_Onboarding.Data.NoSQLDatabase;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
+using System.Configuration;
+
 
 public static class ServiceCollectionExtension
 {
@@ -123,23 +125,9 @@ public static class ServiceCollectionExtension
         return services;
     }
 
-    public static IServiceCollection RegisterUrlHelper(this IServiceCollection services)
+    public static IServiceCollection ConfigureTokenLifspam(this IServiceCollection services)
     {
-        services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
-
-        services.AddScoped<IUrlHelper>(x =>
-        {
-            var actionContext = x.GetRequiredService<IActionContextAccessor>().ActionContext;
-            return new UrlHelper(actionContext);
-        });
-
-        return services;
-    }
-
-    public static IServiceCollection RegisterHttpContextAccessor(this IServiceCollection services)
-    {
-        services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-
+        services.Configure<DataProtectionTokenProviderOptions>(opts => opts.TokenLifespan = TimeSpan.FromMinutes(20));
         return services;
     }
 }
