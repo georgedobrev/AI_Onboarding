@@ -7,7 +7,6 @@ using AI_Onboarding.ViewModels.ResponseModels;
 using AI_Onboarding.ViewModels.UserModels;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
@@ -31,13 +30,10 @@ namespace AI_Onboarding.Services.Implementation
         private readonly ITokenService _tokenService;
         private readonly IConfiguration _configuration;
         private readonly ILogger<IdentityService> _logger;
-        private readonly IUrlHelper _urlHelper;
-        private readonly IHttpContextAccessor _contextAccessor;
-        private readonly LinkGenerator _linkGenerator;
 
         public IdentityService(IRepository<User> repository, IMapper mapper, UserManager<User> userManager, SignInManager<User> signInManager,
             ITokenService tokenService, IConfiguration configuration, ILogger<IdentityService> logger, IRepository<Role> repositoryRole,
-            IRepository<UserRole> repositoryUserRole, IUrlHelper urlHelper, IHttpContextAccessor httpContextAccessor, LinkGenerator link)
+            IRepository<UserRole> repositoryUserRole)
         {
             _repository = repository;
             _mapper = mapper;
@@ -48,9 +44,6 @@ namespace AI_Onboarding.Services.Implementation
             _logger = logger;
             _repositoryRole = repositoryRole;
             _repositoryUserRole = repositoryUserRole;
-            _urlHelper = urlHelper;
-            _contextAccessor = httpContextAccessor;
-            _linkGenerator = link;
         }
 
         public async Task<BaseResponseViewModel> RegisterAsync(UserRegistrationViewModel viewUser)
@@ -172,10 +165,8 @@ namespace AI_Onboarding.Services.Implementation
 
         public async Task<TokensResponseViewModel> GoogleLoginAsync(string token)
         {
-
             using (var httpClient = new HttpClient())
             {
-
                 var handler = new JwtSecurityTokenHandler();
                 var jwtToken = handler.ReadJwtToken(token);
                 var claims = jwtToken.Claims;
@@ -245,7 +236,6 @@ namespace AI_Onboarding.Services.Implementation
                     var emailBodyWithUrl = emailTemplate.Replace("{{action_url}}", resetUrl);
                     var emailBody = emailBodyWithUrl.Replace("{{name}}", user.FirstName);
 
-
                     var client = new SendGridClient(apiKey);
                     var from = new EmailAddress(senderEmail, senderName);
                     var to = new EmailAddress(user.Email);
@@ -261,7 +251,6 @@ namespace AI_Onboarding.Services.Implementation
                     return new BaseResponseViewModel { Success = false, ErrorMessage = "User not found" };
                 }
             }
-
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while sending the password reset email.");

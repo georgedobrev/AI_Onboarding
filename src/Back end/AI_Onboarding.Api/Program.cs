@@ -43,9 +43,6 @@ namespace AI_Onboarding.Api
                 });
             });
             builder.Host.UseSerilog((hostingContext, logger) => logger.ReadFrom.Configuration(hostingContext.Configuration));
-            builder.Services.Configure<DataProtectionTokenProviderOptions>(opts => opts.TokenLifespan = TimeSpan.FromHours(10));
-            builder.Services.RegisterUrlHelper();
-            builder.Services.RegisterHttpContextAccessor();
 
             ServiceCollectionExtension.ConfigureTokenLifspam(builder.Services);
             ServiceCollectionExtension.RegisterDbContext(builder.Services, builder.Configuration, builder.Environment);
