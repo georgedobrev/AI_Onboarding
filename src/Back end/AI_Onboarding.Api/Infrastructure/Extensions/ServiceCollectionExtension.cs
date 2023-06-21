@@ -14,6 +14,10 @@ using Microsoft.AspNetCore.Identity;
 using MongoDB.Driver;
 using AI_Onboarding.Data.NoSQLDatabase.Interfaces;
 using AI_Onboarding.Data.NoSQLDatabase;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.AspNetCore.Mvc.Routing;
+using System.Configuration;
 
 public static class ServiceCollectionExtension
 {
@@ -22,7 +26,7 @@ public static class ServiceCollectionExtension
         services.AddDbContext<DataContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("SqlConnection")));
 
-        services.AddIdentity<User, Role>().AddEntityFrameworkStores<DataContext>();
+        services.AddIdentity<User, Role>().AddEntityFrameworkStores<DataContext>().AddDefaultTokenProviders();
         if (environment.IsDevelopment())
         {
             services.Configure<IdentityOptions>(options =>
@@ -117,6 +121,13 @@ public static class ServiceCollectionExtension
         {
             services.AddScoped(serviceType.Interface, serviceType.Implementation);
         }
+        return services;
+    }
+
+    public static IServiceCollection ConfigureTokenLifspam(this IServiceCollection services)
+    {
+
+        services.Configure<DataProtectionTokenProviderOptions>(opts => opts.TokenLifespan = TimeSpan.FromMinutes(20));
         return services;
     }
 }
