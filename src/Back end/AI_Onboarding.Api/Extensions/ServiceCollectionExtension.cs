@@ -18,6 +18,7 @@ using AI_Onboarding.Data.NoSQLDatabase;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
+using System.Configuration;
 
 public static class ServiceCollectionExtension
 {
@@ -141,6 +142,13 @@ public static class ServiceCollectionExtension
     {
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
+        return services;
+    }
+
+    public static IServiceCollection ConfigureTokenLifspam(this IServiceCollection services)
+    {
+
+        services.Configure<DataProtectionTokenProviderOptions>(opts => opts.TokenLifespan = TimeSpan.FromMinutes(20));
         return services;
     }
 }

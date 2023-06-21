@@ -34,12 +34,11 @@ namespace AI_Onboarding.Services.Implementation
         private readonly IConfiguration _configuration;
         private readonly ILogger<IdentityService> _logger;
         private readonly IUrlHelper _urlHelper;
-        private readonly IHttpContextAccessor _contextAccessor;
-        private readonly LinkGenerator _linkGenerator;
+        private const string baseUrl = "localhost:5173/account/reset-password";
 
         public IdentityService(IRepository<User> repository, IMapper mapper, UserManager<User> userManager, SignInManager<User> signInManager,
             ITokenService tokenService, IConfiguration configuration, ILogger<IdentityService> logger, IRepository<Role> repositoryRole,
-            IRepository<UserRole> repositoryUserRole, IUrlHelper urlHelper, IHttpContextAccessor httpContextAccessor, LinkGenerator link)
+            IRepository<UserRole> repositoryUserRole, IUrlHelper urlHelper)
         {
             _repository = repository;
             _mapper = mapper;
@@ -51,8 +50,6 @@ namespace AI_Onboarding.Services.Implementation
             _repositoryRole = repositoryRole;
             _repositoryUserRole = repositoryUserRole;
             _urlHelper = urlHelper;
-            _contextAccessor = httpContextAccessor;
-            _linkGenerator = link;
         }
 
         public async Task<BaseResponseViewModel> RegisterAsync(UserRegistrationViewModel viewUser)
@@ -229,10 +226,9 @@ namespace AI_Onboarding.Services.Implementation
 
                     var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
-                    string baseUrl = "https://localhost:7243/account/reset-password";
                     string resetUrl = $"{baseUrl}?token={HttpUtility.UrlEncode(token)}&email={HttpUtility.UrlEncode(email)}";
 
-                    var emailTemplatePath = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..", "..", "src", "Back end", "AI_Onboarding.Common", "EmailTemplate", "PasswordResetEmailTemplate.html");
+                    var emailTemplatePath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../../../../AI_Onboarding.Common/EmailTemplate/PasswordResetEmailTemplate.html");
                     emailTemplatePath = Path.GetFullPath(emailTemplatePath);
 
                     var emailTemplate = await File.ReadAllTextAsync(emailTemplatePath);
@@ -248,9 +244,6 @@ namespace AI_Onboarding.Services.Implementation
 
                     var msg = MailHelper.CreateSingleEmail(from, to, subject, " ", emailBody);
                     var response = await client.SendEmailAsync(msg);
-                    _logger.LogInformation($"SendGrid Response Status Code: {response.StatusCode}");
-                    _logger.LogInformation($"SendGrid Response Body: {await response.Body.ReadAsStringAsync()}");
-
 
                     return new BaseResponseViewModel { Success = true, ErrorMessage = string.Empty };
                 }
