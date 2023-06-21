@@ -51,7 +51,7 @@ namespace AI_Onboarding.Services.Implementation
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = "/opt/homebrew/Cellar/python@3.11/3.11.3/bin/python3",
+                    FileName = "/opt/homebrew/Cellar/python@3.11/3.11.4/bin/python3",
                     Arguments = $"\"{relativePath}\" \"{argument.Replace("\"", "\\\"")}\"",
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
