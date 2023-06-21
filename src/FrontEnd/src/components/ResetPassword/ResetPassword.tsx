@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { TextField, Button } from '@mui/material';
 import logoImage from '../../assets/blankfactor-logo.jpg';
 import './ResetPassword.css';
 
 const ResetPassword: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [email, setEmail] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -23,7 +24,7 @@ const ResetPassword: React.FC = () => {
             <img src={logoImage} alt="blankfactor" className="reset-password-logo" />
             <h1 className="reset-password-welcome-h1">Reset Password</h1>
           </div>
-          {window.location.pathname === '/account/reset-password/success' ? (
+          {location.pathname === '/account/reset-password/success' ? (
             <div className="reset-password-form">
               <TextField
                 id="new-password"
