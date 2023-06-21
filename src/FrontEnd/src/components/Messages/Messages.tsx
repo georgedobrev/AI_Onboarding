@@ -53,7 +53,7 @@ const Messages: React.FC = () => {
       </div>
       <div className="messages-content-container">
         <div className="messages-content">
-          {!(location.pathname === '/account' && userRole === 'Administrator') && (
+          {!(location.pathname === '/upload' && userRole === 'Administrator') && (
             <div className="chat-messages">
               {messages.map((message) => (
                 <div
@@ -67,7 +67,7 @@ const Messages: React.FC = () => {
               ))}
             </div>
           )}
-          {location.pathname === '/account' && userRole === 'Administrator' && <FileUploader />}
+          {location.pathname === '/upload' && userRole === 'Administrator' && <FileUploader />}
           {location.pathname === '/home' && (
             <form onSubmit={handleSearchSubmit} className="search-container">
               <div className="search-input">

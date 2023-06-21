@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from 'r
 import Home from './components/Home/Home.tsx';
 import Signup from './components/SignIn/Signup.tsx';
 import Register from './components/Register/Register.tsx';
-import Account from './components/Account/Account.tsx';
+import Upload from './components/Upload/Upload.tsx';
 import ResetPassword from './components/ResetPassword/ResetPassword.tsx';
 import { ToastContainer } from 'react-toastify';
 import config from './config.json';
@@ -85,12 +85,12 @@ const App = () => {
               element={<ProtectedRouteHome element={<Home />} redirectTo="/signup" />}
             />
             <Route
-              path="/account/"
+              path="/upload/"
               element={
                 <ProtectedRouteAccount
-                  element={<Account />}
+                  element={<Upload />}
                   redirectTo="/signup"
-                  allowedPaths={['/account']}
+                  allowedPaths={['/upload']}
                 />
               }
             />

@@ -34,7 +34,7 @@ const uploadFile = async (baseUrl: string, uploadEndpoint: string, file: File) =
       toast.success('File uploaded successfully', {
         position: 'top-right',
         autoClose: 3000,
-        hideProgressBar: false,
+        hideProgressBar: true,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
@@ -52,5 +52,5 @@ const uploadFile = async (baseUrl: string, uploadEndpoint: string, file: File) =
 };
 
 export const apiService = {
-    uploadFile,
+  uploadFile,
 };
