@@ -1,9 +1,5 @@
 using Microsoft.OpenApi.Models;
 using Serilog;
-using Microsoft.AspNetCore.Builder;
-using AI_Onboarding.Services;
-using AI_Onboarding.Api.Filter;
-using Microsoft.AspNetCore.Identity;
 
 namespace AI_Onboarding.Api
 {
@@ -51,6 +47,7 @@ namespace AI_Onboarding.Api
             builder.Services.RegisterUrlHelper();
             builder.Services.RegisterHttpContextAccessor();
 
+            ServiceCollectionExtension.ConfigureTokenLifspam(builder.Services);
             ServiceCollectionExtension.RegisterDbContext(builder.Services, builder.Configuration, builder.Environment);
             ServiceCollectionExtension.ConfigureNoSQLDatabase(builder.Services, builder.Configuration);
             ServiceCollectionExtension.ConfigureServices(builder.Services, builder.Configuration, builder.Environment);
