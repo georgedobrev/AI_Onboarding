@@ -78,8 +78,8 @@ const App = () => {
             <Route path="/" element={<Navigate to="/signup" />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/account/change-password" element={<ResetPassword />} />
             <Route path="/account/reset-password" element={<ResetPassword />} />
-            <Route path="/account/reset-password/success" element={<ResetPassword />} />
             <Route
               path="/home"
               element={<ProtectedRouteHome element={<Home />} redirectTo="/signup" />}

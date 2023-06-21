@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { TextField, IconButton } from '@mui/material';
 import { Send } from '@mui/icons-material';
 import { useLocation } from 'react-router-dom';
@@ -6,14 +6,18 @@ import FileUploader from './FileUploader.tsx';
 import { authService } from '../../services/authService.ts';
 import './Messages.css';
 
-const userRole = localStorage.getItem('userRole');
-
 const Messages: React.FC = () => {
   const location = useLocation();
+  const [userRole, setUserRole] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [messages, setMessages] = useState<
     { text: string; isAnswer: boolean; isTyping?: boolean }[]
   >([]);
+
+  useEffect(() => {
+    const storedUserRole = localStorage.getItem('userRole');
+    setUserRole(storedUserRole);
+  }, []);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);

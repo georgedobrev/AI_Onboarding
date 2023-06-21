@@ -32,6 +32,33 @@ interface AISearchResponse {
   answerQuery: string;
 }
 
+interface forgotPasswordRequestBody {
+  email: string;
+}
+
+interface forgotPasswordResponse {
+  message: string;
+}
+
+interface resetPasswordRequestBody {
+  email: string;
+  token: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+
+interface resetPasswordResponse {
+  message: string;
+}
+
+interface validateResetTokenRequestBody {
+  token: string;
+  email: string;
+}
+interface validateResetTokenResponse {
+  message: string;
+}
+
 export const authService = {
   login: async (formData: SignInForms) => {
     try {
@@ -123,6 +150,62 @@ export const authService = {
     } catch (error) {
       console.error(error);
       throw new Error('Google login failed');
+    }
+  },
+
+  forgotPassword: async (formData: object | undefined) => {
+    try {
+      const headers = { headers: { 'Content-Type': 'application/json' } };
+      const url = `${config.baseUrl}${config.forgotPasswordEndpoint}`;
+      const response = await fetchWrapper.post<forgotPasswordResponse, forgotPasswordRequestBody>(
+        url,
+        formData,
+        headers
+      );
+      if (!response) {
+        throw new Error('Request failed');
+      }
+      return response;
+    } catch (error) {
+      console.error(error);
+      throw new Error('Forget password failed');
+    }
+  },
+
+  resetPassword: async (formData: object | undefined) => {
+    try {
+      const headers = { headers: { 'Content-Type': 'application/json' } };
+      const url = `${config.baseUrl}${config.resetPasswordEndpoint}`;
+      const response = await fetchWrapper.post<resetPasswordResponse, resetPasswordRequestBody>(
+        url,
+        formData,
+        headers
+      );
+      if (!response) {
+        throw new Error('Request failed');
+      }
+      return response;
+    } catch (error) {
+      console.error(error);
+      throw new Error('Reset password failed');
+    }
+  },
+
+  validateResetToken: async (formData: object | undefined) => {
+    try {
+      const headers = { headers: { 'Content-Type': 'application/json' } };
+      const url = `${config.baseUrl}${config.validateResetTokenEndpoint}`;
+      const response = await fetchWrapper.post<
+        validateResetTokenResponse,
+        validateResetTokenRequestBody
+      >(url, formData, headers);
+      if (!response) {
+        throw new Error('Request failed');
+      }
+      return response;
+    } catch (error) {
+      console.error(error);
+      throw new Error('Validate reset token failed');
     }
   },
 
