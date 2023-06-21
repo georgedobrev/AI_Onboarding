@@ -204,6 +204,11 @@ const Signup: React.FC = () => {
                 }))
               }
             />
+            <span className="forgot-password">
+              <Link to="/account/reset-password" className="forgot-password-hyperlink">
+                Forgot Password?
+              </Link>
+            </span>
             <Button
               variant="contained"
               className="signup-continue-btn"
