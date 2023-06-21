@@ -1,5 +1,4 @@
-﻿using System;
-using AI_Onboarding.ViewModels.JWTModels;
+﻿using AI_Onboarding.ViewModels.JWTModels;
 
 namespace AI_Onboarding.ViewModels.ResponseModels
 {

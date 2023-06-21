@@ -9,6 +9,7 @@ namespace AI_Onboarding.Data.Models
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
         public string ExtractedText { get; set; }
+        public bool IsForTraining { get; set; } = true;
     }
 }
 

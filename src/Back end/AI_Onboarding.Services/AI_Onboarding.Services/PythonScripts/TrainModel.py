@@ -1,94 +1,132 @@
 import os
-import sys
-import json
-import torch
-from torch.utils.data import DataLoader
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, AdamW
+from transformers import T5ForConditionalGeneration, AutoTokenizer, pipeline,AutoModelForSeq2SeqLM, Seq2SeqTrainer, Seq2SeqTrainingArguments, DataCollatorForSeq2Seq
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 from datasets import Dataset
+import pandas as pd
+import pymongo
 
-# Set up paths and load the model
-save_dir = os.path.join(os.path.expanduser("~"), "Desktop", "models", "flan_t5")
-base_model = "google/flan-t5-base"
-model_path = save_dir if os.path.exists(save_dir) else base_model
-model = AutoModelForSeq2SeqLM.from_pretrained(model_path)
-tokenizer = AutoTokenizer.from_pretrained(base_model)
+# Connect to MongoDB and retrieve text based on a field
+client = pymongo.MongoClient("mongodb://mongo:mongo@localhost:27017/")  
 
-# Define the dataset
-dataset_str = sys.argv[1]
-dataset = json.loads(dataset_str)
+db = client["DocumentsDB"] 
+collection = db["Documents"]
 
-# Preprocess the input data
-texts = []
-target_answers = []
-for item in dataset:
-    document_text = item["document_text"]
-    for question in item["questions"]:
-        question_text = question["question_text"]
-        target_text = question["answers"]
-        texts.append({
-            "input_text": f"document: {document_text} question: {question_text}",
-            "target_text": target_text
-        })
-        target_answers.append(target_text)
+# Retrieve the text from MongoDB based on a field
+documents = collection.find({"IsForTraining": True}) 
+documents = list(documents)
 
-# Tokenize the texts using the T5 tokenizer
-tokenized_texts = tokenizer(
-    [text["input_text"] for text in texts],
-    [text["target_text"] for text in texts],
-    truncation=True,
-    padding="max_length",
-    return_tensors="pt"
-)
+if len(documents) != 0:
+    texts = []
+    for document in documents:
+        texts.append(document["ExtractedText"])
 
-# Create a Dataset object
-dataset = Dataset.from_dict({
-    "input_ids": tokenized_texts["input_ids"],
-    "attention_mask": tokenized_texts["attention_mask"],
-    "labels": tokenized_texts["input_ids"]
-})
+    qmodel_name = "ThomasSimonini/t5-end2end-question-generation"
+    amodel_name = "deepset/roberta-base-squad2"
+    save_dir = os.path.join(os.path.expanduser("~"), "Desktop", "models", "flan_t5")
+    base_model = "google/flan-t5-base"
 
-# Define the batch processing function
-def process_batch(batch):
-    return {
-        "input_ids": torch.tensor([item["input_ids"] for item in batch]),
-        "attention_mask": torch.tensor([item["attention_mask"] for item in batch]),
-        "labels": torch.tensor([item["labels"] for item in batch])
-    }
+    qmodel = T5ForConditionalGeneration.from_pretrained(qmodel_name)
+    qtokenizer = AutoTokenizer.from_pretrained("google/flan-t5-base")
 
-# Create the DataLoader for batch processing
-dataloader = DataLoader(dataset, batch_size=8, collate_fn=process_batch)
 
-# Define the optimizer
-optimizer = AdamW(model.parameters(), lr=1e-5)
+    def run_qmodel(input_string, **generator_args):
+        generator_args = {
+        "max_length": 256,
+        "num_beams": 4,
+        "length_penalty": 1.5,
+        "no_repeat_ngram_size": 3,
+        "early_stopping": True,
+        }
+        input_string = "generate questions: " + input_string + " </s>"
+        input_ids = qtokenizer.encode(input_string, return_tensors="pt")
+        res = qmodel.generate(input_ids, **generator_args)
+        output = qtokenizer.batch_decode(res, skip_special_tokens=True)
+        output = [item.split("? ") for item in output]
+        output = output[0]
+        return output
 
-# Training loop
-num_epochs = 10
-for epoch in range(num_epochs):
-    train_loss = 0.0
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=512,
+        chunk_overlap=0
+    )
 
-    for batch in dataloader:
-        input_ids = batch["input_ids"]
-        attention_mask = batch["attention_mask"]
-        labels = batch["labels"]
+    for text in texts:
+        chunks = text_splitter.split_text(text)
+        questions = []
+        for chunk in chunks:
+            questions.extend(run_qmodel(chunk)) 
 
-        optimizer.zero_grad()
-        outputs = model(
-            input_ids=input_ids,
-            attention_mask=attention_mask,
-            labels=labels
+        answers = []
+        question_answerer = pipeline('question-answering', model=amodel_name, tokenizer=amodel_name)
+
+        # Print the generated questions
+        for question in questions:
+            # Generate an answer based on the question and the input text
+            answer = question_answerer(question=question, context=text)
+            # Print the generated answer
+            answers.append(answer["answer"])
+
+        qa_pairs = []
+        # Iterate over the questions and answers arrays to create the question-answer pairs
+        for question, answer in zip(questions, answers):
+            qa_pair = {
+                "question": question,
+                "answer": answer
+            }
+            qa_pairs.append(qa_pair)
+
+        # Set up paths and load the model
+        model_path = save_dir if os.path.exists(save_dir) else base_model
+        model = AutoModelForSeq2SeqLM.from_pretrained(model_path)
+        tokenizer = AutoTokenizer.from_pretrained(base_model)
+
+        df = pd.DataFrame(qa_pairs)
+        dataset = Dataset.from_pandas(df)
+
+        def preprocess_function(examples):
+            inputs = examples["question"]
+            targets = examples["answer"]
+        
+            model_inputs = tokenizer(inputs, targets, padding="max_length", truncation=True)
+
+            # Setup the tokenizer for targets
+            with tokenizer.as_target_tokenizer():
+                labels = tokenizer(examples["answer"], max_length=512, truncation=True)
+
+            model_inputs["labels"] = labels["input_ids"]
+            return model_inputs
+
+        train_dataset = dataset.map(preprocess_function, batched=True)
+
+        # Step 4: Define the Training Arguments
+        training_args = Seq2SeqTrainingArguments(
+            output_dir="./output",
+            num_train_epochs=5,
+            per_device_train_batch_size=8,
+            learning_rate=1e-4,
+            save_strategy="epoch",
         )
-        loss = outputs.loss
-        train_loss += loss.item()
 
-        loss.backward()
-        optimizer.step()
+        data_collator = DataCollatorForSeq2Seq(tokenizer,model)
 
-    avg_train_loss = train_loss / len(dataloader)
+        # Step 5: Create the Trainer
+        trainer = Seq2SeqTrainer(
+            model,
+            training_args,
+            train_dataset=train_dataset,
+            data_collator=data_collator,
+            tokenizer=tokenizer
+        )
 
-    print(f"Epoch {epoch+1} | Train Loss: {avg_train_loss:.4f}")
+        # Step 6: Start Training
+        trainer.train()
 
-# Create the save directory if it doesn't exist
-os.makedirs(save_dir, exist_ok=True)
+        os.makedirs(save_dir, exist_ok=True)
 
-# Save the fine-tuned model
-model.save_pretrained(save_dir)
+        model.save_pretrained(save_dir)
+        tokenizer.save_pretrained(save_dir)
+
+    collection.update_many({"IsForTraining": True}, {"$set": {"IsForTraining": False}})
+
+# Close the MongoDB connection
+client.close()

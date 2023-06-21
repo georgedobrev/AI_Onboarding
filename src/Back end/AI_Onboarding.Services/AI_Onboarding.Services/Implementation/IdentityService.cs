@@ -19,6 +19,9 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Routing;
 using System.Web;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace AI_Onboarding.Services.Implementation
 {
