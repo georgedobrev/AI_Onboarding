@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { TextField, Button } from '@mui/material';
+import { TextField, Button, InputAdornment, IconButton } from '@mui/material';
 import logoImage from '../../assets/blankfactor-logo.jpg';
 import { authService } from '../../services/authService.ts';
 import './ResetPassword.css';
 import { toast } from 'react-toastify';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 const ResetPassword: React.FC = () => {
   const navigate = useNavigate();
@@ -12,6 +13,16 @@ const ResetPassword: React.FC = () => {
   const [email, setEmail] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  const handleTogglePasswordVisibility = () => {
+    setShowPassword((prevShowPassword) => !prevShowPassword);
+  };
+
+  const handleToggleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword((prevShowConfirmPassword) => !prevShowConfirmPassword);
+  };
 
   const handleContinueClick = async () => {
     await authService.forgotPassword({ email });
@@ -116,7 +127,16 @@ const ResetPassword: React.FC = () => {
                 label="New Password"
                 variant="outlined"
                 className="new-password-field"
-                type="password"
+                type={showPassword ? 'text' : 'password'}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={handleTogglePasswordVisibility} edge="end">
+                        {showPassword ? <Visibility /> : <VisibilityOff />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
               />
@@ -125,7 +145,16 @@ const ResetPassword: React.FC = () => {
                 label="Confirm Password"
                 variant="outlined"
                 className="confirm-password-field"
-                type="password"
+                type={showConfirmPassword ? 'text' : 'password'}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={handleToggleConfirmPasswordVisibility} edge="end">
+                        {showConfirmPassword ? <Visibility /> : <VisibilityOff />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
               />
