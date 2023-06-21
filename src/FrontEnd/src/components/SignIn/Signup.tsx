@@ -4,10 +4,10 @@ import { TextField, Button, InputAdornment, IconButton } from '@mui/material';
 import { CredentialResponse, GoogleLogin } from '@react-oauth/google';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import logoImage from '../../assets/blankfactor-logo.jpg';
-import './Signup.css';
 import { FormValues, ExtendSessionFormValues } from './types.ts';
 import { authService } from '../../services/authService.ts';
 import { toast } from 'react-toastify';
+import config from '../../config.json';
 import 'react-toastify/dist/ReactToastify.css';
 import './Signup.css';
 
@@ -34,7 +34,6 @@ const Signup: React.FC = () => {
   const handleGoogleSignupSuccess = async (credentialResponse: CredentialResponse) => {
     const response = await authService.googleLogin(credentialResponse.credential);
     await handleSuccessfulLogin(response);
-
     toast.success('Google login successful', {
       position: 'top-right',
       autoClose: 1000,
@@ -45,6 +44,12 @@ const Signup: React.FC = () => {
       progress: undefined,
       theme: 'dark',
     });
+
+    const accessToken = localStorage.getItem('accessToken');
+    const tokenParts = accessToken.split('.');
+    const tokenPayload = JSON.parse(atob(tokenParts[1]));
+    const userRole = tokenPayload[config.JWTUserRole];
+    localStorage.setItem('userRole', userRole);
     return navigate('/home');
   };
 

@@ -1,35 +1,48 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { List, ListItem, ListItemIcon } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import HomeIcon from '@mui/icons-material/Home';
-import MessageIcon from '@mui/icons-material/Message';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import './Navbar.css';
 
 const Navbar: React.FC = () => {
-    return (
-        <div className="navbar">
-            <div className="nav-container">
-                <List>
-                    <ListItem button>
-                        <ListItemIcon>
-                            <HomeIcon />
-                        </ListItemIcon>
-                    </ListItem>
-                    <ListItem button>
-                        <ListItemIcon>
-                            <MessageIcon />
-                        </ListItemIcon>
-                    </ListItem>
-                    <ListItem button>
-                        <ListItemIcon>
-                            <AccountCircleIcon />
-                        </ListItemIcon>
-                    </ListItem>
-                </List>
-                <div className="navbar-line"></div>
-            </div>
-        </div>
-    );
+  const [userRole, setUserRole] = useState<string | null>(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const storedUserRole = localStorage.getItem('userRole');
+    setUserRole(storedUserRole);
+  }, []);
+
+  const handleAccountClick = () => {
+    navigate('/account');
+  };
+
+  const handleHomeClick = () => {
+    navigate('/home');
+  };
+
+  return (
+    <div className="navbar">
+      <div className="nav-container">
+        <List>
+          <ListItem button onClick={handleHomeClick}>
+            <ListItemIcon>
+              <HomeIcon />
+            </ListItemIcon>
+          </ListItem>
+          {userRole === 'Administrator' && (
+            <ListItem button onClick={handleAccountClick}>
+              <ListItemIcon>
+                <AccountCircleIcon />
+              </ListItemIcon>
+            </ListItem>
+          )}
+        </List>
+        <div className="navbar-line"></div>
+      </div>
+    </div>
+  );
 };
 
 export default Navbar;

@@ -2,7 +2,11 @@ import os
 import sys
 import pinecone
 from langchain.embeddings.huggingface import HuggingFaceEmbeddings
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+from langchain.llms import HuggingFacePipeline
+from langchain.chains import RetrievalQA
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, pipeline
+from langchain.vectorstores import Pinecone
+import textwrap
 
 # Get the user's home directory
 home_dir = os.path.expanduser("~")
@@ -17,35 +21,45 @@ model = AutoModelForSeq2SeqLM.from_pretrained(model_path)
 
 tokenizer = AutoTokenizer.from_pretrained(base_model)
 
+pipe = pipeline(
+    "text2text-generation",
+    model = model,
+    tokenizer = tokenizer,
+    repetition_penalty = 1.15,
+    max_length = 512
+)
+
+llm = HuggingFacePipeline(pipeline=pipe)
+
 # Load the FLAN-T5 model and tokenizer
 model_name = "sentence-transformers/all-mpnet-base-v2"
 
 # Set up Pinecone client
 pinecone.init(api_key="ebe39065-b027-4b75-940b-aad3809f72e6", environment="us-west4-gcp")
-pinecone_index_name = "ai-onboarding"
-pinecone_index = pinecone.Index(index_name=pinecone_index_name)
+index_name = "ai-onboarding"
+
+embedding = HuggingFaceEmbeddings(model_name=model_name, model_kwargs={'device': 'cpu'})
 
 question = sys.argv[1]
 
-# Initialize the HuggingFaceEmbeddings
-embeddings = HuggingFaceEmbeddings(model_name=model_name, model_kwargs={'device': 'cpu'})
+retriever = Pinecone.from_existing_index(index_name=index_name, embedding=embedding).as_retriever(search_kwargs={"k":3})
 
-vector = embeddings.embed_query(question)
+qa = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff", retriever = retriever)
 
-# Retrieve top 3 relevant vectors from Pinecone index
-pinecone_results = pinecone_index.query(vector, top_k=3,include_metadata=True)
+def wrap_text_preserve_newlines(text, width=110):
+    # Split the input text into lines based on newline characters
+    lines = text.split('\n')
 
-context = ""
-for match in pinecone_results['matches']:
-    metadata = match['metadata']
-    text = metadata['text']
-    context += text
+    # Wrap each line individually
+    wrapped_lines = [textwrap.fill(line, width=width) for line in lines]
 
-# Generate response based on the question and context
-inputs = tokenizer(f"question: {question} context: {context}", return_tensors="pt")
+    # Join the wrapped lines back together using newline characters
+    wrapped_text = '\n'.join(wrapped_lines)
 
-outputs = model.generate(**inputs, max_new_tokens=5000)
+    return wrapped_text
 
-res = tokenizer.batch_decode(outputs, skip_special_tokens=True)
-result_string = ' '.join(res)
-print(result_string)
+def process_llm_response(llm_response):
+    print(wrap_text_preserve_newlines(llm_response['result']))
+
+llm_response = qa(question)
+process_llm_response(llm_response)

@@ -19,6 +19,9 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Routing;
 using System.Web;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace AI_Onboarding.Services.Implementation
 {
@@ -94,13 +97,17 @@ namespace AI_Onboarding.Services.Implementation
 
                 if (result.Succeeded)
                 {
-                    int id = _repository.FindByCondition(u => u.Email == user.Email).Id;
+                    var dbUser = _repository.FindByCondition(u => u.Email == user.Email);
+
+                    int id = dbUser.Id;
+
+                    var name = dbUser.FirstName + " " + dbUser.LastName;
 
                     int roleId = _repositoryUserRole.FindByCondition(ur => ur.UserId == id).RoleId;
 
                     string[] roleNames = _repositoryRole.FindAllByCondition(r => r.Id == roleId).Select(r => r.Name).ToArray();
 
-                    return new TokensResponseViewModel { Success = true, ErrorMessage = "", Tokens = _tokenService.GenerateAccessToken(user.Email, id, roleNames, true) };
+                    return new TokensResponseViewModel { Success = true, ErrorMessage = "", Tokens = _tokenService.GenerateAccessToken(user.Email, name, id, roleNames, true) };
                 }
                 else
                 {
@@ -153,7 +160,9 @@ namespace AI_Onboarding.Services.Implementation
 
                 string[] roleNames = _repositoryRole.FindAllByCondition(r => r.Id == roleId).Select(r => r.Name).ToArray();
 
-                var newTokens = _tokenService.GenerateAccessToken(user.Email, user.Id, roleNames);
+                var name = user.FirstName + " " + user.LastName;
+
+                var newTokens = _tokenService.GenerateAccessToken(user.Email, name, user.Id, roleNames);
                 return new TokensResponseViewModel { Success = true, ErrorMessage = "", Tokens = newTokens };
             }
             catch (Exception ex)
@@ -187,7 +196,9 @@ namespace AI_Onboarding.Services.Implementation
 
                     string[] roleNames = _repositoryRole.FindAllByCondition(r => r.Id == roleId).Select(r => r.Name).ToArray();
 
-                    var tokens = _tokenService.GenerateAccessToken(user.Email, user.Id, roleNames, true);
+                    var name = user.FirstName + " " + user.LastName;
+
+                    var tokens = _tokenService.GenerateAccessToken(user.Email, name, user.Id, roleNames, true);
 
                     return new TokensResponseViewModel { Success = true, ErrorMessage = "", Tokens = tokens };
                 }

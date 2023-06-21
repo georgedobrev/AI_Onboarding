@@ -15,26 +15,30 @@ tokenizer = AutoTokenizer.from_pretrained(base_model)
 
 # Define the dataset
 dataset_str = sys.argv[1]
+
 dataset = json.loads(dataset_str)
 
 # Preprocess the input data
 texts = []
 target_answers = []
-for item in dataset:
-    document_text = item["document_text"]
-    for question in item["questions"]:
-        question_text = question["question_text"]
-        target_text = question["answers"]
-        texts.append({
-            "input_text": f"document: {document_text} question: {question_text}",
-            "target_text": target_text
-        })
-        target_answers.append(target_text)
+for item in dataset["QuestionsAnswers"]:
+    question_text = item["Question"]
+    target_text = item["Answer"]
+    texts.append({
+        "text": f"context: {dataset['DocumentText']} question: {question_text}"
+    })
+    target_answers.append({"text":target_text})
 
 # Tokenize the texts using the T5 tokenizer
 tokenized_texts = tokenizer(
-    [text["input_text"] for text in texts],
-    [text["target_text"] for text in texts],
+    [text["text"] for text in texts],
+    truncation=True,
+    padding="max_length",
+    return_tensors="pt"
+)
+
+tokenized_target_answers = tokenizer(
+    [text["text"] for text in target_answers],
     truncation=True,
     padding="max_length",
     return_tensors="pt"
@@ -44,7 +48,7 @@ tokenized_texts = tokenizer(
 dataset = Dataset.from_dict({
     "input_ids": tokenized_texts["input_ids"],
     "attention_mask": tokenized_texts["attention_mask"],
-    "labels": tokenized_texts["input_ids"]
+    "labels": tokenized_target_answers["input_ids"]
 })
 
 # Define the batch processing function

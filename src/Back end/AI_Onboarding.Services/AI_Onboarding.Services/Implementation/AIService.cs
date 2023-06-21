@@ -1,6 +1,4 @@
-﻿using System;
-using System.Data;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using AI_Onboarding.Services.Interfaces;
 using AI_Onboarding.ViewModels.ResponseModels;
 
@@ -10,9 +8,45 @@ namespace AI_Onboarding.Services.Implementation
     {
         public ScriptResponseViewModel RunScript(string relativePath, string argument)
         {
-            string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-            string fullPythonFilePath = System.IO.Path.Combine(baseDirectory, relativePath);
+            int maxArgumentLength = 30000;
 
+            if (argument.Length <= maxArgumentLength)
+            {
+                return ExecuteScript(relativePath, argument);
+            }
+            else
+            {
+                int argumentParts = (int)Math.Ceiling(argument.Length / (double)maxArgumentLength);
+                string output = string.Empty;
+                string error = string.Empty;
+
+                for (int i = 0; i < argumentParts; i++)
+                {
+                    int startIndex = i * maxArgumentLength;
+                    int length = Math.Min(maxArgumentLength, argument.Length - startIndex);
+                    string partialArgument = argument.Substring(startIndex, length);
+
+                    ScriptResponseViewModel response = ExecuteScript(relativePath, partialArgument);
+                    output += response.Output;
+                    error += response.ErrorMessage;
+
+                    if (!response.Success)
+                        break;
+                }
+
+                if (string.IsNullOrEmpty(error))
+                {
+                    return new ScriptResponseViewModel { Success = true, Output = output };
+                }
+                else
+                {
+                    return new ScriptResponseViewModel { Success = false, ErrorMessage = error };
+                }
+            }
+        }
+
+        private ScriptResponseViewModel ExecuteScript(string relativePath, string argument)
+        {
             var process = new Process
             {
                 StartInfo = new ProcessStartInfo
@@ -43,8 +77,6 @@ namespace AI_Onboarding.Services.Implementation
             {
                 return new ScriptResponseViewModel { Success = false, ErrorMessage = error };
             }
-
         }
     }
 }
-

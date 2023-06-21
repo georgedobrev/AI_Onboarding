@@ -1,7 +1,6 @@
 ﻿using System.Text;
 using AI_Onboarding.Common;
 using AI_Onboarding.Data.Models;
-using AI_Onboarding.Data.NoSQLDatabase;
 using AI_Onboarding.Data.NoSQLDatabase.Interfaces;
 using AI_Onboarding.Services.Interfaces;
 using AI_Onboarding.ViewModels.DocumentModels;
@@ -10,6 +9,7 @@ using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.parser;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Spire.Presentation;
 using Xceed.Words.NET;
 using IShape = Spire.Presentation.IShape;
@@ -31,13 +31,9 @@ namespace AI_Onboarding.Services.Implementation
             _configuration = configuration;
         }
 
-        public BaseResponseViewModel UploadDocument(DocumentViewModel document)
-        {
-            if (document.File is null || document.File.Length == 0)
-            {
-                return new BaseResponseViewModel { Success = false, ErrorMessage = "No file uploaded." };
-            }
 
+        private string ExtractText(DocumentViewModel document)
+        {
             StringBuilder sb = new StringBuilder();
 
             switch (document.FileTypeId)
@@ -65,7 +61,7 @@ namespace AI_Onboarding.Services.Implementation
                 case (int)FileType.pptx:
                     using (Presentation presentation = new Presentation())
                     {
-                        presentation.LoadFromStream(document.File.OpenReadStream(),FileFormat.Auto);
+                        presentation.LoadFromStream(document.File.OpenReadStream(), FileFormat.Auto);
 
                         foreach (ISlide slide in presentation.Slides)
                         {
@@ -81,31 +77,41 @@ namespace AI_Onboarding.Services.Implementation
                             }
                         }
                     }
-
                     break;
             }
 
-            string extractedText = sb.ToString();
-            ScriptResponseViewModel result;
+            return sb.ToString();
+        }
+
+        public BaseResponseViewModel UploadFile(DocumentViewModel document)
+        {
+            if (document.File is null || document.File.Length == 0)
+            {
+                return new BaseResponseViewModel { Success = false, ErrorMessage = "No file uploaded." };
+            }
+
+            var extractedText = ExtractText(document);
+
+            ScriptResponseViewModel resultStoreDocument;
             try
             {
                 Document dbDocument = new Document { ExtractedText = extractedText };
                 _documentRepository.Add(dbDocument);
-                result = _aiService.RunScript(_configuration["PythonScript:StoreDocumentPath"], extractedText);
+                resultStoreDocument = _aiService.RunScript(_configuration["PythonScript:StoreDocumentPath"], extractedText);
+
+                if (resultStoreDocument.Success)
+                {
+                    return new BaseResponseViewModel { Success = true, ErrorMessage = "" };
+                }
+                else
+                {
+                    return new BaseResponseViewModel { Success = false, ErrorMessage = resultStoreDocument.ErrorMessage };
+                }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred");
                 return new BaseResponseViewModel { Success = false, ErrorMessage = ex.Message };
-            }
-
-            if (result.Success)
-            {
-                return new BaseResponseViewModel { Success = true, ErrorMessage = "" };
-            }
-            else
-            {
-                return new BaseResponseViewModel { Success = false, ErrorMessage = result.ErrorMessage };
             }
         }
     }
