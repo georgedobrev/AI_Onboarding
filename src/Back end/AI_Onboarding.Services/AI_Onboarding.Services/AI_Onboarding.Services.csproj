@@ -17,6 +17,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.5" />
     <PackageReference Include="iTextSharp" Version="5.5.13.3" />
     <PackageReference Include="DocX" Version="2.4.0" />
+    <PackageReference Include="SendGrid" Version="9.28.1" />
     <PackageReference Include="Spire.Presentation" Version="8.6.0" />
     <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />

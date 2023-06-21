@@ -6,19 +6,19 @@ using AI_Onboarding.ViewModels.JWTModels;
 using AI_Onboarding.ViewModels.ResponseModels;
 using AI_Onboarding.ViewModels.UserModels;
 using AutoMapper;
-using Azure.Core;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using SendGrid;
+using SendGrid.Helpers.Mail;
 using System.IdentityModel.Tokens.Jwt;
-using System.Net.Http.Headers;
 using System.Security.Claims;
-using System.Security.Policy;
 using System.Text;
+using Microsoft.AspNetCore.Routing;
+using System.Web;
 
 namespace AI_Onboarding.Services.Implementation
 {
@@ -33,10 +33,13 @@ namespace AI_Onboarding.Services.Implementation
         private readonly ITokenService _tokenService;
         private readonly IConfiguration _configuration;
         private readonly ILogger<IdentityService> _logger;
+        private readonly IUrlHelper _urlHelper;
+        private readonly IHttpContextAccessor _contextAccessor;
+        private readonly LinkGenerator _linkGenerator;
 
         public IdentityService(IRepository<User> repository, IMapper mapper, UserManager<User> userManager, SignInManager<User> signInManager,
             ITokenService tokenService, IConfiguration configuration, ILogger<IdentityService> logger, IRepository<Role> repositoryRole,
-            IRepository<UserRole> repositoryUserRole)
+            IRepository<UserRole> repositoryUserRole, IUrlHelper urlHelper, IHttpContextAccessor httpContextAccessor, LinkGenerator link)
         {
             _repository = repository;
             _mapper = mapper;
@@ -47,6 +50,9 @@ namespace AI_Onboarding.Services.Implementation
             _logger = logger;
             _repositoryRole = repositoryRole;
             _repositoryUserRole = repositoryUserRole;
+            _urlHelper = urlHelper;
+            _contextAccessor = httpContextAccessor;
+            _linkGenerator = link;
         }
 
         public async Task<BaseResponseViewModel> RegisterAsync(UserRegistrationViewModel viewUser)
@@ -214,6 +220,58 @@ namespace AI_Onboarding.Services.Implementation
                         return new TokensResponseViewModel { Success = false, ErrorMessage = "Registration failed", Tokens = null };
                     }
                 }
+            }
+        }
+
+        public async Task<BaseResponseViewModel> SendPasswordResetEmailAsync(string email)
+        {
+            try
+            {
+                var user = await _userManager.FindByEmailAsync(email);
+                if (user != null)
+                {
+                    var emailSettings = _configuration.GetSection("EmailSettings");
+                    var apiKey = emailSettings["ApiKey"];
+                    var senderEmail = emailSettings["SenderEmail"];
+                    var senderName = emailSettings["Sendername"];
+
+                    var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+                    string baseUrl = "https://localhost:7243/account/reset-password";
+                    string resetUrl = $"{baseUrl}?token={HttpUtility.UrlEncode(token)}&email={HttpUtility.UrlEncode(email)}";
+
+                    var emailTemplatePath = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..", "..", "src", "Back end", "AI_Onboarding.Common", "EmailTemplate", "PasswordResetEmailTemplate.html");
+                    emailTemplatePath = Path.GetFullPath(emailTemplatePath);
+
+                    var emailTemplate = await File.ReadAllTextAsync(emailTemplatePath);
+
+                    var emailBodyWithUrl = emailTemplate.Replace("{{action_url}}", resetUrl);
+                    var emailBody = emailBodyWithUrl.Replace("{{name}}", user.FirstName);
+
+
+                    var client = new SendGridClient(apiKey);
+                    var from = new EmailAddress(senderEmail, senderName);
+                    var to = new EmailAddress(user.Email);
+                    var subject = "Password Reset";
+
+                    var msg = MailHelper.CreateSingleEmail(from, to, subject, " ", emailBody);
+                    var response = await client.SendEmailAsync(msg);
+                    _logger.LogInformation($"SendGrid Response Status Code: {response.StatusCode}");
+                    _logger.LogInformation($"SendGrid Response Body: {await response.Body.ReadAsStringAsync()}");
+
+
+                    return new BaseResponseViewModel { Success = true, ErrorMessage = string.Empty };
+                }
+                else
+                {
+                    return new BaseResponseViewModel { Success = false, ErrorMessage = "User not found" };
+                }
+            }
+
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while sending the password reset email.");
+                return new BaseResponseViewModel { Success = false, ErrorMessage = ex.Message };
             }
         }
     }

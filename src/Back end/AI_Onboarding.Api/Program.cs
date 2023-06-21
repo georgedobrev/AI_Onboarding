@@ -3,6 +3,7 @@ using Serilog;
 using Microsoft.AspNetCore.Builder;
 using AI_Onboarding.Services;
 using AI_Onboarding.Api.Filter;
+using Microsoft.AspNetCore.Identity;
 
 namespace AI_Onboarding.Api
 {
@@ -46,6 +47,9 @@ namespace AI_Onboarding.Api
                 });
             });
             builder.Host.UseSerilog((hostingContext, logger) => logger.ReadFrom.Configuration(hostingContext.Configuration));
+            builder.Services.Configure<DataProtectionTokenProviderOptions>(opts => opts.TokenLifespan = TimeSpan.FromHours(10));
+            builder.Services.RegisterUrlHelper();
+            builder.Services.RegisterHttpContextAccessor();
 
             ServiceCollectionExtension.RegisterDbContext(builder.Services, builder.Configuration, builder.Environment);
             ServiceCollectionExtension.ConfigureNoSQLDatabase(builder.Services, builder.Configuration);

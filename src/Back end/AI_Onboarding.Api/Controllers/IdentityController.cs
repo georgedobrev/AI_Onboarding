@@ -5,7 +5,7 @@ using AI_Onboarding.Services.Interfaces;
 using AI_Onboarding.ViewModels.JWTModels;
 using Microsoft.AspNetCore.Identity;
 using AI_Onboarding.Data.Models;
-using System.Security.Claims;
+using AI_Onboarding.ViewModels.UserModels.PasswordResetModels;
 
 namespace AI_Onboarding.Api.Controllers
 {
@@ -71,12 +71,68 @@ namespace AI_Onboarding.Api.Controllers
                 int.TryParse(_configuration["JWT:TokenValidityInMinutes"], out int tokenValidityInMinutes);
 
                 Response.Headers.Add("Access-Token", result.Tokens.Token);
-                
+
                 return Ok(result.ErrorMessage);
             }
             else
             {
                 return BadRequest(result.ErrorMessage);
+            }
+        }
+
+        [HttpPost("forgot-password")]
+        [AllowAnonymous]
+        public async Task<IActionResult> SendPasswordResetEmailAsync([FromBody] SendEmailViewModel model)
+        {
+            var result = await _identityServise.SendPasswordResetEmailAsync(model.Email);
+            if (result.Success)
+            {
+                return Ok("Password reset email sent successfully.");
+            }
+            else
+            {
+                return BadRequest(result.ErrorMessage);
+            }
+        }
+
+        [HttpPost("validate-reset-token")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ValidateResetToken([FromBody] ValidateTokenViewModel model)
+        {
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            var isTokenValid = await _userManager.VerifyUserTokenAsync(user, _userManager.Options.Tokens.PasswordResetTokenProvider, "ResetPassword", model.Token);
+
+            if (isTokenValid)
+            {
+                return Ok("Token is valid!");
+            }
+            else
+            {
+                return BadRequest("Token is invalid or expired!");
+            }
+        }
+
+        [HttpPost("change-password")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ChangePassword([FromBody] ResetPasswordViewModel model)
+        {
+            if (model == null || string.IsNullOrEmpty(model.Email) || string.IsNullOrEmpty(model.Token) || string.IsNullOrEmpty(model.NewPassword))
+            {
+                return BadRequest("Invalid input.");
+            }
+
+            var user = await _userManager.FindByEmailAsync(model.Email);
+
+            var result = await _userManager.ResetPasswordAsync(user, model.Token, model.NewPassword);
+
+
+            if (result.Succeeded)
+            {
+                return Ok("Password changed successfully!");
+            }
+            else
+            {
+                return BadRequest("Failed to change password!");
             }
         }
 
