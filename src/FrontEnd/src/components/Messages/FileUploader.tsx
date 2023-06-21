@@ -30,7 +30,7 @@ const FileUploader: React.FC = () => {
       const uploadEndpoint = config.uploadEndpoint;
 
       const responses = await Promise.all(
-        Array.from(files).map((file) => apiService.uploadFile(baseUrl, uploadEndpoint, file))
+          Array.from(files).map((file) => apiService.uploadFile(baseUrl, uploadEndpoint, file))
       );
 
       if (responses.every((response) => response)) {
@@ -66,86 +66,81 @@ const FileUploader: React.FC = () => {
   };
 
   return (
-    <div className="pdf-main">
-      {documentFiles.length > 0 ? (
-        <div className="pdf-container">
-          {loading ? (
-            <div className="loading-spinner">
-              <CircularProgress size={24} />
-            </div>
-          ) : (
-            <div className="pdf-wrapper">
-              {documentType === 'pdf' && (
-                <Document
-                  file={documentFiles[0]}
-                  onLoadSuccess={handleDocumentLoadSuccess}
-                  onLoadError={(error) => console.error('Error loading PDF:', error)}
-                >
-                  <Page
-                    pageNumber={currentPage}
-                    className="pdf-page"
-                    renderMode="canvas"
-                    renderTextLayer={false}
-                    renderAnnotationLayer={false}
-                  />
-                </Document>
+      <div className="pdf-main">
+        {documentFiles.length > 0 ? (
+            <div className="pdf-container">
+              {loading ? (
+                  <div className="loading-spinner">
+                    <CircularProgress size={24} />
+                  </div>
+              ) : (
+                  <div className="pdf-wrapper">
+                    {documentType === 'pdf' && (
+                        <Document
+                            file={documentFiles[0]}
+                            onLoadSuccess={handleDocumentLoadSuccess}
+                            onLoadError={(error) => console.error('Error loading PDF:', error)}
+                        >
+                          <Page
+                              pageNumber={currentPage}
+                              className="pdf-page"
+                              renderMode="canvas"
+                              renderTextLayer={false}
+                              renderAnnotationLayer={false}
+                          />
+                        </Document>
+                    )}
+                    {(documentType === 'docx' || documentType === 'pptx') && (
+                        <DocViewer
+                            renderer={documentType === 'pptx' ? DocViewerRenderers.Pptx : undefined}
+                            documents={documentFiles.map((file) => ({ uri: URL.createObjectURL(file) }))}
+                            onError={(error) =>
+                                console.error(`Error loading ${documentType.toUpperCase()}:`, error)
+                            }
+                        />
+                    )}
+                  </div>
               )}
-              {documentType === 'docx' && (
-                <DocViewer
-                  renderer={DocViewerRenderers.Docx}
-                  documents={documentFiles.map((file) => URL.createObjectURL(file))}
-                  onError={(error) => console.error('Error loading DOCX:', error)}
-                />
-              )}
-              {documentType === 'pptx' && (
-                <DocViewer
-                  renderer={DocViewerRenderers.Pptx}
-                  documents={documentFiles.map((file) => URL.createObjectURL(file))}
-                  onError={(error) => console.error('Error loading PPTX:', error)}
-                />
+              {responseReceived && (
+                  <div className="pdf-navigation">
+                    <Button
+                        onClick={handlePreviousPage}
+                        disabled={currentPage === 1}
+                        className="pdf-previous-page"
+                        variant="contained"
+                    >
+                      Previous Page
+                    </Button>
+                    <span>{`${currentPage} / ${numPages}`}</span>
+                    <Button
+                        onClick={handleNextPage}
+                        disabled={currentPage === numPages}
+                        className="pdf-next-page"
+                        variant="contained"
+                    >
+                      Next Page
+                    </Button>
+                  </div>
               )}
             </div>
-          )}
-          {responseReceived && (
-            <div className="pdf-navigation">
-              <Button
-                onClick={handlePreviousPage}
-                disabled={currentPage === 1}
-                className="pdf-previous-page"
-                variant="contained"
-              >
-                Previous Page
-              </Button>
-              <span>{`${currentPage} / ${numPages}`}</span>
-              <Button
-                onClick={handleNextPage}
-                disabled={currentPage === numPages}
-                className="pdf-next-page"
-                variant="contained"
-              >
-                Next Page
-              </Button>
-            </div>
-          )}
-        </div>
-      ) : null}
+        ) : null}
 
-      <div className="attach-icon">
-        <input
-          type="file"
-          id="file-input"
-          accept=".pdf"
-          style={{ display: 'none' }}
-          onChange={handleFileChange}
-        />
-        <label htmlFor="file-input">
-          <Button variant="contained" component="span" className="attach-btn">
-            <AttachFileIcon />
-            <p>UPLOAD FILE</p>
-          </Button>
-        </label>
+        <div className="attach-icon">
+          <input
+              type="file"
+              id="file-input"
+              accept=".pdf, .docx, .pptx"
+              style={{ display: 'none' }}
+              onChange={handleFileChange}
+          />
+          <label htmlFor="file-input">
+            <Button variant="contained" component="span" className="attach-btn">
+              <AttachFileIcon />
+              <p>UPLOAD FILE</p>
+            </Button>
+          </label>
+        </div>
       </div>
-    </div>
   );
 };
 
