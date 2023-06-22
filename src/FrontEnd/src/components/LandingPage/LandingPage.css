@@ -1,0 +1,71 @@
+.landing-page-container {
+    display: flex;
+    justify-content: center; /* Center content horizontally */
+    align-items: center; /* Center content vertically */
+    width: 100%;
+    padding: 20px;
+    text-align: center;
+}
+
+.landing-page-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--whiteColor);
+    border-radius: 10px;
+    padding: 50px;
+}
+
+.landing-page-h1 {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 50px;
+    background-image: linear-gradient(var(--blankfactorLogoLightBlue), var(--blankfactorLogoLightBlue));
+    background-size: 100% 10px;
+    background-repeat: no-repeat;
+    background-position: 50% 0%;
+    transition: background-size .7s, background-position .5s ease-in-out;
+    margin-bottom: 30px;
+}
+
+h1:hover {
+    background-size: 100% 100%;
+    background-position: 0% 100%;
+    color: var(--whiteColor);
+    transition: background-position .7s, background-size .5s , color .3s ease-in-out;
+}
+
+.landing-page-container p {
+    margin-bottom: 10px;
+    color: var(--blackColor);
+}
+
+.landing-page-container ul {
+    list-style: none;
+    padding: 0;
+    color: var(--blackColor);
+}
+
+.landing-page-container ul li {
+    margin-bottom: 5px;
+}
+
+.landing-page-container ul li a {
+    color: var(--blankfactorLogoLightBlue);
+    text-decoration: none;
+}
+
+.landing-page-logo {
+    width: 100%;
+    height: 150px;
+    aspect-ratio: unset;
+    object-fit: cover;
+}
+
+.landing-page-header-text {
+    margin-bottom: 30px;
+}
+
+.landing-page-text {
+    font-size: 20px;
+}

@@ -4,6 +4,11 @@
 
 .nav-container {
     display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+    width: 100%;
 }
 
 .navbar .MuiList-root {
@@ -11,6 +16,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    width: 100%;
 }
 
 .navbar .MuiListItem-root {
@@ -32,7 +38,7 @@
     width: 0.5px;
     background-color: var(--lineColor);
     position: relative;
-    margin-left: 20px;
+    /*margin-left: 20px;*/
     height: 100%;
 }
 
@@ -42,6 +48,11 @@
 
 .navbar .menu-button {
     color: var(--whiteColor);
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .drawer-list {
@@ -86,6 +97,7 @@
         justify-content: center;
         align-items: center;
         height: 100%;
+        width: 10%;
     }
 
     .nav-container {
@@ -93,7 +105,16 @@
         flex-direction: row;
         justify-content: center;
         align-items: center;
+        width: 100%;
         height: 100%;
+    }
+
+    .MuiButton-Base-root .menu-button {
+        display: flex;
+        position: relative;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
     }
 
     .navbar .menu-button {
@@ -102,13 +123,15 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
+        flex-grow: 1;
     }
 
-    .navbar-line {
-        width: 1px;
+    .navbar .menu-button:last-child::after {
+        content: "";
+        width: 0.5px;
         background-color: var(--lineColor);
-        position: relative;
-        margin-left: 30px;
+        position: absolute;
         height: 100%;
+        right: 0;
     }
 }
