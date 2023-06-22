@@ -6,7 +6,6 @@ import Register from './components/Register/Register.tsx';
 import Upload from './components/Upload/Upload.tsx';
 import ResetPassword from './components/ResetPassword/ResetPassword.tsx';
 import Account from './components/Account/Account.tsx';
-import LandingPage from './components/LandingPage/LandingPage.tsx';
 import { ToastContainer } from 'react-toastify';
 import config from './config.json';
 import 'react-toastify/dist/ReactToastify.css';
@@ -91,7 +90,7 @@ const App = () => {
       <Router>
         <div className="App">
           <Routes>
-            <Route path="/" element={<LandingPage />} />
+            <Route path="/" element={<Navigate to="/signup" />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/register" element={<Register />} />
             <Route path="/account/change-password" element={<ResetPassword />} />
@@ -101,9 +100,13 @@ const App = () => {
               element={<ProtectedRouteHome element={<Home />} redirectTo="/signup" />}
             />
             <Route
+              path="/account"
+              element={<ProtectedRouteAccount element={<Account />} redirectTo="/signup" />}
+            />
+            <Route
               path="/upload/"
               element={
-                <ProtectedRouteAccount
+                <ProtectedRouteUpload
                   element={<Upload />}
                   redirectTo="/signup"
                   allowedPaths={['/upload']}
