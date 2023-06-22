@@ -7,7 +7,6 @@ using AI_Onboarding.ViewModels.ResponseModels;
 using AI_Onboarding.ViewModels.UserModels;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
@@ -166,10 +165,8 @@ namespace AI_Onboarding.Services.Implementation
 
         public async Task<TokensResponseViewModel> GoogleLoginAsync(string token)
         {
-
             using (var httpClient = new HttpClient())
             {
-
                 var handler = new JwtSecurityTokenHandler();
                 var jwtToken = handler.ReadJwtToken(token);
                 var claims = jwtToken.Claims;
@@ -239,7 +236,6 @@ namespace AI_Onboarding.Services.Implementation
                     var emailBodyWithUrl = emailTemplate.Replace("{{action_url}}", resetUrl);
                     var emailBody = emailBodyWithUrl.Replace("{{name}}", user.FirstName);
 
-
                     var client = new SendGridClient(apiKey);
                     var from = new EmailAddress(senderEmail, senderName);
                     var to = new EmailAddress(user.Email);
@@ -255,7 +251,6 @@ namespace AI_Onboarding.Services.Implementation
                     return new BaseResponseViewModel { Success = false, ErrorMessage = "User not found" };
                 }
             }
-
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while sending the password reset email.");

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { TextField, IconButton } from '@mui/material';
 import { Send } from '@mui/icons-material';
 import { useLocation } from 'react-router-dom';
@@ -6,14 +6,18 @@ import FileUploader from './FileUploader.tsx';
 import { authService } from '../../services/authService.ts';
 import './Messages.css';
 
-const userRole = localStorage.getItem('userRole');
-
 const Messages: React.FC = () => {
   const location = useLocation();
+  const [userRole, setUserRole] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [messages, setMessages] = useState<
     { text: string; isAnswer: boolean; isTyping?: boolean }[]
   >([]);
+
+  useEffect(() => {
+    const storedUserRole = localStorage.getItem('userRole');
+    setUserRole(storedUserRole);
+  }, []);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(event.target.value);
@@ -49,7 +53,7 @@ const Messages: React.FC = () => {
       </div>
       <div className="messages-content-container">
         <div className="messages-content">
-          {!(location.pathname === '/account' && userRole === 'Administrator') && (
+          {!(location.pathname === '/upload' && userRole === 'Administrator') && (
             <div className="chat-messages">
               {messages.map((message) => (
                 <div
@@ -63,7 +67,7 @@ const Messages: React.FC = () => {
               ))}
             </div>
           )}
-          {location.pathname === '/account' && userRole === 'Administrator' && <FileUploader />}
+          {location.pathname === '/upload' && userRole === 'Administrator' && <FileUploader />}
           {location.pathname === '/home' && (
             <form onSubmit={handleSearchSubmit} className="search-container">
               <div className="search-input">

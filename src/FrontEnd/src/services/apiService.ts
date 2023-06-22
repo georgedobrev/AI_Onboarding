@@ -3,6 +3,7 @@ import config from '../config.json';
 import { lookup } from 'mime-types';
 import { toast } from 'react-toastify';
 import { authHeaderFile } from './commonConfig.ts';
+import { successNotification } from '../components/Notifications/Notifications.tsx';
 
 const uploadFile = async (baseUrl: string, uploadEndpoint: string, file: File) => {
   const formData = new FormData();
@@ -31,16 +32,7 @@ const uploadFile = async (baseUrl: string, uploadEndpoint: string, file: File) =
 
     if (response) {
       // File uploaded successfully
-      toast.success('File uploaded successfully', {
-        position: 'top-right',
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: 'dark',
-      });
+      successNotification('File uploaded successfully');
       return response;
     } else {
       // Error uploading file
@@ -52,5 +44,5 @@ const uploadFile = async (baseUrl: string, uploadEndpoint: string, file: File) =
 };
 
 export const apiService = {
-    uploadFile,
+  uploadFile,
 };

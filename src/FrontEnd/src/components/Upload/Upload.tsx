@@ -3,7 +3,7 @@ import Navbar from '../Navbar/Navbar.tsx';
 import blankfactorLogo from '../../assets/blankfactor-logo.jpg';
 import Messages from '../Messages/Messages.tsx';
 
-const Account: React.FC = () => {
+const Upload: React.FC = () => {
   return (
     <>
       <Navbar />
@@ -22,4 +22,4 @@ const Account: React.FC = () => {
     </>
   );
 };
-export default Account;
+export default Upload;

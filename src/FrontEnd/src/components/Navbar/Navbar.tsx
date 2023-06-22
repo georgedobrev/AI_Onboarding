@@ -3,6 +3,7 @@ import { List, ListItem, ListItemIcon } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import HomeIcon from '@mui/icons-material/Home';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import FileUploadIcon from '@mui/icons-material/FileUpload';
 import './Navbar.css';
 
 const Navbar: React.FC = () => {
@@ -15,7 +16,7 @@ const Navbar: React.FC = () => {
   }, []);
 
   const handleAccountClick = () => {
-    navigate('/account');
+    navigate('/upload');
   };
 
   const handleHomeClick = () => {
@@ -34,7 +35,7 @@ const Navbar: React.FC = () => {
           {userRole === 'Administrator' && (
             <ListItem button onClick={handleAccountClick}>
               <ListItemIcon>
-                <AccountCircleIcon />
+                <FileUploadIcon />
               </ListItemIcon>
             </ListItem>
           )}

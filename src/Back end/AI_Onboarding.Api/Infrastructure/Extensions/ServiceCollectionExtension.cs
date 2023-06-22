@@ -71,6 +71,7 @@ public static class ServiceCollectionExtension
         }
         return services;
     }
+  
     public static IServiceCollection ConfigureAuth(IServiceCollection services, IConfiguration configuration)
     {
         services.AddAuthentication(options =>
@@ -126,7 +127,6 @@ public static class ServiceCollectionExtension
 
     public static IServiceCollection ConfigureTokenLifspam(this IServiceCollection services)
     {
-
         services.Configure<DataProtectionTokenProviderOptions>(opts => opts.TokenLifespan = TimeSpan.FromMinutes(20));
         return services;
     }
