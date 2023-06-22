@@ -4,8 +4,8 @@ import { TextField, Button, InputAdornment, IconButton } from '@mui/material';
 import logoImage from '../../assets/blankfactor-logo.jpg';
 import { authService } from '../../services/authService.ts';
 import './ResetPassword.css';
-import { toast } from 'react-toastify';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { errorNotifications, successNotification } from '../Notifications/Notifications.tsx';
 
 const ResetPassword: React.FC = () => {
   const navigate = useNavigate();
@@ -26,16 +26,7 @@ const ResetPassword: React.FC = () => {
 
   const handleContinueClick = async () => {
     await authService.forgotPassword({ email });
-    toast.success('Check your email for link', {
-      position: 'top-right',
-      autoClose: 1000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: 'dark',
-    });
+    successNotification('Check your email for link');
   };
 
   const handleContinueClickReset = async () => {
@@ -50,29 +41,8 @@ const ResetPassword: React.FC = () => {
     try {
       await authService.validateResetToken(validateTokenData);
 
-      toast.success('Token validated', {
-        position: 'top-right',
-        autoClose: 1000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: 'dark',
-      });
-
-      // Rest of your code
       if (newPassword !== confirmPassword) {
-        toast.error('Passwords do not match', {
-          position: 'top-right',
-          autoClose: 1000,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: 'dark',
-        });
+        errorNotifications('Passwords do not match');
         return;
       }
 
@@ -84,29 +54,11 @@ const ResetPassword: React.FC = () => {
       };
 
       await authService.resetPassword(resetPasswordData);
-      toast.success('Password reset', {
-        position: 'top-right',
-        autoClose: 1000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: 'dark',
-      });
+      successNotification('Password reset');
       navigate('/signup');
     } catch (error) {
       console.error(error);
-      toast.error('Invalid token', {
-        position: 'top-right',
-        autoClose: 1000,
-        hideProgressBar: true,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: 'dark',
-      });
+      errorNotifications('Invalid token');
       navigate('/signup');
       return;
     }

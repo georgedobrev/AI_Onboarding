@@ -36,7 +36,7 @@ interface forgotPasswordRequestBody {
   email: string;
 }
 
-interface forgotPasswordResponse {
+interface passwordResetResponse {
   message: string;
 }
 
@@ -47,16 +47,9 @@ interface resetPasswordRequestBody {
   confirmPassword: string;
 }
 
-interface resetPasswordResponse {
-  message: string;
-}
-
 interface validateResetTokenRequestBody {
   token: string;
   email: string;
-}
-interface validateResetTokenResponse {
-  message: string;
 }
 
 export const authService = {
@@ -157,7 +150,7 @@ export const authService = {
     try {
       const headers = { headers: { 'Content-Type': 'application/json' } };
       const url = `${config.baseUrl}${config.forgotPasswordEndpoint}`;
-      const response = await fetchWrapper.post<forgotPasswordResponse, forgotPasswordRequestBody>(
+      const response = await fetchWrapper.post<passwordResetResponse, forgotPasswordRequestBody>(
         url,
         formData,
         headers
@@ -176,7 +169,7 @@ export const authService = {
     try {
       const headers = { headers: { 'Content-Type': 'application/json' } };
       const url = `${config.baseUrl}${config.resetPasswordEndpoint}`;
-      const response = await fetchWrapper.post<resetPasswordResponse, resetPasswordRequestBody>(
+      const response = await fetchWrapper.post<passwordResetResponse, resetPasswordRequestBody>(
         url,
         formData,
         headers
@@ -196,7 +189,7 @@ export const authService = {
       const headers = { headers: { 'Content-Type': 'application/json' } };
       const url = `${config.baseUrl}${config.validateResetTokenEndpoint}`;
       const response = await fetchWrapper.post<
-        validateResetTokenResponse,
+        passwordResetResponse,
         validateResetTokenRequestBody
       >(url, formData, headers);
       if (!response) {

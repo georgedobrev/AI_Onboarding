@@ -104,9 +104,11 @@ const App = () => {
               element={<ProtectedRouteAccount element={<Account />} redirectTo="/signup" />}
             />
             <Route
-              path="/upload/"
               element={
                 <ProtectedRouteUpload
+              path="/upload/"
+              element={
+                <ProtectedRouteAccount
                   element={<Upload />}
                   redirectTo="/signup"
                   allowedPaths={['/upload']}
