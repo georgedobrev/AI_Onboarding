@@ -44,6 +44,30 @@ const Messages: React.FC = () => {
   };
 
   const isMessageInProgress = messages.some((message) => message.isTyping);
+  const name = localStorage.getItem('fullName');
+
+  const renderMessages = messages.map((message, index) => {
+    if (message.isAnswer) {
+      return (
+        <div className="message-answer-wrapper">
+          <span className="message-answer-name">Blankfactor Chat Bot</span>
+          <div className="message answer" key={index}>
+            <span>{message.text}</span>
+            {message.isTyping && <span className="dot-animation" />}
+          </div>
+        </div>
+      );
+    } else {
+      return (
+        <div className="message-question-wrapper">
+          <span className="message-question-name">{name}</span>
+          <div className="message question" key={index}>
+            <span>{message.text}</span>
+          </div>
+        </div>
+      );
+    }
+  });
 
   return (
     <div className="messages-container">
@@ -54,18 +78,7 @@ const Messages: React.FC = () => {
       <div className="messages-content-container">
         <div className="messages-content">
           {!(location.pathname === '/upload' && userRole === 'Administrator') && (
-            <div className="chat-messages">
-              {messages.map((message) => (
-                <div
-                  className={`message ${message.isAnswer ? 'answer' : ''} ${
-                    message.isTyping ? 'typing' : ''
-                  }`}
-                >
-                  {message.isAnswer && <div className="logo-container" />}
-                  {message.text}
-                </div>
-              ))}
-            </div>
+            <div className="chat-messages">{renderMessages}</div>
           )}
           {location.pathname === '/upload' && userRole === 'Administrator' && <FileUploader />}
           {location.pathname === '/home' && (

@@ -49,6 +49,8 @@ const Signup: React.FC = () => {
     const tokenParts = accessToken.split('.');
     const tokenPayload = JSON.parse(atob(tokenParts[1]));
     const userRole = tokenPayload[config.JWTUserRole];
+    const fullName = tokenPayload[config.Name];
+    localStorage.setItem('fullName', fullName);
     localStorage.setItem('userRole', userRole);
     return navigate('/home');
   };
@@ -114,6 +116,10 @@ const Signup: React.FC = () => {
       const accessToken = response.headers.get('access-token');
       const refreshToken = response.headers.get('refresh-token');
       const remainingTime = calculateRemainingTime(refreshToken);
+      const tokenParts = accessToken.split('.');
+      const tokenPayload = JSON.parse(atob(tokenParts[1]));
+      const fullName = tokenPayload[config.Name];
+      localStorage.setItem('fullName', fullName);
 
       setTimeout(() => {
         localStorage.removeItem('refreshToken');
