@@ -1,16 +1,5 @@
 @import url('https://fonts.googleapis.com/css?family=Poppins:900i');
 
-* {
-    box-sizing: border-box;
-}
-
-body {
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
 .wrapper {
     display: flex;
     justify-content: center;
@@ -60,6 +49,7 @@ span .login-text {
     position: relative;
     top: 12%;
 }
+
 /**************SVG****************/
 
 path.one {
