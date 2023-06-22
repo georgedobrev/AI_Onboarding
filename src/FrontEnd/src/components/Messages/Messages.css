@@ -39,7 +39,7 @@
     left: 14px;
     width: 24px;
     height: 24px;
-    background-image: url('src/assets/blankfactor-logo.jpg');
+    background-image: url('./src/assets/blankfactor-logo.jpg');
     background-size: cover;
     border-radius: 10%;
     transform: translate(-50%, -50%);

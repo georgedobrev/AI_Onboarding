@@ -4,6 +4,8 @@ import { FormValues as SignInForms } from '../components/SignIn/types.ts';
 import { FormValues as RegisterForms } from '../components/Register/types.ts';
 import { ExtendSessionFormValues } from '../components/SignIn/types.ts';
 import { authHeaderAI } from './commonConfig.ts';
+import {errorNotifications} from "../components/Notifications/Notifications.tsx";
+import jwt_decode from 'jwt-decode';
 
 interface LoginResponse {
   accessToken?: string;
@@ -71,9 +73,7 @@ export const authService = {
       localStorage.setItem('refreshToken', refreshToken);
 
       // TODO to be refactored
-      const tokenParts = accessToken.split('.');
-      const tokenPayload = JSON.parse(atob(tokenParts[1]));
-
+      const tokenPayload = jwt_decode(accessToken);
       const userRole = tokenPayload[config.JWTUserRole];
       localStorage.setItem('userRole', userRole);
 
@@ -87,6 +87,7 @@ export const authService = {
 
       return response;
     } catch (error) {
+      errorNotifications('Wrong email or password');
       throw new Error('Login failed');
     }
   },
@@ -160,6 +161,7 @@ export const authService = {
       }
       return response;
     } catch (error) {
+      errorNotifications('Wrong email or non-existing email')
       console.error(error);
       throw new Error('Forget password failed');
     }
