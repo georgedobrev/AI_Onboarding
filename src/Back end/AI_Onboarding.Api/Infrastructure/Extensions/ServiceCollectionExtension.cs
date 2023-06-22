@@ -72,6 +72,7 @@ public static class ServiceCollectionExtension
         }
         return services;
     }
+  
     public static IServiceCollection ConfigureAuth(IServiceCollection services, IConfiguration configuration)
     {
         services.AddAuthentication(options =>

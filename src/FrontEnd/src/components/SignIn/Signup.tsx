@@ -10,6 +10,7 @@ import { toast } from 'react-toastify';
 import config from '../../config.json';
 import 'react-toastify/dist/ReactToastify.css';
 import './Signup.css';
+import { successNotification } from '../Notifications/Notifications.tsx';
 
 const Signup: React.FC = () => {
   const location = useLocation();
@@ -34,16 +35,7 @@ const Signup: React.FC = () => {
   const handleGoogleSignupSuccess = async (credentialResponse: CredentialResponse) => {
     const response = await authService.googleLogin(credentialResponse.credential);
     await handleSuccessfulLogin(response);
-    toast.success('Google login successful', {
-      position: 'top-right',
-      autoClose: 1000,
-      hideProgressBar: true,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-      theme: 'dark',
-    });
+    successNotification('Google login successful');
 
     const accessToken = localStorage.getItem('accessToken');
     const tokenParts = accessToken.split('.');
@@ -89,16 +81,7 @@ const Signup: React.FC = () => {
       if (response) {
         await handleSuccessfulLogin(response);
         navigate('/home');
-        toast.success('Login Successful', {
-          position: 'top-right',
-          autoClose: 1000,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: 'dark',
-        });
+        successNotification('Login Successful');
       } else {
         throw new Error('Request failed');
       }
