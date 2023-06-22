@@ -20,19 +20,9 @@
 .landing-page-h1 {
     font-family: 'Bebas Neue', cursive;
     font-size: 50px;
-    background-image: linear-gradient(var(--blankfactorLogoLightBlue), var(--blankfactorLogoLightBlue));
-    background-size: 100% 10px;
-    background-repeat: no-repeat;
-    background-position: 50% 0%;
-    transition: background-size .7s, background-position .5s ease-in-out;
-    margin-bottom: 30px;
-}
-
-h1:hover {
-    background-size: 100% 100%;
-    background-position: 0% 100%;
     color: var(--whiteColor);
-    transition: background-position .7s, background-size .5s , color .3s ease-in-out;
+    background:var(--blankfactorLogoLightBlue);
+    margin-bottom: 30px;
 }
 
 .landing-page-container p {
