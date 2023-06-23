@@ -12,7 +12,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import { pdfjs } from 'react-pdf';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import './App.css';
-import jwt_decode from "jwt-decode";
+import jwt_decode from 'jwt-decode';
+import LandingPage from './components/LandingPage/LandingPage.tsx';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 const clientId = '87684702779-3ju9p8rrlfrbpq18e18ldd79eooph69g.apps.googleusercontent.com';
@@ -90,7 +91,7 @@ const App = () => {
       <Router>
         <div className="App">
           <Routes>
-            <Route path="/" element={<Navigate to="/signup" />} />
+            <Route path="/" element={<LandingPage />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/register" element={<Register />} />
             <Route path="/account/change-password" element={<ResetPassword />} />
@@ -100,8 +101,8 @@ const App = () => {
               element={<ProtectedRouteHome element={<Home />} redirectTo="/signup" />}
             />
             <Route
-                path="/account"
-                element={<ProtectedRouteAccount element={<Account />} redirectTo="/signup" />}
+              path="/account"
+              element={<ProtectedRouteAccount element={<Account />} redirectTo="/signup" />}
             />
             <Route
               path="/upload/"
