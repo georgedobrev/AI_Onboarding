@@ -11,7 +11,7 @@ import config from '../../config.json';
 import 'react-toastify/dist/ReactToastify.css';
 import './Signup.css';
 import { successNotification } from '../Notifications/Notifications.tsx';
-import jwt_decode from "jwt-decode";
+import jwt_decode from 'jwt-decode';
 
 const Signup: React.FC = () => {
   const location = useLocation();
@@ -67,7 +67,7 @@ const Signup: React.FC = () => {
   };
 
   const calculateRemainingTime = (token: string) => {
-    const tokenPayload = jwt_decode(accessToken);
+    const tokenPayload = jwt_decode(token);
     const expirationTime = tokenPayload.exp * 1000;
     const currentTime = new Date().getTime();
     const remainingTime = expirationTime - currentTime;
