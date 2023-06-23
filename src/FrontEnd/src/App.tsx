@@ -12,6 +12,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { pdfjs } from 'react-pdf';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import './App.css';
+import jwt_decode from "jwt-decode";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 const clientId = '87684702779-3ju9p8rrlfrbpq18e18ldd79eooph69g.apps.googleusercontent.com';
@@ -61,8 +62,7 @@ const ProtectedRouteUpload: React.FC<ProtectedRouteUploadProps> = ({
   if (!accessToken) {
     return <Navigate to={redirectTo} replace />;
   }
-  const tokenParts = accessToken.split('.');
-  const tokenPayload = JSON.parse(atob(tokenParts[1]));
+  const tokenPayload = jwt_decode(accessToken);
   const userRole = tokenPayload[config.JWTUserRole];
   if (userRole === 'Administrator') {
     return element;
@@ -100,8 +100,8 @@ const App = () => {
               element={<ProtectedRouteHome element={<Home />} redirectTo="/signup" />}
             />
             <Route
-              path="/account"
-              element={<ProtectedRouteAccount element={<Account />} redirectTo="/signup" />}
+                path="/account"
+                element={<ProtectedRouteAccount element={<Account />} redirectTo="/signup" />}
             />
             <Route
               path="/upload/"

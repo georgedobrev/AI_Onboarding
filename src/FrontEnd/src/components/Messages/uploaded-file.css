@@ -92,3 +92,32 @@
     width: 100%;
     color: var(--whiteColor);
 }
+
+@media (max-height: 675px) {
+    .react-pdf__Page__canvas {
+        width: auto !important;
+        height: auto !important;
+        max-height: 65vh !important;
+    }
+
+    .pdf-container {
+        height: 100%;
+        width: 100%;
+    }
+}
+
+@media (max-width: 758px) {
+    .react-pdf__Page__canvas {
+        width: auto !important;
+        height: auto !important;
+        max-height: 25vh !important;
+    }
+}
+
+@media (max-width: 1600px) {
+    .react-pdf__Page__canvas {
+        width: auto !important;
+        height: auto !important;
+        max-height: 55vh !important;
+    }
+}
