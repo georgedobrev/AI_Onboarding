@@ -12,6 +12,7 @@
     <None Remove="DocumentModels\" />
     <None Remove="ResponseModels\" />
     <None Remove="UserModels\PasswordResetModels\" />
+    <None Remove="ConversationModels\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="12.0.1" />
@@ -23,5 +24,6 @@
   <ItemGroup>
     <Folder Include="DocumentModels\" />
     <Folder Include="ResponseModels\" />
+    <Folder Include="ConversationModels\" />
   </ItemGroup>
 </Project>
