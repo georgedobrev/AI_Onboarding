@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.AspNetCore.Mvc.Routing;
 using System.Configuration;
+using AI_Onboarding.ViewModels.ConversationModels.Profiles;
 
 public static class ServiceCollectionExtension
 {
@@ -55,7 +56,7 @@ public static class ServiceCollectionExtension
         services.AddScoped<IDocumentRepository, DocumentRepository>();
 
         services.AddScopedServiceTypes(typeof(TokenService).Assembly, typeof(IService));
-        services.AddAutoMapper(typeof(UserProfile));
+        services.AddAutoMapper(typeof(UserProfile), typeof(ConversationProfile));
         if (environment.IsDevelopment())
         {
             services.AddCors(options =>
@@ -71,7 +72,7 @@ public static class ServiceCollectionExtension
         }
         return services;
     }
-  
+
     public static IServiceCollection ConfigureAuth(IServiceCollection services, IConfiguration configuration)
     {
         services.AddAuthentication(options =>
