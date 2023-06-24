@@ -46,7 +46,7 @@ namespace AI_Onboarding.Services.Implementation
             {
                 var conversation = _repository.Find((int)id);
 
-                if (conversation.UserId == userId)
+                if (conversation?.UserId == userId)
                 {
                     conversation.QuestionAnswers.Add(new QuestionAnswer
                     {
