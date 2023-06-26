@@ -45,7 +45,6 @@ const Messages: React.FC = () => {
       ]);
     }
   };
-
   const isMessageInProgress = messages.some((message) => message.isTyping);
   const name = localStorage.getItem('fullName');
   const renderMessages = messages.map((message, index) => {
