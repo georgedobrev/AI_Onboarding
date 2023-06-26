@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import AttachFileIcon from '@mui/icons-material/AttachFile';
-import { Document, Page } from 'react-pdf';
-import DocViewer, { DocViewerRenderers } from '@cyntler/react-doc-viewer';
 import { apiService } from '../../services/apiService.ts';
 import config from '../../config.json';
-import './uploaded-file.css';
+import DocViewer, { DocViewerRenderers } from '@cyntler/react-doc-viewer';
+import { Document, Page } from 'react-pdf';
+import AttachFileIcon from '@mui/icons-material/AttachFile';
 import { Button, CircularProgress } from '@mui/material';
+import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import './FileUploader.css';
 
 const FileUploader: React.FC = () => {
   const [documentFiles, setDocumentFiles] = useState<File[]>([]);
@@ -14,10 +16,9 @@ const FileUploader: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);
   const [responseReceived, setResponseReceived] = useState<boolean>(false);
-
+  const acceptedFileTypes = '.pdf, .docx, .pptx';
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = (event.target as HTMLInputElement)?.files || null;
-
     if (files) {
       setDocumentFiles(Array.from(files));
       setCurrentPage(1);
@@ -75,6 +76,14 @@ const FileUploader: React.FC = () => {
             </div>
           ) : (
             <div className="pdf-wrapper">
+              <Button
+                onClick={handlePreviousPage}
+                disabled={currentPage === 1}
+                className="pdf-previous-page"
+                variant="contained"
+              >
+                <KeyboardArrowLeftIcon />
+              </Button>
               {documentType === 'pdf' && (
                 <Document
                   file={documentFiles[0]}
@@ -90,41 +99,28 @@ const FileUploader: React.FC = () => {
                   />
                 </Document>
               )}
-              {documentType === 'docx' && (
+              {(documentType === 'docx' || documentType === 'pptx') && (
                 <DocViewer
-                  renderer={DocViewerRenderers.Docx}
-                  documents={documentFiles.map((file) => URL.createObjectURL(file))}
-                  onError={(error) => console.error('Error loading DOCX:', error)}
+                  renderer={documentType === 'pptx' ? DocViewerRenderers.Pptx : undefined}
+                  documents={documentFiles.map((file) => ({ uri: URL.createObjectURL(file) }))}
+                  onError={(error) =>
+                    console.error(`Error loading ${documentType.toUpperCase()}:`, error)
+                  }
                 />
               )}
-              {documentType === 'pptx' && (
-                <DocViewer
-                  renderer={DocViewerRenderers.Pptx}
-                  documents={documentFiles.map((file) => URL.createObjectURL(file))}
-                  onError={(error) => console.error('Error loading PPTX:', error)}
-                />
-              )}
-            </div>
-          )}
-          {responseReceived && (
-            <div className="pdf-navigation">
-              <Button
-                onClick={handlePreviousPage}
-                disabled={currentPage === 1}
-                className="pdf-previous-page"
-                variant="contained"
-              >
-                Previous Page
-              </Button>
-              <span>{`${currentPage} / ${numPages}`}</span>
               <Button
                 onClick={handleNextPage}
                 disabled={currentPage === numPages}
                 className="pdf-next-page"
                 variant="contained"
               >
-                Next Page
+                <KeyboardArrowRightIcon />
               </Button>
+            </div>
+          )}
+          {responseReceived && (
+            <div className="pdf-navigation">
+              <span>{`${currentPage} / ${numPages}`}</span>
             </div>
           )}
         </div>
@@ -134,7 +130,7 @@ const FileUploader: React.FC = () => {
         <input
           type="file"
           id="file-input"
-          accept=".pdf"
+          accept={acceptedFileTypes}
           style={{ display: 'none' }}
           onChange={handleFileChange}
         />

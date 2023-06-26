@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { TextField, IconButton } from '@mui/material';
-import { Send } from '@mui/icons-material';
 import { useLocation } from 'react-router-dom';
 import FileUploader from './FileUploader.tsx';
+import { TextField, IconButton } from '@mui/material';
+import { Send } from '@mui/icons-material';
 import { authService } from '../../services/authService.ts';
 import './Messages.css';
 
@@ -13,6 +13,10 @@ const Messages: React.FC = () => {
   const [messages, setMessages] = useState<
     { text: string; isAnswer: boolean; isTyping?: boolean }[]
   >([]);
+  const roles = {
+    Administrator: 'Administrator',
+    Employee: 'Employee',
+  };
 
   useEffect(() => {
     const storedUserRole = localStorage.getItem('userRole');
@@ -29,7 +33,6 @@ const Messages: React.FC = () => {
       setMessages((prevMessages) => [...prevMessages, { text: searchQuery, isAnswer: false }]);
       setSearchQuery('');
     }
-
     if (!messages.some((message) => message.isTyping)) {
       setMessages((prevMessages) => [
         ...prevMessages,
@@ -42,8 +45,30 @@ const Messages: React.FC = () => {
       ]);
     }
   };
-
   const isMessageInProgress = messages.some((message) => message.isTyping);
+  const name = localStorage.getItem('fullName');
+  const renderMessages = messages.map((message, index) => {
+    if (message.isAnswer) {
+      return (
+        <div className="message-answer-wrapper" key={index}>
+          <span className="message-answer-name">Blankfactor Chat Bot</span>
+          <div className="message answer">
+            <span>{message.text}</span>
+            {message.isTyping && <span className="dot-animation" />}
+          </div>
+        </div>
+      );
+    } else {
+      return (
+        <div className="message-question-wrapper" key={index}>
+          <span className="message-question-name">{name}</span>
+          <div className="message question">
+            <span>{message.text}</span>
+          </div>
+        </div>
+      );
+    }
+  });
 
   return (
     <div className="messages-container">
@@ -53,21 +78,10 @@ const Messages: React.FC = () => {
       </div>
       <div className="messages-content-container">
         <div className="messages-content">
-          {!(location.pathname === '/upload' && userRole === 'Administrator') && (
-            <div className="chat-messages">
-              {messages.map((message) => (
-                <div
-                  className={`message ${message.isAnswer ? 'answer' : ''} ${
-                    message.isTyping ? 'typing' : ''
-                  }`}
-                >
-                  {message.isAnswer && <div className="logo-container" />}
-                  {message.text}
-                </div>
-              ))}
-            </div>
+          {!(location.pathname === '/upload' && userRole === roles.Administrator) && (
+            <div className="chat-messages">{renderMessages}</div>
           )}
-          {location.pathname === '/upload' && userRole === 'Administrator' && <FileUploader />}
+          {location.pathname === '/upload' && userRole === roles.Administrator && <FileUploader />}
           {location.pathname === '/home' && (
             <form onSubmit={handleSearchSubmit} className="search-container">
               <div className="search-input">

@@ -2,11 +2,21 @@
     display: flex;
 }
 
+.nav-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}
+
 .navbar .MuiList-root {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    width: 100%;
 }
 
 .navbar .MuiListItem-root {
@@ -16,6 +26,52 @@
 
 .navbar .MuiListItemIcon-root {
     color: var(--whiteColor);
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.navbar-line {
+    width: 0.5px;
+    background-color: var(--lineColor);
+    position: relative;
+    height: 100%;
+    z-index: 1;
+}
+
+.hide {
+    display: none;
+}
+
+.navbar .menu-button {
+    color: var(--whiteColor);
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.drawer-list {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--mainColor);
+    height: 100%;
+}
+
+
+.drawer-list .MuiListItem-root {
+    margin-bottom: 70px;
+    padding: 10px;
+}
+
+.drawer-list .MuiListItemIcon-root {
+    color: var(--whiteColor);
     width: 20px;
     height: 20px;
     display: flex;
@@ -23,13 +79,53 @@
     align-items: center;
 }
 
-.nav-container {
-    display: flex;
+.MuiDrawer-paper {
+    background-color: var(--mainColor);
 }
 
-.navbar-line {
-    width: 0.5px;
-    background-color: var(--lineColor);
-    top: 0;
-    bottom: 0;
+.MuiPaper-root.MuiDrawer-paper.MuiDrawer-paperAnchorLeft {
+    background-color: var(--mainColor);
+}
+
+@media (max-width: 768px) {
+    .nav-list {
+        display: none;
+    }
+
+    .navbar {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        width: 10%;
+    }
+
+    .nav-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+    }
+
+    .MuiButton-Base-root .menu-button {
+        display: flex;
+        position: relative;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .navbar .menu-button {
+        display: flex;
+        position: relative;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        flex-grow: 1;
+        margin-left: 0;
+        padding: 0;
+    }
 }

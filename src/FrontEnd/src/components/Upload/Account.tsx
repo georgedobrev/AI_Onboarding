@@ -1,19 +1,21 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import Button from '@mui/material/Button';
 import Navbar from '../Navbar/Navbar.tsx';
 import blankfactorLogo from '../../assets/blankfactor-logo.jpg';
+import Button from '@mui/material/Button';
 import './Account.css';
+import { useNavigate } from 'react-router-dom';
+
 const Account: React.FC = () => {
   const navigate = useNavigate();
   const handleSignOut = () => {
+    // Add your sign out logic here
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('userRole');
-    localStorage.removeItem('fullName');
 
     navigate('/signup');
   };
+
   return (
     <>
       <Navbar />
