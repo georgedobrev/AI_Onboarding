@@ -4,7 +4,7 @@ import { Document, Page } from 'react-pdf';
 import DocViewer, { DocViewerRenderers } from '@cyntler/react-doc-viewer';
 import { apiService } from '../../services/apiService.ts';
 import config from '../../config.json';
-import './uploaded-file.css';
+import './FileUploader.css';
 import { Button, CircularProgress } from '@mui/material';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';

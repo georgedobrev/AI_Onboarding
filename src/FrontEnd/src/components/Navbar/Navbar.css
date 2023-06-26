@@ -38,8 +38,8 @@
     width: 0.5px;
     background-color: var(--lineColor);
     position: relative;
-    /*margin-left: 20px;*/
     height: 100%;
+    z-index: 1;
 }
 
 .hide {
@@ -57,11 +57,13 @@
 
 .drawer-list {
     display: flex;
-    flex-direction: column;
+    flex-direction: row; /* Changed from column to row */
     align-items: center;
     justify-content: center;
     background-color: var(--mainColor);
+    height: 100%; /* Added height property */
 }
+
 
 .drawer-list .MuiListItem-root {
     margin-bottom: 70px;
@@ -85,8 +87,7 @@
     background-color: var(--mainColor);
 }
 
-/* Media query for mobile view */
-@media (max-width: 767px) {
+@media (max-width: 768px) {
     .nav-list {
         display: none;
     }
@@ -124,14 +125,7 @@
         align-items: center;
         justify-content: center;
         flex-grow: 1;
-    }
-
-    .navbar .menu-button:last-child::after {
-        content: "";
-        width: 0.5px;
-        background-color: var(--lineColor);
-        position: absolute;
-        height: 100%;
-        right: 0;
+        margin-left: 0;
+        padding: 0;
     }
 }

@@ -1,7 +1,7 @@
 .landing-page-container {
     display: flex;
-    justify-content: center; /* Center content horizontally */
-    align-items: center; /* Center content vertically */
+    justify-content: center;
+    align-items: center;
     width: 100%;
     padding: 20px;
     text-align: center;
@@ -21,7 +21,7 @@
     font-family: 'Bebas Neue', cursive;
     font-size: 50px;
     color: var(--whiteColor);
-    background:var(--blankfactorLogoLightBlue);
+    background: var(--blankfactorLogoLightBlue);
     margin-bottom: 30px;
 }
 

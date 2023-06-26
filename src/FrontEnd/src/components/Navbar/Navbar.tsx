@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { List, ListItem, ListItemIcon, IconButton, Drawer, Divider } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import Chats from '../Chats/Chats.tsx';
 import { Menu as MenuIcon } from '@mui/icons-material';
 import HomeIcon from '@mui/icons-material/Home';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
@@ -11,6 +12,7 @@ const Navbar: React.FC = () => {
   const [userRole, setUserRole] = useState<string | null>(null);
   const [open, setOpen] = useState(false);
   const [isMobileView, setIsMobileView] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -18,16 +20,15 @@ const Navbar: React.FC = () => {
     setUserRole(storedUserRole);
 
     const handleResize = () => {
+      setWindowWidth(window.innerWidth);
       setIsMobileView(window.innerWidth < 768);
     };
 
-    // Set initial view on component mount
+    setWindowWidth(window.innerWidth);
     setIsMobileView(window.innerWidth < 768);
 
-    // Add event listener to handle window resize
     window.addEventListener('resize', handleResize);
 
-    // Cleanup event listener on component unmount
     return () => {
       window.removeEventListener('resize', handleResize);
     };
@@ -54,44 +55,40 @@ const Navbar: React.FC = () => {
   };
 
   return (
-      <div className="navbar">
-        <div className="nav-container">
-          {isMobileView ? (
-              <IconButton
-                  aria-label="open drawer"
-                  edge="start"
-                  onClick={handleDrawerOpen}
-                  className="menu-button"
-              >
-                <MenuIcon />
-              </IconButton>
-          ) : (
-              <List className="nav-list">
-                <ListItem button onClick={handleHomeClick}>
-                  <ListItemIcon>
-                    <HomeIcon />
-                  </ListItemIcon>
-                </ListItem>
-                {userRole === 'Administrator' && (
-                    <ListItem button onClick={handleUploadClick}>
-                      <ListItemIcon>
-                        <FileUploadIcon />
-                      </ListItemIcon>
-                    </ListItem>
-                )}
-                <ListItem button onClick={handleAccountClick}>
-                  <ListItemIcon>
-                    <AccountCircleIcon />
-                  </ListItemIcon>
-                </ListItem>
-              </List>
-          )}
-          <Drawer
-              anchor="left"
-              open={open}
-              onClose={handleDrawerClose}
-              className="drawer"
+    <div className="navbar">
+      <div className="nav-container">
+        {isMobileView ? (
+          <IconButton
+            aria-label="open drawer"
+            edge="start"
+            onClick={handleDrawerOpen}
+            className="menu-button"
           >
+            <MenuIcon />
+          </IconButton>
+        ) : (
+          <List className="nav-list">
+            <ListItem button onClick={handleHomeClick}>
+              <ListItemIcon>
+                <HomeIcon />
+              </ListItemIcon>
+            </ListItem>
+            {userRole === 'Administrator' && (
+              <ListItem button onClick={handleUploadClick}>
+                <ListItemIcon>
+                  <FileUploadIcon />
+                </ListItemIcon>
+              </ListItem>
+            )}
+            <ListItem button onClick={handleAccountClick}>
+              <ListItemIcon>
+                <AccountCircleIcon />
+              </ListItemIcon>
+            </ListItem>
+          </List>
+        )}
+        {isMobileView && windowWidth <= 768 && (
+          <Drawer anchor="left" open={open} onClose={handleDrawerClose} className="drawer">
             <div className="drawer-list">
               <List>
                 <ListItem button onClick={handleHomeClick}>
@@ -100,11 +97,11 @@ const Navbar: React.FC = () => {
                   </ListItemIcon>
                 </ListItem>
                 {userRole === 'Administrator' && (
-                    <ListItem button onClick={handleUploadClick}>
-                      <ListItemIcon>
-                        <FileUploadIcon />
-                      </ListItemIcon>
-                    </ListItem>
+                  <ListItem button onClick={handleUploadClick}>
+                    <ListItemIcon>
+                      <FileUploadIcon />
+                    </ListItemIcon>
+                  </ListItem>
                 )}
                 <ListItem button onClick={handleAccountClick}>
                   <ListItemIcon>
@@ -112,12 +109,14 @@ const Navbar: React.FC = () => {
                   </ListItemIcon>
                 </ListItem>
               </List>
+              <Chats /> {/* Moved Chats component inside the drawer-list */}
             </div>
             <Divider />
           </Drawer>
-          <div className="navbar-line"></div>
-        </div>
+        )}
+        <div className="navbar-line"></div>
       </div>
+    </div>
   );
 };
 
