@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import { pdfjs } from 'react-pdf';
+import { GoogleOAuthProvider } from '@react-oauth/google';
+import jwt_decode from 'jwt-decode';
 import Home from './components/Home/Home.tsx';
 import Signup from './components/SignIn/Signup.tsx';
 import Register from './components/Register/Register.tsx';
 import Upload from './components/Upload/Upload.tsx';
 import ResetPassword from './components/ResetPassword/ResetPassword.tsx';
 import Account from './components/Account/Account.tsx';
-import { ToastContainer } from 'react-toastify';
+import LandingPage from './components/LandingPage/LandingPage.tsx';
+import './App.css';
 import config from './config.json';
 import 'react-toastify/dist/ReactToastify.css';
-import { pdfjs } from 'react-pdf';
-import { GoogleOAuthProvider } from '@react-oauth/google';
-import './App.css';
-import jwt_decode from 'jwt-decode';
-import LandingPage from './components/LandingPage/LandingPage.tsx';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 const clientId = '87684702779-3ju9p8rrlfrbpq18e18ldd79eooph69g.apps.googleusercontent.com';

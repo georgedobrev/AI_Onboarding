@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { List, ListItem, ListItemIcon, IconButton, Drawer, Divider } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import './Navbar.css';
 import Chats from '../Chats/Chats.tsx';
+import { List, ListItem, ListItemIcon, IconButton, Drawer, Divider } from '@mui/material';
 import { Menu as MenuIcon } from '@mui/icons-material';
 import HomeIcon from '@mui/icons-material/Home';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
-import './Navbar.css';
 
 const Navbar: React.FC = () => {
   const [userRole, setUserRole] = useState<string | null>(null);
@@ -14,6 +14,7 @@ const Navbar: React.FC = () => {
   const [isMobileView, setIsMobileView] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const navigate = useNavigate();
+  const mobileViewNum = 768;
 
   useEffect(() => {
     const storedUserRole = localStorage.getItem('userRole');
@@ -21,11 +22,11 @@ const Navbar: React.FC = () => {
 
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
-      setIsMobileView(window.innerWidth < 768);
+      setIsMobileView(window.innerWidth < mobileViewNum);
     };
 
     setWindowWidth(window.innerWidth);
-    setIsMobileView(window.innerWidth < 768);
+    setIsMobileView(window.innerWidth < mobileViewNum);
 
     window.addEventListener('resize', handleResize);
 
@@ -87,7 +88,7 @@ const Navbar: React.FC = () => {
             </ListItem>
           </List>
         )}
-        {isMobileView && windowWidth <= 768 && (
+        {isMobileView && windowWidth <= mobileViewNum && (
           <Drawer anchor="left" open={open} onClose={handleDrawerClose} className="drawer">
             <div className="drawer-list">
               <List>
@@ -109,7 +110,7 @@ const Navbar: React.FC = () => {
                   </ListItemIcon>
                 </ListItem>
               </List>
-              <Chats /> {/* Moved Chats component inside the drawer-list */}
+              <Chats />
             </div>
             <Divider />
           </Drawer>

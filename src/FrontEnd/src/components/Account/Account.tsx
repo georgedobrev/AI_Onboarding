@@ -1,10 +1,9 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import Button from '@mui/material/Button';
 import Navbar from '../Navbar/Navbar.tsx';
 import blankfactorLogo from '../../assets/blankfactor-logo.jpg';
-import Button from '@mui/material/Button';
 import './Account.css';
-import { useNavigate } from 'react-router-dom';
-
 const Account: React.FC = () => {
   const navigate = useNavigate();
   const handleSignOut = () => {
@@ -15,7 +14,6 @@ const Account: React.FC = () => {
 
     navigate('/signup');
   };
-
   return (
     <>
       <Navbar />

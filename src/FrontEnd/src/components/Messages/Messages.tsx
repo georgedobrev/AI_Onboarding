@@ -29,7 +29,6 @@ const Messages: React.FC = () => {
       setMessages((prevMessages) => [...prevMessages, { text: searchQuery, isAnswer: false }]);
       setSearchQuery('');
     }
-
     if (!messages.some((message) => message.isTyping)) {
       setMessages((prevMessages) => [
         ...prevMessages,
@@ -42,10 +41,8 @@ const Messages: React.FC = () => {
       ]);
     }
   };
-
   const isMessageInProgress = messages.some((message) => message.isTyping);
   const name = localStorage.getItem('fullName');
-
   const renderMessages = messages.map((message, index) => {
     if (message.isAnswer) {
       return (

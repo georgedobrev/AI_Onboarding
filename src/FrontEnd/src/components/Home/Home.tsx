@@ -33,7 +33,7 @@ const Home: React.FC = () => {
           <div className="header-line"></div>
         </div>
         <div className="main-container">
-          {!isMobileView && <Chats />} {/* Show Chats component if not in mobile view */}
+          {!isMobileView && <Chats />}
           <Messages />
         </div>
       </div>

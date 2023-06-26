@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import AttachFileIcon from '@mui/icons-material/AttachFile';
-import { Document, Page } from 'react-pdf';
-import DocViewer, { DocViewerRenderers } from '@cyntler/react-doc-viewer';
 import { apiService } from '../../services/apiService.ts';
 import config from '../../config.json';
+import DocViewer, { DocViewerRenderers } from '@cyntler/react-doc-viewer';
+import { Document, Page } from 'react-pdf';
 import './FileUploader.css';
+import AttachFileIcon from '@mui/icons-material/AttachFile';
 import { Button, CircularProgress } from '@mui/material';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
@@ -16,7 +16,7 @@ const FileUploader: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);
   const [responseReceived, setResponseReceived] = useState<boolean>(false);
-
+  const acceptedFileTypes = '.pdf, .docx, .pptx';
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = (event.target as HTMLInputElement)?.files || null;
     if (files) {
@@ -130,7 +130,7 @@ const FileUploader: React.FC = () => {
         <input
           type="file"
           id="file-input"
-          accept=".pdf, .docx, .pptx"
+          accept={acceptedFileTypes}
           style={{ display: 'none' }}
           onChange={handleFileChange}
         />
