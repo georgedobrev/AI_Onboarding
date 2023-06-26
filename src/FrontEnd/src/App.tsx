@@ -34,6 +34,11 @@ interface ProtectedRouteUploadProps {
   allowedPaths: string[];
 }
 
+const roles = {
+  Administrator: 'Administrator',
+  Employee: 'Employee',
+};
+
 const ProtectedRouteHome: React.FC<ProtectedRouteHomeProps> = ({ element, redirectTo }) => {
   const accessToken = localStorage.getItem('accessToken');
 
@@ -65,7 +70,7 @@ const ProtectedRouteUpload: React.FC<ProtectedRouteUploadProps> = ({
   }
   const tokenPayload = jwt_decode(accessToken);
   const userRole = tokenPayload[config.JWTUserRole];
-  if (userRole === 'Administrator') {
+  if (userRole === roles.Administrator) {
     return element;
   }
 

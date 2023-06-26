@@ -32,6 +32,7 @@
 .react-pdf__Page__canvas {
     height: 100% !important;
     width: 100% !important;
+    max-height: 70vh !important;
 }
 
 .pdf-main {
@@ -96,14 +97,6 @@
 .attach-btn {
     width: 100%;
     color: var(--whiteColor);
-}
-
-@media (min-width: 769px) {
-    .react-pdf__Page__canvas {
-        width: auto !important;
-        height: auto !important;
-        max-height: 70vh !important;
-    }
 }
 
 @media (max-width: 768px) {

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import FileUploader from './FileUploader.tsx';
-import { authService } from '../../services/authService.ts';
-import './Messages.css';
 import { TextField, IconButton } from '@mui/material';
 import { Send } from '@mui/icons-material';
+import { authService } from '../../services/authService.ts';
+import './Messages.css';
 
 const Messages: React.FC = () => {
   const location = useLocation();

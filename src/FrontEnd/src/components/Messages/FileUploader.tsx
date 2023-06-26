@@ -3,11 +3,11 @@ import { apiService } from '../../services/apiService.ts';
 import config from '../../config.json';
 import DocViewer, { DocViewerRenderers } from '@cyntler/react-doc-viewer';
 import { Document, Page } from 'react-pdf';
-import './FileUploader.css';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import { Button, CircularProgress } from '@mui/material';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import './FileUploader.css';
 
 const FileUploader: React.FC = () => {
   const [documentFiles, setDocumentFiles] = useState<File[]>([]);

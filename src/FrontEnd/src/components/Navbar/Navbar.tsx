@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './Navbar.css';
-import Chats from '../Chats/Chats.tsx';
-import { List, ListItem, ListItemIcon, IconButton, Drawer, Divider } from '@mui/material';
+import { Divider, Drawer, IconButton, List, ListItem, ListItemIcon } from '@mui/material';
 import { Menu as MenuIcon } from '@mui/icons-material';
 import HomeIcon from '@mui/icons-material/Home';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import FileUploadIcon from '@mui/icons-material/FileUpload';
+import Chats from '../Chats/Chats.tsx';
+import './Navbar.css';
 
 const Navbar: React.FC = () => {
   const [userRole, setUserRole] = useState<string | null>(null);
@@ -15,6 +15,10 @@ const Navbar: React.FC = () => {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const navigate = useNavigate();
   const mobileViewNum = 768;
+  const roles = {
+    Administrator: 'Administrator',
+    Employee: 'Employee',
+  };
 
   useEffect(() => {
     const storedUserRole = localStorage.getItem('userRole');
@@ -74,7 +78,7 @@ const Navbar: React.FC = () => {
                 <HomeIcon />
               </ListItemIcon>
             </ListItem>
-            {userRole === 'Administrator' && (
+            {userRole === roles.Administrator && (
               <ListItem button onClick={handleUploadClick}>
                 <ListItemIcon>
                   <FileUploadIcon />
@@ -97,7 +101,7 @@ const Navbar: React.FC = () => {
                     <HomeIcon />
                   </ListItemIcon>
                 </ListItem>
-                {userRole === 'Administrator' && (
+                {userRole === roles.Administrator && (
                   <ListItem button onClick={handleUploadClick}>
                     <ListItemIcon>
                       <FileUploadIcon />
