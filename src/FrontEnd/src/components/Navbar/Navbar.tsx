@@ -15,12 +15,16 @@ const Navbar: React.FC = () => {
     setUserRole(storedUserRole);
   }, []);
 
-  const handleAccountClick = () => {
+  const handleUploadClick = () => {
     navigate('/upload');
   };
 
   const handleHomeClick = () => {
     navigate('/home');
+  };
+
+  const handleAccountClick = () => {
+    navigate('/account');
   };
 
   return (
@@ -33,12 +37,17 @@ const Navbar: React.FC = () => {
             </ListItemIcon>
           </ListItem>
           {userRole === 'Administrator' && (
-            <ListItem button onClick={handleAccountClick}>
+            <ListItem button onClick={handleUploadClick}>
               <ListItemIcon>
                 <FileUploadIcon />
               </ListItemIcon>
             </ListItem>
           )}
+          <ListItem button onClick={handleAccountClick}>
+            <ListItemIcon>
+              <AccountCircleIcon />
+            </ListItemIcon>
+          </ListItem>
         </List>
         <div className="navbar-line"></div>
       </div>
