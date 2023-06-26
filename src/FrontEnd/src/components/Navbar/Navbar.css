@@ -57,11 +57,11 @@
 
 .drawer-list {
     display: flex;
-    flex-direction: row; /* Changed from column to row */
+    flex-direction: row;
     align-items: center;
     justify-content: center;
     background-color: var(--mainColor);
-    height: 100%; /* Added height property */
+    height: 100%;
 }
 
 
