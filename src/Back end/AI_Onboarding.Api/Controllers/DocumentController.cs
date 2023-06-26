@@ -8,7 +8,7 @@ namespace AI_Onboarding.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = Roles.Administrator)]
+    [Authorize]
     public class DocumentController : ControllerBase
     {
         private readonly IDocumentService _documentService;
@@ -18,6 +18,7 @@ namespace AI_Onboarding.Api.Controllers
             _documentService = documentService;
         }
 
+        [Authorize(Roles = Roles.Administrator)]
         [HttpPost("upload")]
         public ActionResult UploadFile([FromForm] DocumentViewModel document)
         {
@@ -26,6 +27,21 @@ namespace AI_Onboarding.Api.Controllers
             if (result.Success)
             {
                 return Ok(result.ErrorMessage);
+            }
+            else
+            {
+                return BadRequest(result.ErrorMessage);
+            }
+        }
+
+        [HttpPost("convert")]
+        public ActionResult ConvertFile([FromForm] DocumentViewModel document)
+        {
+            var result = _documentService.ConvertToPdf(document);
+
+            if (result.Success)
+            {
+                return Ok(result.ConvertedFile);
             }
             else
             {

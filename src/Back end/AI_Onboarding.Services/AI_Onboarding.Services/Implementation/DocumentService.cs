@@ -1,15 +1,15 @@
 ﻿using System.Text;
 using AI_Onboarding.Common;
-using AI_Onboarding.Data.Models;
 using AI_Onboarding.Data.NoSQLDatabase.Interfaces;
 using AI_Onboarding.Services.Interfaces;
 using AI_Onboarding.ViewModels.DocumentModels;
 using AI_Onboarding.ViewModels.ResponseModels;
 using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.parser;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
+using Aspose.Words;
 using Spire.Presentation;
 using Xceed.Words.NET;
 using IShape = Spire.Presentation.IShape;
@@ -95,7 +95,7 @@ namespace AI_Onboarding.Services.Implementation
             ScriptResponseViewModel resultStoreDocument;
             try
             {
-                Document dbDocument = new Document { ExtractedText = extractedText };
+                Data.Models.Document dbDocument = new Data.Models.Document { ExtractedText = extractedText };
                 _documentRepository.Add(dbDocument);
                 resultStoreDocument = _aiService.RunScript(_configuration["PythonScript:StoreDocumentPath"], extractedText);
 
@@ -112,6 +112,47 @@ namespace AI_Onboarding.Services.Implementation
             {
                 _logger.LogError(ex, "An error occurred");
                 return new BaseResponseViewModel { Success = false, ErrorMessage = ex.Message };
+            }
+        }
+
+        public ConvertFileResponseViewModel ConvertToPdf(DocumentViewModel document)
+        {
+            switch (document.FileTypeId)
+            {
+                case (int)FileType.docx:
+                    return new ConvertFileResponseViewModel { Success = true, ErrorMessage = "", ConvertedFile = ConvertDocxToPdf(document.File) };
+                case (int)FileType.pptx:
+                    return new ConvertFileResponseViewModel { Success = true, ErrorMessage = "", ConvertedFile = ConvertPptxToPdf(document.File) };
+                default:
+                    return new ConvertFileResponseViewModel { Success = true, ErrorMessage = "Unsupported document type ID." };
+            }
+        }
+
+        private byte[] ConvertDocxToPdf(IFormFile docxFile)
+        {
+            using (var docStream = docxFile.OpenReadStream())
+            {
+                var doc = new Document(docStream);
+
+                using (var pdfStream = new MemoryStream())
+                {
+                    doc.Save(pdfStream, SaveFormat.Pdf);
+                    return pdfStream.ToArray();
+                }
+            }
+        }
+
+        private byte[] ConvertPptxToPdf(IFormFile pptxFile)
+        {
+            using (var pptxStream = pptxFile.OpenReadStream())
+            {
+                var presentation = new Aspose.Slides.Presentation(pptxStream);
+
+                using (var pdfStream = new MemoryStream())
+                {
+                    presentation.Save(pdfStream, Aspose.Slides.Export.SaveFormat.Pdf);
+                    return pdfStream.ToArray();
+                }
             }
         }
     }
