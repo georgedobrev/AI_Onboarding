@@ -6,6 +6,7 @@ using AI_Onboarding.ViewModels.JWTModels;
 using Microsoft.AspNetCore.Identity;
 using AI_Onboarding.Data.Models;
 using AI_Onboarding.ViewModels.UserModels.PasswordResetModels;
+using AI_Onboarding.ViewModels.ResponseModels;
 
 namespace AI_Onboarding.Api.Controllers
 {
@@ -40,6 +41,24 @@ namespace AI_Onboarding.Api.Controllers
             {
                 return BadRequest(result.ErrorMessage);
             }
+        }
+
+        [HttpPost("validate-confirm-token")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailViewModel model)
+        {
+            var user = await _userManager.FindByEmailAsync(model.email);
+
+            var result = await _userManager.ConfirmEmailAsync(user, model.token);
+            if (result.Succeeded)
+            {
+                return Ok("Email successfully confirmed.");
+            }
+            else
+            {
+                return BadRequest("Error confirming email.");
+            }
+
         }
 
         [HttpPost("login")]

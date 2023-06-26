@@ -14,10 +14,6 @@ using Microsoft.AspNetCore.Identity;
 using MongoDB.Driver;
 using AI_Onboarding.Data.NoSQLDatabase.Interfaces;
 using AI_Onboarding.Data.NoSQLDatabase;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.AspNetCore.Mvc.Routing;
-using System.Configuration;
 
 public static class ServiceCollectionExtension
 {
@@ -36,6 +32,8 @@ public static class ServiceCollectionExtension
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
                 options.Password.RequireLowercase = false;
+                options.SignIn.RequireConfirmedEmail = true;
+                options.Tokens.EmailConfirmationTokenProvider = "Default";
             });
         }
         return services;
@@ -71,7 +69,7 @@ public static class ServiceCollectionExtension
         }
         return services;
     }
-  
+
     public static IServiceCollection ConfigureAuth(IServiceCollection services, IConfiguration configuration)
     {
         services.AddAuthentication(options =>

@@ -35,6 +35,7 @@ namespace AI_Onboarding.Data.ModelBuilding
                 UserName = "admin1@admin.com",
                 FirstName = "Admin1",
                 LastName = "Admin1",
+                EmailConfirmed = true
             };
 
             var admin2 = new User
@@ -44,6 +45,7 @@ namespace AI_Onboarding.Data.ModelBuilding
                 UserName = "admin2@admin.com",
                 FirstName = "Admin2",
                 LastName = "Admin2",
+                EmailConfirmed = true
             };
 
             var user = new User
@@ -53,6 +55,7 @@ namespace AI_Onboarding.Data.ModelBuilding
                 UserName = "user@mail.com",
                 FirstName = "User",
                 LastName = "User",
+                EmailConfirmed = true
             };
 
             admin1.PasswordHash = passwordHasher.HashPassword(admin1, password);
