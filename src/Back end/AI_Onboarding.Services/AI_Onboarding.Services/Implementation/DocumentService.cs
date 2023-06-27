@@ -121,8 +121,6 @@ namespace AI_Onboarding.Services.Implementation
             {
                 case (int)FileType.docx:
                     return new ConvertFileResponseViewModel { Success = true, ErrorMessage = "", ConvertedFile = ConvertDocxToPdf(document.File) };
-                case (int)FileType.pptx:
-                    return new ConvertFileResponseViewModel { Success = true, ErrorMessage = "", ConvertedFile = ConvertPptxToPdf(document.File) };
                 default:
                     return new ConvertFileResponseViewModel { Success = true, ErrorMessage = "Unsupported document type ID." };
             }
@@ -140,22 +138,6 @@ namespace AI_Onboarding.Services.Implementation
                     return pdfStream.ToArray();
                 }
             }
-        }
-
-        private byte[] ConvertPptxToPdf(IFormFile pptxFile)
-        {
-            using var stream = new MemoryStream();
-            pptxFile.CopyTo(stream);
-            stream.Position = 0;
-
-            var presentation = new Presentation();
-
-            presentation.LoadFromStream(stream, FileFormat.Pptx2013);
-
-            using var pdfStream = new MemoryStream();
-            presentation.SaveToFile(pdfStream, FileFormat.PDF);
-
-            return pdfStream.ToArray();
         }
     }
 }
