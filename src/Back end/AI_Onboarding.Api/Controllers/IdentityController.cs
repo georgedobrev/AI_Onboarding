@@ -47,9 +47,9 @@ namespace AI_Onboarding.Api.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailViewModel model)
         {
-            var user = await _userManager.FindByEmailAsync(model.email);
+            var user = await _userManager.FindByEmailAsync(model.Email);
 
-            var result = await _userManager.ConfirmEmailAsync(user, model.token);
+            var result = await _userManager.ConfirmEmailAsync(user, model.Token);
             if (result.Succeeded)
             {
                 return Ok("Email successfully confirmed.");
