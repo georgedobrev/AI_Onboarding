@@ -23,5 +23,21 @@ namespace AI_Onboarding.Api.Controllers
 
             return Ok(conversations);
         }
+
+        [HttpGet("{id}")]
+        public ActionResult GetConversation(int id)
+        {
+            var conversation = _conversationService.GetConversation(id);
+
+            if (conversation is not null)
+            {
+
+                return Ok(conversation);
+            }
+            else
+            {
+                return NotFound("Conversation doesn't exist!");
+            }
+        }
     }
 }
