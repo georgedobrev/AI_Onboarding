@@ -64,56 +64,56 @@ namespace AI_Onboarding.Data.Migrations
                 keyColumn: "Id",
                 keyValue: 1,
                 column: "CreatedAt",
-                value: new DateTime(2023, 6, 24, 19, 7, 15, 282, DateTimeKind.Utc).AddTicks(5910));
+                value: new DateTime(2023, 6, 27, 6, 44, 3, 10, DateTimeKind.Utc).AddTicks(560));
 
             migrationBuilder.UpdateData(
                 table: "Roles",
                 keyColumn: "Id",
                 keyValue: 2,
                 column: "CreatedAt",
-                value: new DateTime(2023, 6, 24, 19, 7, 15, 282, DateTimeKind.Utc).AddTicks(5910));
+                value: new DateTime(2023, 6, 27, 6, 44, 3, 10, DateTimeKind.Utc).AddTicks(570));
 
             migrationBuilder.UpdateData(
                 table: "UserRoles",
                 keyColumns: new[] { "RoleId", "UserId" },
                 keyValues: new object[] { 1, 1 },
                 column: "CreatedAt",
-                value: new DateTime(2023, 6, 24, 19, 7, 15, 387, DateTimeKind.Utc).AddTicks(9790));
+                value: new DateTime(2023, 6, 27, 6, 44, 3, 116, DateTimeKind.Utc).AddTicks(6900));
 
             migrationBuilder.UpdateData(
                 table: "UserRoles",
                 keyColumns: new[] { "RoleId", "UserId" },
                 keyValues: new object[] { 1, 2 },
                 column: "CreatedAt",
-                value: new DateTime(2023, 6, 24, 19, 7, 15, 387, DateTimeKind.Utc).AddTicks(9790));
+                value: new DateTime(2023, 6, 27, 6, 44, 3, 116, DateTimeKind.Utc).AddTicks(6900));
 
             migrationBuilder.UpdateData(
                 table: "UserRoles",
                 keyColumns: new[] { "RoleId", "UserId" },
                 keyValues: new object[] { 2, 3 },
                 column: "CreatedAt",
-                value: new DateTime(2023, 6, 24, 19, 7, 15, 387, DateTimeKind.Utc).AddTicks(9790));
+                value: new DateTime(2023, 6, 27, 6, 44, 3, 116, DateTimeKind.Utc).AddTicks(6900));
 
             migrationBuilder.UpdateData(
                 table: "Users",
                 keyColumn: "Id",
                 keyValue: 1,
                 columns: new[] { "ConcurrencyStamp", "CreatedAt", "PasswordHash", "SecurityStamp" },
-                values: new object[] { "6b294fd9-a00c-4cb2-a370-195f7b0a3fc4", new DateTime(2023, 6, 24, 19, 7, 15, 282, DateTimeKind.Utc).AddTicks(5970), "AQAAAAIAAYagAAAAEEM4Cd43AJBjXTG/eLE0Ccm/y9G88JYBQ5bdID2Ev22JbNIl3Ev81euB41/IfhmWkg==", "39bf2397-e172-4870-8dca-cf7346384cdf" });
+                values: new object[] { "d22220cd-c95e-4e27-8243-d3ebb267f519", new DateTime(2023, 6, 27, 6, 44, 3, 10, DateTimeKind.Utc).AddTicks(630), "AQAAAAIAAYagAAAAELlnwR3GDZ4izljiQjyd9ep0IcvzpicscFc3eLoVL83+3t+bzwkzxc9Zs+DZf1FptA==", "cafd87bf-c2f8-4264-90ef-9726336038cc" });
 
             migrationBuilder.UpdateData(
                 table: "Users",
                 keyColumn: "Id",
                 keyValue: 2,
                 columns: new[] { "ConcurrencyStamp", "CreatedAt", "PasswordHash", "SecurityStamp" },
-                values: new object[] { "52dba547-5176-4164-83f8-03927be77dd7", new DateTime(2023, 6, 24, 19, 7, 15, 282, DateTimeKind.Utc).AddTicks(6030), "AQAAAAIAAYagAAAAEGL6vtF/O6oW/LDWW7AoAkx5Vu9HVuMy09j8dyfUOBJvq3KPCz4v7OJgMoryhGsIsg==", "298d75c8-347d-450c-873b-30f8b2a166fd" });
+                values: new object[] { "c8818a77-99ff-45bf-9e6d-52a4b1b7f96e", new DateTime(2023, 6, 27, 6, 44, 3, 10, DateTimeKind.Utc).AddTicks(710), "AQAAAAIAAYagAAAAEN63fE0JmfM9oKc+0SicQ9tkl1BiFwkHl9RkavgTSu8gG7hZ2QlKx8p5JuIvet3bcQ==", "037aef5c-42fc-4701-904c-4d852365e5cb" });
 
             migrationBuilder.UpdateData(
                 table: "Users",
                 keyColumn: "Id",
                 keyValue: 3,
                 columns: new[] { "ConcurrencyStamp", "CreatedAt", "PasswordHash", "SecurityStamp" },
-                values: new object[] { "4fa9d193-4af2-4dee-9119-0bb024b1d890", new DateTime(2023, 6, 24, 19, 7, 15, 282, DateTimeKind.Utc).AddTicks(6040), "AQAAAAIAAYagAAAAEHQQHbFqgeT5D7MAdKhF0I3xBsZDfeRGXCVo3dszVs19hxdHYDLBbfCSgpcZ/E9m/w==", "5e781c6c-737f-43c1-bb5c-887f01ee4346" });
+                values: new object[] { "aaa72e89-5493-4f68-9b97-adfff96fa918", new DateTime(2023, 6, 27, 6, 44, 3, 10, DateTimeKind.Utc).AddTicks(720), "AQAAAAIAAYagAAAAEOANsfVUWVkk3KIp7UKx4qsR4J7oH4B4kaMpmT1FtZP/2icO6ScAByMZR1sQVWt+tQ==", "715ea76a-aa33-44b5-975e-7a7fc7f6b2ea" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Conversation_ModifiedById",
@@ -140,56 +140,56 @@ namespace AI_Onboarding.Data.Migrations
                 keyColumn: "Id",
                 keyValue: 1,
                 column: "CreatedAt",
-                value: new DateTime(2023, 6, 14, 11, 12, 10, 548, DateTimeKind.Utc).AddTicks(6570));
+                value: new DateTime(2023, 6, 26, 9, 9, 51, 401, DateTimeKind.Utc).AddTicks(6020));
 
             migrationBuilder.UpdateData(
                 table: "Roles",
                 keyColumn: "Id",
                 keyValue: 2,
                 column: "CreatedAt",
-                value: new DateTime(2023, 6, 14, 11, 12, 10, 548, DateTimeKind.Utc).AddTicks(6590));
+                value: new DateTime(2023, 6, 26, 9, 9, 51, 401, DateTimeKind.Utc).AddTicks(6030));
 
             migrationBuilder.UpdateData(
                 table: "UserRoles",
                 keyColumns: new[] { "RoleId", "UserId" },
                 keyValues: new object[] { 1, 1 },
                 column: "CreatedAt",
-                value: new DateTime(2023, 6, 14, 11, 12, 10, 660, DateTimeKind.Utc).AddTicks(2680));
+                value: new DateTime(2023, 6, 26, 9, 9, 51, 510, DateTimeKind.Utc).AddTicks(3160));
 
             migrationBuilder.UpdateData(
                 table: "UserRoles",
                 keyColumns: new[] { "RoleId", "UserId" },
                 keyValues: new object[] { 1, 2 },
                 column: "CreatedAt",
-                value: new DateTime(2023, 6, 14, 11, 12, 10, 660, DateTimeKind.Utc).AddTicks(2680));
+                value: new DateTime(2023, 6, 26, 9, 9, 51, 510, DateTimeKind.Utc).AddTicks(3160));
 
             migrationBuilder.UpdateData(
                 table: "UserRoles",
                 keyColumns: new[] { "RoleId", "UserId" },
                 keyValues: new object[] { 2, 3 },
                 column: "CreatedAt",
-                value: new DateTime(2023, 6, 14, 11, 12, 10, 660, DateTimeKind.Utc).AddTicks(2750));
+                value: new DateTime(2023, 6, 26, 9, 9, 51, 510, DateTimeKind.Utc).AddTicks(3170));
 
             migrationBuilder.UpdateData(
                 table: "Users",
                 keyColumn: "Id",
                 keyValue: 1,
                 columns: new[] { "ConcurrencyStamp", "CreatedAt", "PasswordHash", "SecurityStamp" },
-                values: new object[] { "102cd9d7-6457-491f-a8fb-c2c326f25f29", new DateTime(2023, 6, 14, 11, 12, 10, 548, DateTimeKind.Utc).AddTicks(6680), "AQAAAAIAAYagAAAAEL27a7laPsuyR+EKWSK0iPnq28crSIz35Xl/jeQ+TEuOJgETPc1qFgyrukbMpSQjdg==", "a84a1148-0305-45c6-98f4-f0b62a13ba20" });
+                values: new object[] { "db322c9d-4fc5-4b24-a556-9ff9782cebc8", new DateTime(2023, 6, 26, 9, 9, 51, 401, DateTimeKind.Utc).AddTicks(6100), "AQAAAAIAAYagAAAAEK7Spx3gg8lNkg1VfPtjcdnZtCRTcq1NXNPnDmI/iOGmr1xOjebVn0oEA9hD3wZu/w==", "e30a8931-bda3-4825-93f7-90651a298379" });
 
             migrationBuilder.UpdateData(
                 table: "Users",
                 keyColumn: "Id",
                 keyValue: 2,
                 columns: new[] { "ConcurrencyStamp", "CreatedAt", "PasswordHash", "SecurityStamp" },
-                values: new object[] { "20fa6a59-b5b8-4374-8e97-e06b85d39815", new DateTime(2023, 6, 14, 11, 12, 10, 548, DateTimeKind.Utc).AddTicks(6730), "AQAAAAIAAYagAAAAEK83NYJHaV38AaGJyxXj+uYDebQp54GpfifeQ5nxrIFMYUZ5rjdSYiHst6dNmzNYvw==", "d07978d9-ccc8-4657-b2d4-44b632705871" });
+                values: new object[] { "0d308e54-3037-45d6-9da5-2acb7f07e7c9", new DateTime(2023, 6, 26, 9, 9, 51, 401, DateTimeKind.Utc).AddTicks(6130), "AQAAAAIAAYagAAAAEEBGTFVnMf4np76jvoSRVWVnNYSjmmgUPsC4mI8x7ByNaZX8ctVYxIna71TaeNEwiw==", "3ad6ddbe-52f4-4a7a-a21c-bb2f646f5321" });
 
             migrationBuilder.UpdateData(
                 table: "Users",
                 keyColumn: "Id",
                 keyValue: 3,
                 columns: new[] { "ConcurrencyStamp", "CreatedAt", "PasswordHash", "SecurityStamp" },
-                values: new object[] { "c5914449-540f-4eaf-a9d6-69d1b0c76b4e", new DateTime(2023, 6, 14, 11, 12, 10, 548, DateTimeKind.Utc).AddTicks(6740), "AQAAAAIAAYagAAAAEHzPH3iHEMYkqDWn7HFgyKJ6TvIrY1ulZak3Y/z84cxcMQ+ifFuAcFr6lFg0gsDaAw==", "843c6244-7118-4d62-853d-fa67ac8172bd" });
+                values: new object[] { "846f1eca-fd9f-4da3-9cac-1034a5f2853a", new DateTime(2023, 6, 26, 9, 9, 51, 401, DateTimeKind.Utc).AddTicks(6140), "AQAAAAIAAYagAAAAEGErH06Mw6zX11AB++A8X6ukFL36FPHnJXzLfEO7N5+i2QYDWqXQK3H1vxmWvmJDZw==", "6c88fcda-539e-4ee4-9bca-b2bf9f0c7559" });
         }
     }
 }
