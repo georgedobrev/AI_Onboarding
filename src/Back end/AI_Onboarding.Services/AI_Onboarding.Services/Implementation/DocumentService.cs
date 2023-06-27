@@ -9,7 +9,7 @@ using iTextSharp.text.pdf.parser;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Aspose.Words;
+using SautinSoft.Document;
 using Spire.Presentation;
 using Xceed.Words.NET;
 using IShape = Spire.Presentation.IShape;
@@ -61,7 +61,7 @@ namespace AI_Onboarding.Services.Implementation
                 case (int)FileType.pptx:
                     using (Presentation presentation = new Presentation())
                     {
-                        presentation.LoadFromStream(document.File.OpenReadStream(), FileFormat.Auto);
+                        presentation.LoadFromStream(document.File.OpenReadStream(), Spire.Presentation.FileFormat.Auto);
 
                         foreach (ISlide slide in presentation.Slides)
                         {
@@ -130,13 +130,13 @@ namespace AI_Onboarding.Services.Implementation
 
         private byte[] ConvertDocxToPdf(IFormFile docxFile)
         {
-            using (var docStream = docxFile.OpenReadStream())
+            using (var docxStream = docxFile.OpenReadStream())
             {
-                var doc = new Document(docStream);
+                var docxDocument = DocumentCore.Load(docxStream, new DocxLoadOptions());
 
                 using (var pdfStream = new MemoryStream())
                 {
-                    doc.Save(pdfStream, SaveFormat.Pdf);
+                    docxDocument.Save(pdfStream, new PdfSaveOptions());
                     return pdfStream.ToArray();
                 }
             }
@@ -144,17 +144,20 @@ namespace AI_Onboarding.Services.Implementation
 
         private byte[] ConvertPptxToPdf(IFormFile pptxFile)
         {
-            using (var pptxStream = pptxFile.OpenReadStream())
-            {
-                var presentation = new Aspose.Slides.Presentation(pptxStream);
+            using var stream = new MemoryStream();
+            pptxFile.CopyTo(stream);
+            stream.Position = 0;
 
-                using (var pdfStream = new MemoryStream())
-                {
-                    presentation.Save(pdfStream, Aspose.Slides.Export.SaveFormat.Pdf);
-                    return pdfStream.ToArray();
-                }
-            }
+            var presentation = new Presentation();
+
+            presentation.LoadFromStream(stream, FileFormat.Pptx2013);
+
+            using var pdfStream = new MemoryStream();
+            presentation.SaveToFile(pdfStream, FileFormat.PDF);
+
+            return pdfStream.ToArray();
         }
     }
 }
+
 
