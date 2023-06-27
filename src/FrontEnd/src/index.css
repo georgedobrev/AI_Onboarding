@@ -1,11 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+
 :root {
-    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    font-family: Arial, 'Bebas Neue', system-ui, Avenir, Helvetica, Arial, sans-serif;
+    --color-background: #000119;
+    --stroke-width: calc(1em / 16);
+    --font-size: 30vmin;
+    --font-weight: 700;
+    --letter-spacing: calc(1em / 8);
     --lineColor: #2a2c2d;
     --mainColor: #111315;
     --whiteColor: #ffffff;
     --blackColor: #000000;
     --blankfactorLogoLightBlue: #18c1e2;
     --blankfactorLogoDarkBlue: #080731;
+    --accentColor: #fed330;
     --greyAccentColor: #c9cace;
     --background-color: #242424;
     --searchBarColor: #14afcc;

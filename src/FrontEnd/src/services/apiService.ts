@@ -1,7 +1,6 @@
 import { fetchWrapper } from './FetchWrapper.tsx';
 import config from '../config.json';
 import { lookup } from 'mime-types';
-import { toast } from 'react-toastify';
 import { authHeaderFile } from './commonConfig.ts';
 import { successNotification } from '../components/Notifications/Notifications.tsx';
 

@@ -4,7 +4,6 @@ import { TextField, Button, InputAdornment, IconButton } from '@mui/material';
 import logoImage from '../../assets/blankfactor-logo.jpg';
 import { authService } from '../../services/authService.ts';
 import './ResetPassword.css';
-import { toast } from 'react-toastify';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { errorNotifications, successNotification } from '../Notifications/Notifications.tsx';
 
