@@ -8,7 +8,8 @@ const Chats: React.FC = () => {
         <h2 className="chats-title">Chats</h2>
         <div className="horizontal-chatline"></div>
       </div>
-      <div className="vertical-chatline"></div>
+      <div className="vertical-chatline-left"></div>
+      <div className="vertical-chatline-right"></div>
     </div>
   );
 };
