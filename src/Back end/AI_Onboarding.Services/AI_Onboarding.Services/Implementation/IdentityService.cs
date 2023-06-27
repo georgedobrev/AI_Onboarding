@@ -58,6 +58,31 @@ namespace AI_Onboarding.Services.Implementation
                 if (result.Succeeded)
                 {
                     await _userManager.AddToRoleAsync(user, Roles.Employee);
+
+                    var emailSettings = _configuration.GetSection("EmailSettings");
+                    var apiKey = emailSettings["ApiKey"];
+                    var senderEmail = emailSettings["SenderEmail"];
+                    var senderName = emailSettings["Sendername"];
+
+                    var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    var confirmUrl = $"{Constants.ConfirmEmailBaseUrl}?token={HttpUtility.UrlEncode(token)}&email={HttpUtility.UrlEncode(user.Email)}";
+
+                    var emailTemplatePath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "../../../../AI_Onboarding.Common/EmailTemplate/EmailConfirmation.html");
+                    emailTemplatePath = Path.GetFullPath(emailTemplatePath);
+
+                    var emailTemplate = await File.ReadAllTextAsync(emailTemplatePath);
+
+                    var emailBodyWithUrl = emailTemplate.Replace("{{action_url}}", confirmUrl);
+                    var emailBody = emailBodyWithUrl.Replace("{{name}}", user.FirstName);
+
+                    var client = new SendGridClient(apiKey);
+                    var from = new EmailAddress(senderEmail, senderName);
+                    var to = new EmailAddress(user.Email);
+                    var subject = "Email Confirmation";
+
+                    var msg = MailHelper.CreateSingleEmail(from, to, subject, " ", emailBody);
+                    var response = await client.SendEmailAsync(msg);
+
                     return new BaseResponseViewModel { Success = true, ErrorMessage = "" }; ;
                 }
                 else
@@ -84,25 +109,37 @@ namespace AI_Onboarding.Services.Implementation
 
             try
             {
-                var result = await _signInManager.PasswordSignInAsync(user.Email, user.Password, false, false);
+                var dbUser = await _userManager.FindByEmailAsync(user.Email);
 
-                if (result.Succeeded)
+                if (dbUser == null)
                 {
-                    var dbUser = _repository.FindByCondition(u => u.Email == user.Email);
+                    return new TokensResponseViewModel { Success = false, ErrorMessage = "Invalid email or password", Tokens = null };
+                }
 
-                    int id = dbUser.Id;
+                if (dbUser.EmailConfirmed)
+                {
+                    var result = await _signInManager.PasswordSignInAsync(user.Email, user.Password, false, false);
 
-                    var name = dbUser.FirstName + " " + dbUser.LastName;
+                    if (result.Succeeded)
+                    {
+                        int id = dbUser.Id;
 
-                    int roleId = _repositoryUserRole.FindByCondition(ur => ur.UserId == id).RoleId;
+                        var name = dbUser.FirstName + " " + dbUser.LastName;
 
-                    string[] roleNames = _repositoryRole.FindAllByCondition(r => r.Id == roleId).Select(r => r.Name).ToArray();
+                        int roleId = _repositoryUserRole.FindByCondition(ur => ur.UserId == id).RoleId;
 
-                    return new TokensResponseViewModel { Success = true, ErrorMessage = "", Tokens = _tokenService.GenerateAccessToken(user.Email, name, id, roleNames, true) };
+                        string[] roleNames = _repositoryRole.FindAllByCondition(r => r.Id == roleId).Select(r => r.Name).ToArray();
+
+                        return new TokensResponseViewModel { Success = true, ErrorMessage = "", Tokens = _tokenService.GenerateAccessToken(user.Email, name, id, roleNames, true) };
+                    }
+                    else
+                    {
+                        return new TokensResponseViewModel { Success = false, ErrorMessage = "Invalid email or password", Tokens = null };
+                    }
                 }
                 else
                 {
-                    return new TokensResponseViewModel { Success = false, ErrorMessage = "Invalid email or password", Tokens = null };
+                    return new TokensResponseViewModel { Success = false, ErrorMessage = "Email is not confirmed. Please confirm your email.", Tokens = null };
                 }
             }
             catch (Exception ex)
@@ -112,6 +149,7 @@ namespace AI_Onboarding.Services.Implementation
                 return new TokensResponseViewModel { Success = false, ErrorMessage = messages, Tokens = null };
             }
         }
+
 
         public TokensResponseViewModel RefreshTokenAsync(TokenViewModel tokens)
         {
