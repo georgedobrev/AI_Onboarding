@@ -7,6 +7,20 @@ import './Home.css';
 
 const Home: React.FC = () => {
   const [isMobileView, setIsMobileView] = useState(false);
+  const [conversations, setConversations] = useState([]);
+  const [selectedConversation, setSelectedConversation] = useState(null);
+  const [selectedQuestion, setSelectedQuestion] = useState('');
+  const [selectedAnswer, setSelectedAnswer] = useState('');
+
+  const handleConversationClick = (conversation) => {
+    setSelectedConversation(conversation);
+
+    const question = conversation.questionAnswers[0].question;
+    const answer = conversation.questionAnswers[0].answer;
+
+    setSelectedQuestion(question);
+    setSelectedAnswer(answer);
+  };
 
   useEffect(() => {
     const handleResize = () => {
@@ -33,8 +47,14 @@ const Home: React.FC = () => {
           <div className="header-line"></div>
         </div>
         <div className="main-container">
-          {!isMobileView && <Chats />}
-          <Messages />
+          {!isMobileView && (
+            <Chats conversations={conversations} onConversationClick={handleConversationClick} />
+          )}
+          <Messages
+            setConversations={setConversations}
+            selectedQuestion={selectedQuestion}
+            selectedAnswer={selectedAnswer}
+          />
         </div>
       </div>
     </>

@@ -1,7 +1,7 @@
 import jwt_decode from 'jwt-decode';
 import { errorNotifications } from '../components/Notifications/Notifications.tsx';
 import config from '../config.json';
-import { authHeaderAI } from './commonConfig.ts';
+import { authHeaderAI, authHeaderAIGetConversations } from './commonConfig.ts';
 import { fetchWrapper } from './FetchWrapper.tsx';
 import { FormValues as SignInForms } from '../components/SignIn/types.ts';
 import { FormValues as RegisterForms } from '../components/Register/types.ts';
@@ -27,10 +27,12 @@ interface GoogleLoginRequestBody {
 }
 
 interface AISearchRequestBody {
-  searchQuery: string;
+  id: number;
+  question: string;
 }
 
 interface AISearchResponse {
+  id: string;
   answerQuery: string;
 }
 
@@ -204,7 +206,7 @@ export const authService = {
     }
   },
 
-  AISearchResponse: async (formData: string | undefined) => {
+  AISearchResponse: async (formData: object | undefined) => {
     try {
       const headers = authHeaderAI();
       const url = `${config.baseUrl}${config.AISearchEndpoint}`;
@@ -220,6 +222,21 @@ export const authService = {
     } catch (error) {
       console.error(error);
       throw new Error('AI Search failed');
+    }
+  },
+
+  AIGetAllConversations: async () => {
+    try {
+      const headers = authHeaderAIGetConversations();
+      const url = `${config.baseUrl}${config.AIConversations}`;
+      const response = await fetchWrapper.get<AISearchResponse>(url, headers);
+      if (!response) {
+        throw new Error('Request failed');
+      }
+      return response;
+    } catch (error) {
+      console.error(error);
+      throw new Error('AI Get All Conversations failed');
     }
   },
 };

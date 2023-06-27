@@ -6,13 +6,16 @@ import { Send } from '@mui/icons-material';
 import { authService } from '../../services/authService.ts';
 import './Messages.css';
 
-const Messages: React.FC = () => {
+const Messages: React.FC = ({ setConversations, selectedQuestion, selectedAnswer }) => {
   const location = useLocation();
   const [userRole, setUserRole] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [question, setQuestion] = useState('');
   const [messages, setMessages] = useState<
     { text: string; isAnswer: boolean; isTyping?: boolean }[]
   >([]);
+  const [displayedQuestion, setDisplayedQuestion] = useState('');
+  const [displayedAnswer, setDisplayedAnswer] = useState('');
+
   const roles = {
     Administrator: 'Administrator',
     Employee: 'Employee',
@@ -21,30 +24,39 @@ const Messages: React.FC = () => {
   useEffect(() => {
     const storedUserRole = localStorage.getItem('userRole');
     setUserRole(storedUserRole);
-  }, []);
+    setDisplayedQuestion(selectedQuestion);
+    setDisplayedAnswer(selectedAnswer);
+  }, [selectedQuestion, selectedAnswer]);
+
+  useEffect(() => {
+    setMessages([]);
+  }, [selectedQuestion, selectedAnswer]);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(event.target.value);
+    setQuestion(event.target.value);
   };
 
   const handleSearchSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (searchQuery.trim() !== '') {
-      setMessages((prevMessages) => [...prevMessages, { text: searchQuery, isAnswer: false }]);
-      setSearchQuery('');
+    if (question.trim() !== '') {
+      setMessages((prevMessages) => [...prevMessages, { text: question, isAnswer: false }]);
+      setQuestion('');
     }
     if (!messages.some((message) => message.isTyping)) {
       setMessages((prevMessages) => [
         ...prevMessages,
         { text: '', isAnswer: true, isTyping: true },
       ]);
-      const response = await authService.AISearchResponse(searchQuery);
+      const conversations = await authService.AIGetAllConversations();
+      setConversations(conversations.data.conversations);
+      const response = await authService.AISearchResponse({ question });
       setMessages((prevMessages) => [
         ...prevMessages.slice(0, -1),
         { text: response.data, isAnswer: true },
       ]);
     }
   };
+
   const isMessageInProgress = messages.some((message) => message.isTyping);
   const name = localStorage.getItem('fullName');
   const renderMessages = messages.map((message, index) => {
@@ -53,7 +65,7 @@ const Messages: React.FC = () => {
         <div className="message-answer-wrapper" key={index}>
           <span className="message-answer-name">Blankfactor Chat Bot</span>
           <div className="message answer">
-            <span>{message.text}</span>
+            <span>{displayedAnswer || message.text}</span>
             {message.isTyping && <span className="dot-animation" />}
           </div>
         </div>
@@ -63,7 +75,7 @@ const Messages: React.FC = () => {
         <div className="message-question-wrapper" key={index}>
           <span className="message-question-name">{name}</span>
           <div className="message question">
-            <span>{message.text}</span>
+            <span>{displayedQuestion || message.text}</span>
           </div>
         </div>
       );
@@ -87,7 +99,7 @@ const Messages: React.FC = () => {
               <div className="search-input">
                 <TextField
                   placeholder="Write a message"
-                  value={searchQuery}
+                  value={question}
                   onChange={handleSearchChange}
                   fullWidth
                   InputProps={{
