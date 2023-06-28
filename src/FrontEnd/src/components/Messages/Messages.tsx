@@ -1,36 +1,48 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import FileUploader from './FileUploader.tsx';
 import { TextField, IconButton } from '@mui/material';
 import { Send } from '@mui/icons-material';
 import { authService } from '../../services/authService.ts';
 import './Messages.css';
 
-const Messages: React.FC = ({ setConversations, selectedQuestion, selectedAnswer }) => {
+interface MessagesProps {
+  setConversations: (conversations: any) => void;
+  selectedQuestion: string;
+  selectedAnswer: string;
+}
+
+const Messages: React.FC<MessagesProps> = ({
+  setConversations,
+  selectedQuestion,
+  selectedAnswer,
+}) => {
   const location = useLocation();
   const [userRole, setUserRole] = useState<string | null>(null);
   const [question, setQuestion] = useState('');
   const [messages, setMessages] = useState<
     { text: string; isAnswer: boolean; isTyping?: boolean }[]
   >([]);
-  const [displayedQuestion, setDisplayedQuestion] = useState('');
-  const [displayedAnswer, setDisplayedAnswer] = useState('');
 
   const roles = {
     Administrator: 'Administrator',
     Employee: 'Employee',
   };
 
+  const f = async () => {
+    const conversations = await authService.AIGetAllConversations();
+    setConversations(conversations.data.conversations);
+  };
+
   useEffect(() => {
     const storedUserRole = localStorage.getItem('userRole');
+    f();
     setUserRole(storedUserRole);
-    setDisplayedQuestion(selectedQuestion);
-    setDisplayedAnswer(selectedAnswer);
-  }, [selectedQuestion, selectedAnswer]);
+  }, []);
 
   useEffect(() => {
     setMessages([]);
-  }, [selectedQuestion, selectedAnswer]);
+  }, []);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQuestion(event.target.value);
@@ -47,8 +59,6 @@ const Messages: React.FC = ({ setConversations, selectedQuestion, selectedAnswer
         ...prevMessages,
         { text: '', isAnswer: true, isTyping: true },
       ]);
-      const conversations = await authService.AIGetAllConversations();
-      setConversations(conversations.data.conversations);
       const response = await authService.AISearchResponse({ question });
       setMessages((prevMessages) => [
         ...prevMessages.slice(0, -1),
@@ -65,7 +75,7 @@ const Messages: React.FC = ({ setConversations, selectedQuestion, selectedAnswer
         <div className="message-answer-wrapper" key={index}>
           <span className="message-answer-name">Blankfactor Chat Bot</span>
           <div className="message answer">
-            <span>{displayedAnswer || message.text}</span>
+            <span>{message.text}</span>
             {message.isTyping && <span className="dot-animation" />}
           </div>
         </div>
@@ -75,12 +85,30 @@ const Messages: React.FC = ({ setConversations, selectedQuestion, selectedAnswer
         <div className="message-question-wrapper" key={index}>
           <span className="message-question-name">{name}</span>
           <div className="message question">
-            <span>{displayedQuestion || message.text}</span>
+            <span>{message.text}</span>
           </div>
         </div>
       );
     }
   });
+
+  const renderSelectedQuestion = selectedQuestion.split('\n').map((question, index) => (
+    <div className="message-question-wrapper" key={index}>
+      <span className="message-question-name">Question:</span>
+      <div className="message question">
+        <span>{question}</span>
+      </div>
+    </div>
+  ));
+
+  const renderSelectedAnswer = selectedAnswer.split('\n').map((answer, index) => (
+    <div className="message-answer-wrapper" key={index}>
+      <span className="message-answer-name">Answer:</span>
+      <div className="message answer">
+        <span>{answer}</span>
+      </div>
+    </div>
+  ));
 
   return (
     <div className="messages-container">
@@ -90,9 +118,9 @@ const Messages: React.FC = ({ setConversations, selectedQuestion, selectedAnswer
       </div>
       <div className="messages-content-container">
         <div className="messages-content">
-          {!(location.pathname === '/upload' && userRole === roles.Administrator) && (
-            <div className="chat-messages">{renderMessages}</div>
-          )}
+          {renderSelectedQuestion}
+          {renderSelectedAnswer}
+          {renderMessages}
           {location.pathname === '/upload' && userRole === roles.Administrator && <FileUploader />}
           {location.pathname === '/home' && (
             <form onSubmit={handleSearchSubmit} className="search-container">

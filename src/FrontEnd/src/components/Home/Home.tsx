@@ -13,13 +13,19 @@ const Home: React.FC = () => {
   const [selectedAnswer, setSelectedAnswer] = useState('');
 
   const handleConversationClick = (conversation) => {
-    setSelectedConversation(conversation);
+    const questions = [];
+    const answers = [];
 
-    const question = conversation.questionAnswers[0].question;
-    const answer = conversation.questionAnswers[0].answer;
+    for (let i = 0; i < conversation.questionAnswers.length; i++) {
+      const question = conversation.questionAnswers[i].question;
+      const answer = conversation.questionAnswers[i].answer;
 
-    setSelectedQuestion(question);
-    setSelectedAnswer(answer);
+      questions.push(question);
+      answers.push(answer);
+    }
+
+    setSelectedQuestion(questions.join('\n')); // Join questions with a line break
+    setSelectedAnswer(answers.join('\n')); // Join answers with a line break
   };
 
   useEffect(() => {

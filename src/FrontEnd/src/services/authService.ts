@@ -239,4 +239,19 @@ export const authService = {
       throw new Error('AI Get All Conversations failed');
     }
   },
+
+  AIGetConversationById: async (id: number) => {
+    try {
+      const headers = authHeaderAIGetConversations();
+      const url = `${config.baseUrl}${config.AIConversation}${id}`;
+      const response = await fetchWrapper.get<AISearchResponse>(url, headers);
+      if (!response) {
+        throw new Error('Request failed');
+      }
+      return response;
+    } catch (error) {
+      console.error(error);
+      throw new Error('AI Get Conversation By Id failed');
+    }
+  },
 };

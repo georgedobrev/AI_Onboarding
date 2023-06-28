@@ -1,11 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 import MessageIcon from '@mui/icons-material/Message';
 import './Chats.css';
+import { authService } from '../../services/authService.ts';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const Chats: React.FC = ({ conversations, onConversationClick }) => {
-  const handleConversationClick = (conversation) => {
-    onConversationClick(conversation);
-    console.log(conversation.questionAnswers[0].question);
+  const location = useLocation();
+  const [selectedConversation, setSelectedConversation] = useState(null);
+  const navigate = useNavigate();
+
+  const handleConversationClick = async (conversation) => {
+    const response = await authService.AIGetConversationById(conversation.id);
+    console.log(response.data);
+    onConversationClick(response.data);
+    setSelectedConversation(response.data);
+
+    const queryParams = new URLSearchParams({ id: conversation.id });
+    const search = `?${queryParams.toString()}`;
+    const url = `/home${search}`;
+
+    navigate(url);
   };
 
   return (
