@@ -61,6 +61,11 @@ namespace AI_Onboarding.Services.Implementation
             _repository.SaveChanges();
         }
 
+        public ConversationDTO? GetConversation(int id)
+        {
+            return _mapper.Map<ConversationDTO>(_repository.Find(id));
+        }
+
         public UserConversationsViewModel GetUserConversations()
         {
             int.TryParse(_httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out int userId);

@@ -8,6 +8,7 @@ namespace AI_Onboarding.Services.Interfaces
     {
         public void AddToConversation(int? id, string question, string answer);
         public UserConversationsViewModel GetUserConversations();
+        public ConversationDTO? GetConversation(int id);
     }
 }
 
