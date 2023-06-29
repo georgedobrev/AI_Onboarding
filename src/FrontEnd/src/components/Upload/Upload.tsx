@@ -1,7 +1,7 @@
 import React from 'react';
 import Navbar from '../Navbar/Navbar.tsx';
 import blankfactorLogo from '../../assets/blankfactor-logo.jpg';
-import Messages from '../Messages/Messages.tsx';
+import Message from '../Messages/Message.tsx';
 
 const Upload: React.FC = () => {
   return (
@@ -16,7 +16,7 @@ const Upload: React.FC = () => {
           <div className="header-line"></div>
         </div>
         <div className="main-container">
-          <Messages />
+          <Message />
         </div>
       </div>
     </>

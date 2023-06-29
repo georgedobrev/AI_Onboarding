@@ -6,43 +6,56 @@ import { Send } from '@mui/icons-material';
 import { authService } from '../../services/authService.ts';
 import './Messages.css';
 
-interface MessagesProps {
-  setConversations: (conversations: any) => void;
-  selectedQuestion: string;
-  selectedAnswer: string;
-}
-
-const Messages: React.FC<MessagesProps> = ({
-  setConversations,
-  selectedQuestion,
-  selectedAnswer,
-}) => {
+const Message: React.FC = () => {
   const location = useLocation();
+  const { id } = useParams();
   const [userRole, setUserRole] = useState<string | null>(null);
   const [question, setQuestion] = useState('');
   const [messages, setMessages] = useState<
     { text: string; isAnswer: boolean; isTyping?: boolean }[]
   >([]);
+  const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
+  const [questionsAnswers, setQuestionsAnswers] = useState([]);
+
+  const handleConversationClick = (conversation) => {
+    const questionsAnswers = [];
+
+    for (let i = 0; i < conversation.questionAnswers.length; i++) {
+      const question = conversation.questionAnswers[i].question;
+      const answer = conversation.questionAnswers[i].answer;
+
+      questionsAnswers.push(question);
+      questionsAnswers.push(answer);
+    }
+
+    console.log(`questionsAnswers: ${questionsAnswers} `);
+    setQuestionsAnswers(questionsAnswers);
+  };
+
+  const lplp = async () => {
+    const response = await authService.AIGetConversationById(id);
+    console.log(response.data);
+    handleConversationClick(response.data);
+  };
 
   const roles = {
     Administrator: 'Administrator',
     Employee: 'Employee',
   };
 
-  const f = async () => {
-    const conversations = await authService.AIGetAllConversations();
-    setConversations(conversations.data.conversations);
-  };
-
   useEffect(() => {
     const storedUserRole = localStorage.getItem('userRole');
-    f();
     setUserRole(storedUserRole);
-  }, []);
+    lplp();
+  }, [id]);
 
   useEffect(() => {
     setMessages([]);
-  }, []);
+  }, [currentConversationId]);
+
+  useEffect(() => {
+    setCurrentConversationId(id);
+  }, [id]);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQuestion(event.target.value);
@@ -50,16 +63,24 @@ const Messages: React.FC<MessagesProps> = ({
 
   const handleSearchSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+
     if (question.trim() !== '') {
       setMessages((prevMessages) => [...prevMessages, { text: question, isAnswer: false }]);
       setQuestion('');
     }
+
     if (!messages.some((message) => message.isTyping)) {
       setMessages((prevMessages) => [
         ...prevMessages,
         { text: '', isAnswer: true, isTyping: true },
       ]);
-      const response = await authService.AISearchResponse({ question });
+
+      let response: object;
+      if (!id) {
+        response = await authService.AISearchResponse({ question });
+      } else {
+        response = await authService.AISearchResponse({ question, id });
+      }
       setMessages((prevMessages) => [
         ...prevMessages.slice(0, -1),
         { text: response.data, isAnswer: true },
@@ -92,23 +113,27 @@ const Messages: React.FC<MessagesProps> = ({
     }
   });
 
-  const renderSelectedQuestion = selectedQuestion.split('\n').map((question, index) => (
-    <div className="message-question-wrapper" key={index}>
-      <span className="message-question-name">Question:</span>
-      <div className="message question">
-        <span>{question}</span>
-      </div>
-    </div>
-  ));
-
-  const renderSelectedAnswer = selectedAnswer.split('\n').map((answer, index) => (
-    <div className="message-answer-wrapper" key={index}>
-      <span className="message-answer-name">Answer:</span>
-      <div className="message answer">
-        <span>{answer}</span>
-      </div>
-    </div>
-  ));
+  const renderSelectedQuestionAnswers = questionsAnswers.map((item, index) => {
+    if (index % 2 === 0) {
+      return (
+        <div className="message-question-wrapper" key={index}>
+          <span className="message-question-name">{name}</span>
+          <div className="message question">
+            <span>{item}</span>
+          </div>
+        </div>
+      );
+    } else {
+      return (
+        <div className="message-answer-wrapper" key={index}>
+          <span className="message-answer-name">Blankfactor Chat Bot</span>
+          <div className="message answer">
+            <span>{item}</span>
+          </div>
+        </div>
+      );
+    }
+  });
 
   return (
     <div className="messages-container">
@@ -118,11 +143,10 @@ const Messages: React.FC<MessagesProps> = ({
       </div>
       <div className="messages-content-container">
         <div className="messages-content">
-          {renderSelectedQuestion}
-          {renderSelectedAnswer}
+          {renderSelectedQuestionAnswers}
           {renderMessages}
           {location.pathname === '/upload' && userRole === roles.Administrator && <FileUploader />}
-          {location.pathname === '/home' && (
+          {location.pathname.includes('home') && (
             <form onSubmit={handleSearchSubmit} className="search-container">
               <div className="search-input">
                 <TextField
@@ -146,4 +170,4 @@ const Messages: React.FC<MessagesProps> = ({
   );
 };
 
-export default Messages;
+export default Message;

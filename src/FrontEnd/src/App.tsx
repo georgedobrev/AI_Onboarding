@@ -14,6 +14,7 @@ import LandingPage from './components/LandingPage/LandingPage.tsx';
 import './App.css';
 import config from './config.json';
 import 'react-toastify/dist/ReactToastify.css';
+import Message from './components/Messages/Message.tsx';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 const clientId = '87684702779-3ju9p8rrlfrbpq18e18ldd79eooph69g.apps.googleusercontent.com';
@@ -104,11 +105,9 @@ const App = () => {
             <Route
               path="/home"
               element={<ProtectedRouteHome element={<Home />} redirectTo="/signup" />}
-            />
-            <Route
-              path="/home/:id"
-              element={<ProtectedRouteHome element={<Home />} redirectTo="/signup" />}
-            />
+            >
+              <Route path=":id" element={<Message />} />
+            </Route>
             <Route
               path="/account"
               element={<ProtectedRouteAccount element={<Account />} redirectTo="/signup" />}

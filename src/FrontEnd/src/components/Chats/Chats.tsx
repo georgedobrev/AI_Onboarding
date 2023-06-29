@@ -1,25 +1,26 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import MessageIcon from '@mui/icons-material/Message';
 import './Chats.css';
 import { authService } from '../../services/authService.ts';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-const Chats: React.FC = ({ conversations, onConversationClick }) => {
+const Chats: React.FC = ({ onConversationClick }) => {
   const location = useLocation();
   const [selectedConversation, setSelectedConversation] = useState(null);
   const navigate = useNavigate();
+  const [allConversations, setAllConversations] = useState([]);
+
+  const loadAllChatMessages = async () => {
+    const conversations = await authService.AIGetAllConversations();
+    setAllConversations(conversations.data.conversations);
+  };
+
+  useEffect(() => {
+    loadAllChatMessages();
+  }, []);
 
   const handleConversationClick = async (conversation) => {
-    const response = await authService.AIGetConversationById(conversation.id);
-    console.log(response.data);
-    onConversationClick(response.data);
-    setSelectedConversation(response.data);
-
-    const queryParams = new URLSearchParams({ id: conversation.id });
-    const search = `?${queryParams.toString()}`;
-    const url = `/home${search}`;
-
-    navigate(url);
+    onConversationClick(conversation.id);
   };
 
   return (
@@ -27,7 +28,7 @@ const Chats: React.FC = ({ conversations, onConversationClick }) => {
       <div className="chat-header">
         <h2 className="chats-title">Chats</h2>
         <div className="horizontal-chatline"></div>
-        {conversations.map((conversation, index) => (
+        {allConversations.map((conversation, index) => (
           <div
             className="conversation"
             key={index}

@@ -1,32 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import { Outlet, useNavigate } from 'react-router-dom';
 import Navbar from '../Navbar/Navbar.tsx';
 import Chats from '../Chats/Chats.tsx';
-import Messages from '../Messages/Messages.tsx';
+import Message from '../Messages/Message.tsx';
 import blankfactorLogo from '../../assets/blankfactor-logo.jpg';
 import './Home.css';
 
 const Home: React.FC = () => {
   const [isMobileView, setIsMobileView] = useState(false);
   const [conversations, setConversations] = useState([]);
-  const [selectedConversation, setSelectedConversation] = useState(null);
-  const [selectedQuestion, setSelectedQuestion] = useState('');
-  const [selectedAnswer, setSelectedAnswer] = useState('');
-
-  const handleConversationClick = (conversation) => {
-    const questions = [];
-    const answers = [];
-
-    for (let i = 0; i < conversation.questionAnswers.length; i++) {
-      const question = conversation.questionAnswers[i].question;
-      const answer = conversation.questionAnswers[i].answer;
-
-      questions.push(question);
-      answers.push(answer);
-    }
-
-    setSelectedQuestion(questions.join('\n')); // Join questions with a line break
-    setSelectedAnswer(answers.join('\n')); // Join answers with a line break
-  };
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleResize = () => {
@@ -41,6 +24,10 @@ const Home: React.FC = () => {
     };
   }, []);
 
+  const handleConversationClick = (id) => {
+    navigate(`/home/${id}`);
+  };
+
   return (
     <>
       <Navbar />
@@ -53,14 +40,8 @@ const Home: React.FC = () => {
           <div className="header-line"></div>
         </div>
         <div className="main-container">
-          {!isMobileView && (
-            <Chats conversations={conversations} onConversationClick={handleConversationClick} />
-          )}
-          <Messages
-            setConversations={setConversations}
-            selectedQuestion={selectedQuestion}
-            selectedAnswer={selectedAnswer}
-          />
+          {!isMobileView && <Chats onConversationClick={handleConversationClick} />}
+          <Outlet />
         </div>
       </div>
     </>
