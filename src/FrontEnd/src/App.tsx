@@ -106,6 +106,7 @@ const App = () => {
               path="/home"
               element={<ProtectedRouteHome element={<Home />} redirectTo="/signup" />}
             >
+              <Route index element={<Message />} />
               <Route path=":id" element={<Message />} />
             </Route>
             <Route

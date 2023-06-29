@@ -33,9 +33,13 @@ const Message: React.FC = () => {
   };
 
   const lplp = async () => {
-    const response = await authService.AIGetConversationById(id);
-    console.log(response.data);
-    handleConversationClick(response.data);
+    if (id === undefined) {
+      return;
+    } else {
+      const response = await authService.AIGetConversationById(id);
+      console.log(response.data);
+      handleConversationClick(response.data);
+    }
   };
 
   const roles = {

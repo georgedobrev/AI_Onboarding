@@ -17,7 +17,7 @@ const Chats: React.FC = ({ onConversationClick }) => {
 
   useEffect(() => {
     loadAllChatMessages();
-  }, []);
+  }, [selectedConversation, loadAllChatMessages]);
 
   const handleConversationClick = async (conversation) => {
     onConversationClick(conversation.id);

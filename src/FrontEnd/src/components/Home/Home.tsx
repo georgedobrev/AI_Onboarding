@@ -2,13 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import Navbar from '../Navbar/Navbar.tsx';
 import Chats from '../Chats/Chats.tsx';
-import Message from '../Messages/Message.tsx';
 import blankfactorLogo from '../../assets/blankfactor-logo.jpg';
 import './Home.css';
 
 const Home: React.FC = () => {
   const [isMobileView, setIsMobileView] = useState(false);
-  const [conversations, setConversations] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
