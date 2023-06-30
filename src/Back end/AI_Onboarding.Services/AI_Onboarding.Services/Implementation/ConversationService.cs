@@ -23,13 +23,15 @@ namespace AI_Onboarding.Services.Implementation
             _mapper = mapper;
         }
 
-        public void AddToConversation(int? id, string question, string answer)
+        public int? AddToConversation(int? id, string question, string answer)
         {
             int.TryParse(_httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out int userId);
 
+            int? conversationId = null;
+
             if (id is null)
             {
-                _repository.Add(new Conversation
+                var newConversation = new Conversation
                 {
                     UserId = userId,
                     QuestionAnswers = new List<QuestionAnswer>
@@ -40,7 +42,12 @@ namespace AI_Onboarding.Services.Implementation
                             Question = question
                         }
                     }
-                });
+                };
+
+                _repository.Add(newConversation);
+                _repository.SaveChanges();
+
+                conversationId = newConversation.Id;
             }
             else
             {
@@ -55,15 +62,21 @@ namespace AI_Onboarding.Services.Implementation
                     });
 
                     _repository.Update(conversation);
+                    _repository.SaveChanges();
+
+                    conversationId = conversation.Id;
                 }
             }
 
-            _repository.SaveChanges();
+            return conversationId;
         }
+
 
         public ConversationDTO? GetConversation(int id)
         {
-            return _mapper.Map<ConversationDTO>(_repository.Find(id));
+            int.TryParse(_httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out int userId);
+
+            return _mapper.Map<ConversationDTO>(_repository.FindByCondition(x => x.Id == id && x.UserId == userId));
         }
 
         public UserConversationsViewModel GetUserConversations()

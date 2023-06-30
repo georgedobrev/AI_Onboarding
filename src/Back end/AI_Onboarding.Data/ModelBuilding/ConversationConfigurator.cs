@@ -10,6 +10,8 @@ namespace AI_Onboarding.Data.ModelBuilding
         public void Configure(EntityTypeBuilder<Conversation> builder)
 
         {
+            builder.ToTable("Conversations");
+
             builder.Property(x => x.UserId).IsRequired();
 
             builder
@@ -17,7 +19,10 @@ namespace AI_Onboarding.Data.ModelBuilding
             .WithMany(x => x.Conversations)
             .HasForeignKey(x => x.UserId);
 
-            builder.OwnsMany(x => x.QuestionAnswers);
+            builder.OwnsMany(x => x.QuestionAnswers, x =>
+            {
+                x.ToTable("QuestionAnswers");
+            });
         }
     }
 }

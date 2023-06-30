@@ -28,15 +28,15 @@ namespace AI_Onboarding.Api.Controllers
 
             if (result.Success)
             {
-                _conversationService.AddToConversation(conversation.Id, conversation.Question, result.Output);
+                var id = _conversationService.AddToConversation(conversation.Id, conversation.Question, result.Output);
 
-                return Ok(result.Output);
+                return Ok(new ChatResponseViewModel { Id = id, Answer = result.Output });
             }
             else
             {
-                _conversationService.AddToConversation(conversation.Id, conversation.Question, result.ErrorMessage);
+                var id = _conversationService.AddToConversation(conversation.Id, conversation.Question, result.ErrorMessage);
 
-                return BadRequest(result.ErrorMessage);
+                return BadRequest(new ChatResponseViewModel { Id = id, Answer = result.ErrorMessage });
             }
         }
     }
