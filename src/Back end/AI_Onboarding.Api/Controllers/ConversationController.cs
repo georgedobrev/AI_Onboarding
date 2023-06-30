@@ -39,5 +39,20 @@ namespace AI_Onboarding.Api.Controllers
                 return NotFound("Conversation doesn't exist!");
             }
         }
+
+        [HttpDelete("{id}")]
+        public ActionResult DeleteConversation(int id)
+        {
+            var result = _conversationService.DeleteConversation(id);
+
+            if (result.Success)
+            {
+                return Ok();
+            }
+            else
+            {
+                return NotFound(result.ErrorMessage);
+            }
+        }
     }
 }
