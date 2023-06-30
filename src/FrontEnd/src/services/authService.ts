@@ -33,7 +33,7 @@ interface AISearchRequestBody {
 
 interface AISearchResponse {
   id: string;
-  answerQuery: string;
+  answer: string;
 }
 
 interface forgotPasswordRequestBody {

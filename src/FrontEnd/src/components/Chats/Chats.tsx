@@ -1,33 +1,40 @@
 import React, { useEffect, useState } from 'react';
-import MessageIcon from '@mui/icons-material/Message';
-import './Chats.css';
+import { useNavigate } from 'react-router-dom';
 import { authService } from '../../services/authService.ts';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Add as AddIcon, Message as MessageIcon } from '@mui/icons-material';
+import './Chats.css';
 
 const Chats: React.FC = ({ onConversationClick }) => {
-  const location = useLocation();
-  const [selectedConversation, setSelectedConversation] = useState(null);
   const navigate = useNavigate();
   const [allConversations, setAllConversations] = useState([]);
 
   const loadAllChatMessages = async () => {
     const conversations = await authService.AIGetAllConversations();
-    setAllConversations(conversations.data.conversations);
+    setAllConversations(conversations.data.conversations.reverse());
   };
 
   useEffect(() => {
     loadAllChatMessages();
-  }, [selectedConversation, loadAllChatMessages]);
+  }, [loadAllChatMessages]);
 
   const handleConversationClick = async (conversation) => {
     onConversationClick(conversation.id);
+  };
+
+  const handleAddIconClick = () => {
+    localStorage.removeItem('conversationId');
+    navigate('/home');
+    onConversationClick(null);
   };
 
   return (
     <div className="chat-container">
       <div className="chat-header">
         <h2 className="chats-title">Chats</h2>
-        <div className="horizontal-chatline"></div>
+        <div className="add-chat-container" onClick={handleAddIconClick}>
+          <AddIcon className="add-chat-icon" />
+          <p>New Chat</p>
+        </div>
         {allConversations.map((conversation, index) => (
           <div
             className="conversation"
@@ -40,8 +47,6 @@ const Chats: React.FC = ({ onConversationClick }) => {
           </div>
         ))}
       </div>
-      <div className="vertical-chatline-left"></div>
-      <div className="vertical-chatline-right"></div>
       <div className="conversation-list"></div>
     </div>
   );

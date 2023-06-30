@@ -4,26 +4,17 @@
     width: 25%;
     justify-content: center;
     z-index: 0;
-}
-
-.vertical-chatline-right {
-    width: 1px;
-    height: 100%;
-    background-color: var(--lineColor);
-}
-
-.horizontal-chatline {
-    width: 100%;
-    height: 1px;
-    background-color: var(--lineColor);
+    border-right: 1px solid var(--lineColor);
+    overflow: auto;
 }
 
 .chats-title {
     color: var(--whiteColor);
     width: 100%;
     font-size: 24px;
-    margin-block: 24px;
+    padding-block: 24px;
     text-align: center;
+    border-bottom: 1px solid var(--lineColor);
 }
 
 .chat-header {
@@ -37,27 +28,37 @@
 .conversation {
     display: flex;
     position: relative;
-    flex-direction: row;
     align-items: center;
     justify-content: center;
+    gap: 6px;
+    padding-block: 12px;
     color: var(--whiteColor);
     width: 100%;
+    border-bottom: 1px solid var(--lineColor);
+    transition: background-color 0.15s ease-in-out;
+    cursor: pointer;
+    overflow-wrap: anywhere;
 }
 
-.conversation:after {
-    content: '';
-    position: absolute;
-    left: 50%;
-    bottom: -12px;
-    transform: translateX(-50%);
-    width: 150px;
-    height: 1px;
-    background-color: var(--lineColor);
+.conversation:hover {
+    background-color: var(--hoverOnConversation)
 }
 
-.conversation-message-icon {
-    margin-right: 10px;
-    margin-top: 24px;
+.add-chat-container {
+    display: flex;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    color: var(--whiteColor);
+    width: 100%;
+    padding: 14px;
+    border-bottom: 1px solid var(--lineColor);
+    transition: background-color 0.15s ease-in-out;
+    cursor: pointer;
+}
+
+.add-chat-container:hover {
+    background-color: var(--blankfactorLogoLightBlue)
 }
 
 @media screen and (max-width: 768px) {

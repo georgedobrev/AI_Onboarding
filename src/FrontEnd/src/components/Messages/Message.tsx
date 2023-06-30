@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
-import FileUploader from './FileUploader.tsx';
-import { TextField, IconButton } from '@mui/material';
+import { IconButton, TextField } from '@mui/material';
 import { Send } from '@mui/icons-material';
 import { authService } from '../../services/authService.ts';
+import FileUploader from './FileUploader.tsx';
 import './Messages.css';
 
 const Message: React.FC = () => {
@@ -28,16 +28,14 @@ const Message: React.FC = () => {
       questionsAnswers.push(answer);
     }
 
-    console.log(`questionsAnswers: ${questionsAnswers} `);
     setQuestionsAnswers(questionsAnswers);
   };
 
-  const lplp = async () => {
-    if (id === undefined) {
+  const handleConversationById = async () => {
+    if (!id) {
       return;
     } else {
       const response = await authService.AIGetConversationById(id);
-      console.log(response.data);
       handleConversationClick(response.data);
     }
   };
@@ -50,16 +48,19 @@ const Message: React.FC = () => {
   useEffect(() => {
     const storedUserRole = localStorage.getItem('userRole');
     setUserRole(storedUserRole);
-    lplp();
+    handleConversationById();
+    if (!id && !localStorage.getItem('conversationId')) {
+      setCurrentConversationId(null);
+      questionsAnswers.splice(0, questionsAnswers.length);
+    } else {
+      setCurrentConversationId(id);
+      localStorage.setItem('conversationId', id);
+    }
   }, [id]);
 
   useEffect(() => {
     setMessages([]);
   }, [currentConversationId]);
-
-  useEffect(() => {
-    setCurrentConversationId(id);
-  }, [id]);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQuestion(event.target.value);
@@ -80,14 +81,20 @@ const Message: React.FC = () => {
       ]);
 
       let response: object;
-      if (!id) {
-        response = await authService.AISearchResponse({ question });
+      if (!id && !localStorage.getItem('conversationId')) {
+        response = await authService.AISearchResponse({
+          question,
+        });
+        localStorage.setItem('conversationId', response.data.id);
       } else {
-        response = await authService.AISearchResponse({ question, id });
+        response = await authService.AISearchResponse({
+          question,
+          id: id || localStorage.getItem('conversationId'),
+        });
       }
       setMessages((prevMessages) => [
         ...prevMessages.slice(0, -1),
-        { text: response.data, isAnswer: true },
+        { text: response.data.answer, isAnswer: true },
       ]);
     }
   };
