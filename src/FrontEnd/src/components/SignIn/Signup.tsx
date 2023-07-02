@@ -3,15 +3,14 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { TextField, Button, InputAdornment, IconButton } from '@mui/material';
 import { CredentialResponse, GoogleLogin } from '@react-oauth/google';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import logoImage from '../../assets/blankfactor-logo.jpg';
 import { FormValues, ExtendSessionFormValues } from './types.ts';
 import { authService } from '../../services/authService.ts';
-import { toast } from 'react-toastify';
-import config from '../../config.json';
-import 'react-toastify/dist/ReactToastify.css';
-import './Signup.css';
 import { successNotification } from '../Notifications/Notifications.tsx';
 import jwt_decode from 'jwt-decode';
+import config from '../../config.json';
+import logoImage from '../../assets/blankfactor-logo.jpg';
+import 'react-toastify/dist/ReactToastify.css';
+import './Signup.css';
 
 const Signup: React.FC = () => {
   const location = useLocation();

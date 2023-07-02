@@ -11,8 +11,9 @@ import Upload from './components/Upload/Upload.tsx';
 import ResetPassword from './components/ResetPassword/ResetPassword.tsx';
 import Account from './components/Account/Account.tsx';
 import LandingPage from './components/LandingPage/LandingPage.tsx';
-import './App.css';
+import EmailConfirmation from "./components/ConfirmEmail/EmailConfirmation.tsx";
 import config from './config.json';
+import './App.css';
 import 'react-toastify/dist/ReactToastify.css';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
@@ -98,6 +99,7 @@ const App = () => {
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/account/:token" element={<EmailConfirmation />} />
             <Route path="/register" element={<Register />} />
             <Route path="/account/change-password" element={<ResetPassword />} />
             <Route path="/account/reset-password" element={<ResetPassword />} />

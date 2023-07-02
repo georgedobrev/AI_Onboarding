@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
 import { Button, IconButton, InputAdornment, TextField } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { useForm } from 'react-hook-form';
-import './Register.css';
-import logoImage from '../../assets/blankfactor-logo.jpg';
 import { FormValues } from './types.ts';
 import { authService } from '../../services/authService.ts';
 import { successNotification } from '../Notifications/Notifications.tsx';
+import logoImage from '../../assets/blankfactor-logo.jpg';
+import './Register.css';
 
 const Register: React.FC = () => {
   const {
@@ -26,7 +26,7 @@ const Register: React.FC = () => {
     try {
       await authService.register(formData);
       navigate('/signup', { state: { formData: formData } });
-      successNotification('Register successfully');
+      successNotification('Please check your email to verify your account', { autoClose: 3000 });
     } catch (error) {
       console.error(error);
     }
