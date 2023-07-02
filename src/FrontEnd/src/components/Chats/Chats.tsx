@@ -1,12 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { authService } from '../../services/authService.ts';
 import { Add as AddIcon, Message as MessageIcon } from '@mui/icons-material';
+import { authService } from '../../services/authService.ts';
 import './Chats.css';
 
-const Chats: React.FC = ({ onConversationClick }) => {
+interface ChatsProps {
+  onConversationClick: (conversationId: number) => void;
+  id: number;
+}
+
+interface Conversation {
+  text: string;
+  questionAnswers: string[];
+}
+
+const Chats: React.FC<ChatsProps> = ({ onConversationClick }) => {
   const navigate = useNavigate();
-  const [allConversations, setAllConversations] = useState([]);
+  const [allConversations, setAllConversations] = useState<Conversation[]>([]);
 
   const loadAllChatMessages = async () => {
     const conversations = await authService.AIGetAllConversations();
@@ -17,7 +27,7 @@ const Chats: React.FC = ({ onConversationClick }) => {
     loadAllChatMessages();
   }, [loadAllChatMessages]);
 
-  const handleConversationClick = async (conversation) => {
+  const handleConversationClick = async (conversation: ChatsProps) => {
     onConversationClick(conversation.id);
   };
 

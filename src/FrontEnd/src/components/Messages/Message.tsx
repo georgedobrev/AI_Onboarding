@@ -4,32 +4,48 @@ import { IconButton, TextField } from '@mui/material';
 import { Send } from '@mui/icons-material';
 import { authService } from '../../services/authService.ts';
 import FileUploader from './FileUploader.tsx';
-import './Messages.css';
+import './Message.css';
+
+interface Message {
+  text: string;
+  isAnswer: boolean;
+  isTyping?: boolean;
+}
+
+interface Conversation {
+  questionAnswers: {
+    question: string;
+    answer: string;
+  }[];
+}
+
+interface AIResponse {
+  data: {
+    id: string;
+    answer: string;
+  };
+}
 
 const Message: React.FC = () => {
   const location = useLocation();
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const [userRole, setUserRole] = useState<string | null>(null);
-  const [question, setQuestion] = useState('');
-  const [messages, setMessages] = useState<
-    { text: string; isAnswer: boolean; isTyping?: boolean }[]
-  >([]);
-  const [currentConversationId, setCurrentConversationId] = useState<string | null>(null);
-  const [questionsAnswers, setQuestionsAnswers] = useState([]);
+  const [question, setQuestion] = useState<string>('');
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [currentConversationId, setCurrentConversationId] = useState<number | null>(null);
+  const [questionsAnswers, setQuestionsAnswers] = useState<string[]>([]);
 
-  const handleConversationClick = (conversation) => {
-    const questionsAnswers = [];
+  const handleConversationClick = (conversation: Conversation) => {
+    const questionsAnswers: string[] = [];
 
-    for (let i = 0; i < conversation.questionAnswers.length; i++) {
-      const question = conversation.questionAnswers[i].question;
-      const answer = conversation.questionAnswers[i].answer;
-
-      questionsAnswers.push(question);
-      questionsAnswers.push(answer);
-    }
+    conversation.questionAnswers.forEach((qa) => {
+      questionsAnswers.push(qa.question);
+      questionsAnswers.push(qa.answer);
+    });
 
     setQuestionsAnswers(questionsAnswers);
   };
+
 
   const handleConversationById = async () => {
     if (!id) {
@@ -51,7 +67,7 @@ const Message: React.FC = () => {
     handleConversationById();
     if (!id && !localStorage.getItem('conversationId')) {
       setCurrentConversationId(null);
-      questionsAnswers.splice(0, questionsAnswers.length);
+      setQuestionsAnswers([]);
     } else {
       setCurrentConversationId(id);
       localStorage.setItem('conversationId', id);
@@ -80,7 +96,7 @@ const Message: React.FC = () => {
         { text: '', isAnswer: true, isTyping: true },
       ]);
 
-      let response: object;
+      let response: AIResponse;
       if (!id && !localStorage.getItem('conversationId')) {
         response = await authService.AISearchResponse({
           question,

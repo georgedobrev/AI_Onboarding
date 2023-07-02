@@ -6,7 +6,6 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import logoImage from '../../assets/blankfactor-logo.jpg';
 import { FormValues, ExtendSessionFormValues } from './types.ts';
 import { authService } from '../../services/authService.ts';
-import { toast } from 'react-toastify';
 import config from '../../config.json';
 import 'react-toastify/dist/ReactToastify.css';
 import './Signup.css';

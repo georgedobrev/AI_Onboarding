@@ -56,6 +56,11 @@ interface validateResetTokenRequestBody {
   email: string;
 }
 
+interface AISearch {
+  question: string;
+  id?: string;
+}
+
 export const authService = {
   login: async (formData: SignInForms) => {
     try {
@@ -206,7 +211,7 @@ export const authService = {
     }
   },
 
-  AISearchResponse: async (formData: object | undefined) => {
+  AISearchResponse: async (formData: AISearch | undefined) => {
     try {
       const headers = authHeaderAI();
       const url = `${config.baseUrl}${config.AISearchEndpoint}`;
