@@ -1,6 +1,6 @@
 import React from 'react';
 import Navbar from '../Navbar/Navbar.tsx';
-import Message from '../Messages/Message.tsx';
+import Message from '../Message/Message.tsx';
 import blankfactorLogo from '../../assets/blankfactor-logo.jpg';
 
 const Upload: React.FC = () => {

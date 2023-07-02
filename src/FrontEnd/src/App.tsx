@@ -11,7 +11,7 @@ import Upload from './components/Upload/Upload.tsx';
 import ResetPassword from './components/ResetPassword/ResetPassword.tsx';
 import Account from './components/Account/Account.tsx';
 import LandingPage from './components/LandingPage/LandingPage.tsx';
-import Message from './components/Messages/Message.tsx';
+import Message from './components/Message/Message.tsx';
 import './App.css';
 import config from './config.json';
 import 'react-toastify/dist/ReactToastify.css';
