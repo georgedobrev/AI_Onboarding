@@ -5,6 +5,7 @@ using AI_Onboarding.Data.Models;
 using AI_Onboarding.Data.Repository;
 using AI_Onboarding.Services.Interfaces;
 using AI_Onboarding.ViewModels.ConversationModels;
+using AI_Onboarding.ViewModels.ResponseModels;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 
@@ -71,6 +72,26 @@ namespace AI_Onboarding.Services.Implementation
             return conversationId;
         }
 
+        public BaseResponseViewModel DeleteConversation(int id)
+        {
+            int.TryParse(_httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out int userId);
+
+            var conversation = _repository.Remove(id);
+
+            if (conversation is not null && conversation.UserId == userId)
+            {
+                _repository.SaveChanges();
+                return new BaseResponseViewModel { Success = true };
+            }
+            else if (conversation is not null)
+            {
+                return new BaseResponseViewModel { Success = false, ErrorMessage = "Unauthorized" };
+            }
+            else
+            {
+                return new BaseResponseViewModel { Success = false, ErrorMessage = "Conversation doesn't exist!" };
+            }
+        }
 
         public ConversationDTO? GetConversation(int id)
         {
