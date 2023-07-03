@@ -3,6 +3,7 @@ import { useLocation, useParams } from 'react-router-dom';
 import { IconButton, TextField } from '@mui/material';
 import { Send } from '@mui/icons-material';
 import { authService } from '../../services/authService.ts';
+import { loadAllChatMessages } from '../Chats/Chats.tsx';
 import FileUploader from './FileUploader.tsx';
 import './Message.css';
 
@@ -46,7 +47,6 @@ const Message: React.FC = () => {
     setQuestionsAnswers(questionsAnswers);
   };
 
-
   const handleConversationById = async () => {
     if (!id) {
       return;
@@ -82,6 +82,10 @@ const Message: React.FC = () => {
     setQuestion(event.target.value);
   };
 
+  const triggerLoadAllChatMessages = async () => {
+    await loadAllChatMessages();
+  };
+
   const handleSearchSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
@@ -101,13 +105,17 @@ const Message: React.FC = () => {
         response = await authService.AISearchResponse({
           question,
         });
+        await loadAllChatMessages();
         localStorage.setItem('conversationId', response.data.id);
       } else {
         response = await authService.AISearchResponse({
           question,
           id: id || localStorage.getItem('conversationId'),
         });
+        await loadAllChatMessages();
       }
+
+      triggerLoadAllChatMessages(); // Trigger loadAllChatMessages separately
       setMessages((prevMessages) => [
         ...prevMessages.slice(0, -1),
         { text: response.data.answer, isAnswer: true },

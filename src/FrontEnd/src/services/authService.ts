@@ -259,4 +259,19 @@ export const authService = {
       throw new Error('AI Get Conversation By Id failed');
     }
   },
+
+  AIDeleteConversationById: async (id: number) => {
+    try {
+      const headers = authHeaderAIGetConversations();
+      const url = `${config.baseUrl}${config.AIConversation}${id}`;
+      const response = await fetchWrapper.delete<AIDeleteRequestBody>(url, headers);
+      if (!response) {
+        throw new Error('Request failed');
+      }
+      return response;
+    } catch (error) {
+      console.error(error);
+      throw new Error('AI Delete Conversation By Id failed');
+    }
+  },
 };

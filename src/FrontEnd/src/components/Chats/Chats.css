@@ -4,17 +4,26 @@
     width: 25%;
     justify-content: center;
     z-index: 0;
-    border-right: 1px solid var(--lineColor);
-    overflow: auto;
+}
+
+.vertical-chatline-right {
+    width: 1px;
+    height: 100%;
+    background-color: var(--lineColor);
+}
+
+.horizontal-chatline {
+    width: 100%;
+    height: 1px;
+    background-color: var(--lineColor);
 }
 
 .chats-title {
     color: var(--whiteColor);
     width: 100%;
     font-size: 24px;
-    padding-block: 24px;
+    margin-block: 24px;
     text-align: center;
-    border-bottom: 1px solid var(--lineColor);
 }
 
 .chat-header {
@@ -29,7 +38,7 @@
     display: flex;
     position: relative;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 6px;
     padding-block: 12px;
     color: var(--whiteColor);
@@ -41,7 +50,46 @@
 }
 
 .conversation:hover {
-    background-color: var(--hoverOnConversation)
+    background-color: var(--hoverOnConversation);
+}
+
+.conversation-message-icon {
+    margin-left: 8px;
+}
+
+.conversation-text {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+
+.conversation-delete-icon,
+.conversation-tick-icon,
+.conversation-close-icon {
+    cursor: pointer;
+}
+
+.conversation-delete-icon {
+    position: relative;
+    right: 4px;
+}
+
+.conversation-tick-icon,
+.conversation-close-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+}
+
+.conversation-tick-icon,
+.conversation-close-icon {
+    color: var(--whiteColor);
 }
 
 .add-chat-container {
@@ -58,7 +106,11 @@
 }
 
 .add-chat-container:hover {
-    background-color: var(--blankfactorLogoLightBlue)
+    background-color: var(--blankfactorLogoLightBlue);
+}
+
+.selected {
+    background-color: var(--hoverOnConversation);
 }
 
 @media screen and (max-width: 768px) {
