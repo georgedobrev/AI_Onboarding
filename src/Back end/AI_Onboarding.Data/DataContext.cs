@@ -27,6 +27,7 @@ namespace AI_Onboarding.Data
             new UserTokensConfigurator().Configure(modelBuilder.Entity<UserToken>());
             new RoleConfigurator().Configure(modelBuilder.Entity<Role>());
             new RoleClaimsConfigurator().Configure(modelBuilder.Entity<RoleClaim>());
+            new ConversationConfigurator().Configure(modelBuilder.Entity<Conversation>());
             SeederConfigurator.Seed(modelBuilder);
         }
 
