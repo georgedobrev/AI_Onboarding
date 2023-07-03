@@ -3,6 +3,7 @@
     flex-direction: column;
     height: 100%;
     width: 100%;
+    overflow: auto;
 }
 
 .chat-messages {
@@ -146,6 +147,7 @@
     flex-direction: column;
     height: 100%;
     width: 100%;
+    padding-inline: 8px;
     justify-content: end;
     z-index: 0;
 }
@@ -154,7 +156,7 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    margin-inline: 14px;
+    margin-inline: 10%;
 }
 
 .search-textfield.MuiInputBase-root,

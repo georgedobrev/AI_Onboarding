@@ -1,7 +1,7 @@
 import jwt_decode from 'jwt-decode';
 import { errorNotifications } from '../components/Notifications/Notifications.tsx';
 import config from '../config.json';
-import { authHeaderAI } from './commonConfig.ts';
+import { authHeaderAI, authHeaderAIGetConversations } from './commonConfig.ts';
 import { fetchWrapper } from './FetchWrapper.tsx';
 import { FormValues as SignInForms } from '../components/SignIn/types.ts';
 import { FormValues as RegisterForms } from '../components/Register/types.ts';
@@ -27,11 +27,13 @@ interface GoogleLoginRequestBody {
 }
 
 interface AISearchRequestBody {
-  searchQuery: string;
+  id: number;
+  question: string;
 }
 
 interface AISearchResponse {
-  answerQuery: string;
+  id: string;
+  answer: string;
 }
 
 interface forgotPasswordRequestBody {
@@ -52,6 +54,11 @@ interface resetPasswordRequestBody {
 interface validateResetTokenRequestBody {
   token: string;
   email: string;
+}
+
+interface AISearch {
+  question: string;
+  id?: string;
 }
 
 export const authService = {
@@ -204,7 +211,7 @@ export const authService = {
     }
   },
 
-  AISearchResponse: async (formData: string | undefined) => {
+  AISearchResponse: async (formData: AISearch | undefined) => {
     try {
       const headers = authHeaderAI();
       const url = `${config.baseUrl}${config.AISearchEndpoint}`;
@@ -220,6 +227,36 @@ export const authService = {
     } catch (error) {
       console.error(error);
       throw new Error('AI Search failed');
+    }
+  },
+
+  AIGetAllConversations: async () => {
+    try {
+      const headers = authHeaderAIGetConversations();
+      const url = `${config.baseUrl}${config.AIConversations}`;
+      const response = await fetchWrapper.get<AISearchResponse>(url, headers);
+      if (!response) {
+        throw new Error('Request failed');
+      }
+      return response;
+    } catch (error) {
+      console.error(error);
+      throw new Error('AI Get All Conversations failed');
+    }
+  },
+
+  AIGetConversationById: async (id: number) => {
+    try {
+      const headers = authHeaderAIGetConversations();
+      const url = `${config.baseUrl}${config.AIConversation}${id}`;
+      const response = await fetchWrapper.get<AISearchResponse>(url, headers);
+      if (!response) {
+        throw new Error('Request failed');
+      }
+      return response;
+    } catch (error) {
+      console.error(error);
+      throw new Error('AI Get Conversation By Id failed');
     }
   },
 };

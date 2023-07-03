@@ -6,7 +6,6 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import logoImage from '../../assets/blankfactor-logo.jpg';
 import { FormValues, ExtendSessionFormValues } from './types.ts';
 import { authService } from '../../services/authService.ts';
-import { toast } from 'react-toastify';
 import config from '../../config.json';
 import 'react-toastify/dist/ReactToastify.css';
 import './Signup.css';
@@ -44,6 +43,7 @@ const Signup: React.FC = () => {
     const fullName = tokenPayload[config.Name];
     localStorage.setItem('fullName', fullName);
     localStorage.setItem('userRole', userRole);
+    localStorage.removeItem('conversationId');
     return navigate('/home');
   };
 
@@ -79,6 +79,7 @@ const Signup: React.FC = () => {
       const response = await authService.login(formData);
       if (response) {
         await handleSuccessfulLogin(response);
+        localStorage.removeItem('conversationId');
         navigate('/home');
         successNotification('Login Successful');
       } else {
@@ -112,6 +113,7 @@ const Signup: React.FC = () => {
       } else {
         const remainingTime = calculateRemainingTime(accessToken);
         extendSession(remainingTime);
+        localStorage.removeItem('conversationId');
         navigate('/home');
       }
     } catch (error) {
