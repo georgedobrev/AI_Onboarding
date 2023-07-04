@@ -1,7 +1,7 @@
 import jwt_decode from 'jwt-decode';
 import { errorNotifications } from '../components/Notifications/Notifications.tsx';
 import config from '../config.json';
-import { authHeaderAI, authHeaderAIGetConversations } from './commonConfig.ts';
+import { authHeaderAI, authHeaderAIGetConversations, authHeaderFile } from './commonConfig.ts';
 import { fetchWrapper } from './FetchWrapper.tsx';
 import { FormValues as SignInForms } from '../components/SignIn/types.ts';
 import { FormValues as RegisterForms } from '../components/Register/types.ts';
@@ -55,6 +55,10 @@ interface resetPasswordRequestBody {
   confirmPassword: string;
 }
 
+interface ConvertFileResponse {
+  message: string;
+}
+
 interface validateResetTokenRequestBody {
   token: string;
   email: string;
@@ -72,6 +76,7 @@ interface AIDeleteRequestBody {
 interface TokenPayload {
   aud: string;
   exp: number;
+
   [key: string]: string | number;
 }
 
@@ -206,6 +211,25 @@ export const authService = {
     }
   },
 
+  convertFile: async (formData: FormData) => {
+    try {
+      const headers = authHeaderFile();
+      const url = `${config.baseUrl}${config.convertFileEndpoint}`;
+      const response = await fetchWrapper.post<ConvertFileResponse, FormData>(
+        url,
+        formData,
+        headers
+      );
+      if (!response) {
+        throw new Error('Request failed');
+      }
+      return response.data;
+    } catch (error) {
+      console.error(error);
+      throw new Error('Convert file failed');
+    }
+  },
+
   validateResetToken: async (formData: validateResetTokenRequestBody) => {
     try {
       const headers = { headers: { 'Content-Type': 'application/json' } };
@@ -242,7 +266,7 @@ export const authService = {
   AIGetAllConversations: async () => {
     try {
       const headers = authHeaderAIGetConversations();
-      const url = `${config.baseUrl}${config.AIConversations}`;
+      const url = `${config.baseUrl}${config.AIConversationsEndpoint}`;
       const response = await fetchWrapper.get<AIGetConversationsResponse>(url, headers);
       if (!response) {
         throw new Error('Request failed');
@@ -257,7 +281,7 @@ export const authService = {
   AIGetConversationById: async (id: number) => {
     try {
       const headers = authHeaderAIGetConversations();
-      const url = `${config.baseUrl}${config.AIConversation}${id}`;
+      const url = `${config.baseUrl}${config.AIConversationEndpoint}${id}`;
       const response = await fetchWrapper.get<AIGetConversationByIdResponse>(url, headers);
       if (!response) {
         throw new Error('Request failed');
@@ -272,7 +296,7 @@ export const authService = {
   AIDeleteConversationById: async (id: number) => {
     try {
       const headers = authHeaderAIGetConversations();
-      const url = `${config.baseUrl}${config.AIConversation}${id}`;
+      const url = `${config.baseUrl}${config.AIConversationEndpoint}${id}`;
       const response = await fetchWrapper.delete<AIDeleteRequestBody>(url, headers);
       if (!response) {
         throw new Error('Request failed');

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { apiService } from '../../services/apiService.ts';
 import config from '../../config.json';
-import DocViewer, { DocViewerRenderers } from '@cyntler/react-doc-viewer';
 import { Document, Page } from 'react-pdf';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import { Button, CircularProgress } from '@mui/material';
@@ -16,7 +15,8 @@ const FileUploader: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);
   const [responseReceived, setResponseReceived] = useState<boolean>(false);
-  const acceptedFileTypes = '.pdf, .docx, .pptx';
+  const [pdfByteArray, setPdfByteArray] = useState<Uint8Array | null>(null);
+
   const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = (event.target as HTMLInputElement)?.files || null;
     if (files) {
@@ -31,15 +31,17 @@ const FileUploader: React.FC = () => {
       const uploadEndpoint = config.uploadEndpoint;
 
       const responses = await Promise.all(
-        Array.from(files).map((file) => apiService.uploadFile(baseUrl, uploadEndpoint, file))
+          Array.from(files).map((file) => apiService.convertFileToPdf(file))
       );
+      console.log(responses);
 
       if (responses.every((response) => response)) {
-        const extension = files[0].name.split('.').pop()?.toLowerCase();
-        if (extension === 'pdf' || extension === 'docx' || extension === 'pptx') {
-          setDocumentType(extension);
-        }
         setResponseReceived(true);
+        setDocumentType('pdf');
+
+        const pdfResponse = responses[0];
+
+        setPdfByteArray(pdfResponse);
       } else {
         console.error('Error uploading files:', responses);
       }
@@ -49,6 +51,8 @@ const FileUploader: React.FC = () => {
       setLoading(false);
     }
   };
+
+
 
   const handleDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
     setNumPages(numPages);
@@ -84,12 +88,12 @@ const FileUploader: React.FC = () => {
               >
                 <KeyboardArrowLeftIcon />
               </Button>
-              {documentType === 'pdf' && (
-                <Document
-                  file={documentFiles[0]}
-                  onLoadSuccess={handleDocumentLoadSuccess}
-                  onLoadError={(error) => console.error('Error loading PDF:', error)}
-                >
+              {documentType === 'pdf' && pdfByteArray && (
+                  <Document
+                      file={{ data: pdfByteArray  }}
+                      onLoadSuccess={handleDocumentLoadSuccess}
+                      onLoadError={(error) => console.error('Error loading PDF:', error)}
+                  >
                   <Page
                     pageNumber={currentPage}
                     className="pdf-page"
@@ -98,15 +102,6 @@ const FileUploader: React.FC = () => {
                     renderAnnotationLayer={false}
                   />
                 </Document>
-              )}
-              {(documentType === 'docx' || documentType === 'pptx') && (
-                <DocViewer
-                  renderer={documentType === 'pptx' ? DocViewerRenderers.Pptx : undefined}
-                  documents={documentFiles.map((file) => ({ uri: URL.createObjectURL(file) }))}
-                  onError={(error) =>
-                    console.error(`Error loading ${documentType.toUpperCase()}:`, error)
-                  }
-                />
               )}
               <Button
                 onClick={handleNextPage}
@@ -130,7 +125,6 @@ const FileUploader: React.FC = () => {
         <input
           type="file"
           id="file-input"
-          accept={acceptedFileTypes}
           style={{ display: 'none' }}
           onChange={handleFileChange}
         />
