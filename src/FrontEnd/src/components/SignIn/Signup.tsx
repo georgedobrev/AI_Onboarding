@@ -43,6 +43,7 @@ const Signup: React.FC = () => {
     const fullName = tokenPayload[config.Name];
     localStorage.setItem('fullName', fullName);
     localStorage.setItem('userRole', userRole);
+    localStorage.removeItem('conversationId');
     return navigate('/home');
   };
 
@@ -78,6 +79,7 @@ const Signup: React.FC = () => {
       const response = await authService.login(formData);
       if (response) {
         await handleSuccessfulLogin(response);
+        localStorage.removeItem('conversationId');
         navigate('/home');
         successNotification('Login Successful');
       } else {
@@ -111,6 +113,7 @@ const Signup: React.FC = () => {
       } else {
         const remainingTime = calculateRemainingTime(accessToken);
         extendSession(remainingTime);
+        localStorage.removeItem('conversationId');
         navigate('/home');
       }
     } catch (error) {

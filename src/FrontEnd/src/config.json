@@ -10,6 +10,8 @@
   "validateResetTokenEndpoint": "Identity/validate-reset-token",
   "validateConfirmTokenEndpoint": "Identity/validate-confirm-token",
   "AISearchEndpoint": "AI/response",
+  "AIConversations": "Conversation/all",
+  "AIConversation": "Conversation/",
   "JWTUserRole": "http://schemas.microsoft.com/ws/2008/06/identity/claims/role",
   "Name": "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name",
   "pdfID": "1",

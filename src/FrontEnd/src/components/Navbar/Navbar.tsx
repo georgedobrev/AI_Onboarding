@@ -44,6 +44,7 @@ const Navbar: React.FC = () => {
   };
 
   const handleHomeClick = () => {
+    localStorage.removeItem('conversationId');
     navigate('/home');
   };
 

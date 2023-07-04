@@ -9,6 +9,7 @@
     align-items: center;
     height: 100%;
     width: 100%;
+    border-right: 1px solid var(--lineColor);
 }
 
 .navbar .MuiList-root {
@@ -31,15 +32,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-}
-
-
-.navbar-line {
-    width: 0.5px;
-    background-color: var(--lineColor);
-    position: relative;
-    height: 100%;
-    z-index: 1;
 }
 
 .hide {
@@ -127,5 +119,9 @@
         flex-grow: 1;
         margin-left: 0;
         padding: 0;
+    }
+
+    .chat-header {
+        border-left: 1px solid var(--lineColor);
     }
 }
