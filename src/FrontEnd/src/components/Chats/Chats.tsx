@@ -9,7 +9,7 @@ import {
   Close as CloseIcon,
 } from '@mui/icons-material';
 import { authService } from '../../services/authService.ts';
-import store from "../../store/reduxStore.ts";
+import store from '../../store/reduxStore.ts';
 import './Chats.css';
 
 interface ChatsProps {
@@ -24,6 +24,10 @@ interface Conversation {
   id: number;
 }
 
+interface AIGetAllConversationsResponse {
+  conversations: Conversation[];
+}
+
 const FETCH_CONVERSATIONS_SUCCESS = 'FETCH_CONVERSATIONS_SUCCESS';
 
 interface FetchConversationsSuccessAction {
@@ -31,7 +35,9 @@ interface FetchConversationsSuccessAction {
   payload: Conversation[];
 }
 
-const fetchConversationsSuccess = (conversations: Conversation[]): FetchConversationsSuccessAction => ({
+const fetchConversationsSuccess = (
+  conversations: Conversation[]
+): FetchConversationsSuccessAction => ({
   type: FETCH_CONVERSATIONS_SUCCESS,
   payload: conversations,
 });
@@ -40,7 +46,6 @@ export const loadAllChatMessages = async (): Promise<Conversation[]> => {
   const conversations = await authService.AIGetAllConversations();
   return conversations.data.conversations.reverse();
 };
-
 
 const Chats: React.FC<ChatsProps> = ({ onConversationClick }) => {
   const navigate = useNavigate();
@@ -96,51 +101,48 @@ const Chats: React.FC<ChatsProps> = ({ onConversationClick }) => {
   };
 
   return (
-      <div className="chat-container">
-        <div className="chat-header">
-          <h2 className="chats-title">Chats</h2>
-          <div className="add-chat-container" onClick={handleAddIconClick}>
-            <AddIcon className="add-chat-icon" />
-            <p>New Chat</p>
-          </div>
-          {allConversations.map((conversation, index) => (
-              <div
-                  className={`conversation ${selectedConversation === conversation ? 'selected' : ''}`}
-                  key={index}
-                  onClick={() => handleConversationClick(conversation)}
-              >
-                <MessageIcon className="conversation-message-icon" />
-                <div className="conversation-text">
-                  <span>{conversation.text}</span>
-                  <span>{conversation.questionAnswers[0].question}</span>
-                </div>
-                {clickedConversation?.id === conversation.id && (
-                    <>
-                      {showDeleteIcon ? (
-                          <DeleteIcon
-                              className="conversation-delete-icon"
-                              onClick={(e) => handleDeleteClick(e)}
-                          />
-                      ) : (
-                          <>
-                            <CheckIcon
-                                className="conversation-tick-icon"
-                                onClick={(e) => handleTickClick(e, conversation)}
-                            />
-                            <CloseIcon
-                                className="conversation-close-icon"
-                                onClick={handleCancelClick}
-                            />
-                          </>
-                      )}
-                    </>
-                )}
-              </div>
-          ))}
+    <div className="chat-container">
+      <div className="chat-header">
+        <h2 className="chats-title">Chats</h2>
+        <div className="add-chat-container" onClick={handleAddIconClick}>
+          <AddIcon className="add-chat-icon" />
+          <p>New Chat</p>
         </div>
-        <div className="vertical-chatline-left"></div>
-        <div className="vertical-chatline-right"></div>
+        {allConversations.map((conversation, index) => (
+          <div
+            className={`conversation ${selectedConversation === conversation ? 'selected' : ''}`}
+            key={index}
+            onClick={() => handleConversationClick(conversation)}
+          >
+            <MessageIcon className="conversation-message-icon" />
+            <div className="conversation-text">
+              <span>{conversation.text}</span>
+              <span>{conversation.questionAnswers[0].question}</span>
+            </div>
+            {clickedConversation?.id === conversation.id && (
+              <>
+                {showDeleteIcon ? (
+                  <DeleteIcon
+                    className="conversation-delete-icon"
+                    onClick={(e) => handleDeleteClick(e)}
+                  />
+                ) : (
+                  <>
+                    <CheckIcon
+                      className="conversation-tick-icon"
+                      onClick={(e) => handleTickClick(e, conversation)}
+                    />
+                    <CloseIcon className="conversation-close-icon" onClick={handleCancelClick} />
+                  </>
+                )}
+              </>
+            )}
+          </div>
+        ))}
       </div>
+      <div className="vertical-chatline-left"></div>
+      <div className="vertical-chatline-right"></div>
+    </div>
   );
 };
 
