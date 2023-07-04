@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using AI_Onboarding.Services.Interfaces;
-using AI_Onboarding.Common;
+using AI_Onboarding.ViewModels.ConversationModels;
 
 namespace AI_Onboarding.Api.Controllers
 {
@@ -11,26 +11,32 @@ namespace AI_Onboarding.Api.Controllers
     public class AIController : ControllerBase
     {
         private readonly IAIService _aiService;
+        private readonly IConversationService _conversationService;
         private readonly IConfiguration _configuration;
 
-        public AIController(IAIService aiService, IConfiguration configuration)
+        public AIController(IAIService aiService, IConfiguration configuration, IConversationService conversationService)
         {
             _aiService = aiService;
             _configuration = configuration;
+            _conversationService = conversationService;
         }
 
         [HttpPost("response")]
-        public IActionResult GenerateResponse([FromBody] string question)
+        public IActionResult GenerateResponse([FromBody] ConversationViewModel conversation)
         {
-            var result = _aiService.RunScript(_configuration["PythonScript:GenerateResponsePath"], question);
+            var result = _aiService.RunScript(_configuration["PythonScript:GenerateResponsePath"], conversation.Question);
 
             if (result.Success)
             {
-                return Ok(result.Output);
+                var id = _conversationService.AddToConversation(conversation.Id, conversation.Question, result.Output);
+
+                return Ok(new ChatResponseViewModel { Id = id, Answer = result.Output });
             }
             else
             {
-                return BadRequest(result.ErrorMessage);
+                var id = _conversationService.AddToConversation(conversation.Id, conversation.Question, result.ErrorMessage);
+
+                return BadRequest(new ChatResponseViewModel { Id = id, Answer = result.ErrorMessage });
             }
         }
     }

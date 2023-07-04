@@ -4,6 +4,7 @@ using AI_Onboarding.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AI_Onboarding.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230627064403_Conversations")]
+    partial class Conversations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -48,7 +51,7 @@ namespace AI_Onboarding.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Conversations", (string)null);
+                    b.ToTable("Conversation");
                 });
 
             modelBuilder.Entity("AI_Onboarding.Data.Models.Role", b =>
@@ -95,14 +98,14 @@ namespace AI_Onboarding.Data.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2023, 6, 28, 6, 33, 29, 366, DateTimeKind.Utc).AddTicks(7590),
+                            CreatedAt = new DateTime(2023, 6, 27, 6, 44, 3, 10, DateTimeKind.Utc).AddTicks(560),
                             Name = "Administrator",
                             NormalizedName = "ADMINISTRATOR"
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2023, 6, 28, 6, 33, 29, 366, DateTimeKind.Utc).AddTicks(7600),
+                            CreatedAt = new DateTime(2023, 6, 27, 6, 44, 3, 10, DateTimeKind.Utc).AddTicks(570),
                             Name = "Employee",
                             NormalizedName = "EMPLOYEE"
                         });
@@ -254,8 +257,8 @@ namespace AI_Onboarding.Data.Migrations
                         {
                             Id = 1,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "e87d6f0c-216f-4b94-a45b-2b76fb4a4a25",
-                            CreatedAt = new DateTime(2023, 6, 28, 6, 33, 29, 366, DateTimeKind.Utc).AddTicks(7660),
+                            ConcurrencyStamp = "d22220cd-c95e-4e27-8243-d3ebb267f519",
+                            CreatedAt = new DateTime(2023, 6, 27, 6, 44, 3, 10, DateTimeKind.Utc).AddTicks(630),
                             Email = "admin1@admin.com",
                             EmailConfirmed = true,
                             FirstName = "Admin1",
@@ -263,9 +266,9 @@ namespace AI_Onboarding.Data.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN1@ADMIN.COM",
                             NormalizedUserName = "ADMIN1@ADMIN.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEAdBgsSUVgxR2MEeca3h++bbdYYGhMvuY/WIV9d9UyMLZ3j8XFB+wKnGPmlsBiOugg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAELlnwR3GDZ4izljiQjyd9ep0IcvzpicscFc3eLoVL83+3t+bzwkzxc9Zs+DZf1FptA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "63c68360-6d2a-4406-9e40-a433e7314b4f",
+                            SecurityStamp = "cafd87bf-c2f8-4264-90ef-9726336038cc",
                             TwoFactorEnabled = false,
                             UserName = "admin1@admin.com"
                         },
@@ -273,8 +276,8 @@ namespace AI_Onboarding.Data.Migrations
                         {
                             Id = 2,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "8cc2375c-3632-42ea-a9c7-173247129406",
-                            CreatedAt = new DateTime(2023, 6, 28, 6, 33, 29, 366, DateTimeKind.Utc).AddTicks(7740),
+                            ConcurrencyStamp = "c8818a77-99ff-45bf-9e6d-52a4b1b7f96e",
+                            CreatedAt = new DateTime(2023, 6, 27, 6, 44, 3, 10, DateTimeKind.Utc).AddTicks(710),
                             Email = "admin2@admin.com",
                             EmailConfirmed = true,
                             FirstName = "Admin2",
@@ -282,9 +285,9 @@ namespace AI_Onboarding.Data.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN2@ADMIN.COM",
                             NormalizedUserName = "ADMIN2@ADMIN.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEBjZE9uVn3WTqug1B5urEWtMP/BMKlC86JPZKtHOEXgRZJEK/b12avgukrA1coEQ1Q==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEN63fE0JmfM9oKc+0SicQ9tkl1BiFwkHl9RkavgTSu8gG7hZ2QlKx8p5JuIvet3bcQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "ba771a65-4064-43d5-a801-bbfbf789be22",
+                            SecurityStamp = "037aef5c-42fc-4701-904c-4d852365e5cb",
                             TwoFactorEnabled = false,
                             UserName = "admin2@admin.com"
                         },
@@ -292,8 +295,8 @@ namespace AI_Onboarding.Data.Migrations
                         {
                             Id = 3,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "580b80e0-1ae5-4dc0-a478-8519b6f16a02",
-                            CreatedAt = new DateTime(2023, 6, 28, 6, 33, 29, 366, DateTimeKind.Utc).AddTicks(7750),
+                            ConcurrencyStamp = "aaa72e89-5493-4f68-9b97-adfff96fa918",
+                            CreatedAt = new DateTime(2023, 6, 27, 6, 44, 3, 10, DateTimeKind.Utc).AddTicks(720),
                             Email = "user@mail.com",
                             EmailConfirmed = true,
                             FirstName = "User",
@@ -301,9 +304,9 @@ namespace AI_Onboarding.Data.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "USER@MAIL.COM",
                             NormalizedUserName = "USER@MAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAELSNDkb74ELNDw+MlneYFLWOWbQ/qZMuw19NolFofhUWUt+V9BbHs8pJxpUc4+PtuQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEOANsfVUWVkk3KIp7UKx4qsR4J7oH4B4kaMpmT1FtZP/2icO6ScAByMZR1sQVWt+tQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "3f3a7203-a2db-4354-8aa3-fec56e587261",
+                            SecurityStamp = "715ea76a-aa33-44b5-975e-7a7fc7f6b2ea",
                             TwoFactorEnabled = false,
                             UserName = "user@mail.com"
                         });
@@ -406,19 +409,19 @@ namespace AI_Onboarding.Data.Migrations
                         {
                             UserId = 1,
                             RoleId = 1,
-                            CreatedAt = new DateTime(2023, 6, 28, 6, 33, 29, 472, DateTimeKind.Utc).AddTicks(1230)
+                            CreatedAt = new DateTime(2023, 6, 27, 6, 44, 3, 116, DateTimeKind.Utc).AddTicks(6900)
                         },
                         new
                         {
                             UserId = 2,
                             RoleId = 1,
-                            CreatedAt = new DateTime(2023, 6, 28, 6, 33, 29, 472, DateTimeKind.Utc).AddTicks(1230)
+                            CreatedAt = new DateTime(2023, 6, 27, 6, 44, 3, 116, DateTimeKind.Utc).AddTicks(6900)
                         },
                         new
                         {
                             UserId = 3,
                             RoleId = 2,
-                            CreatedAt = new DateTime(2023, 6, 28, 6, 33, 29, 472, DateTimeKind.Utc).AddTicks(1230)
+                            CreatedAt = new DateTime(2023, 6, 27, 6, 44, 3, 116, DateTimeKind.Utc).AddTicks(6900)
                         });
                 });
 
@@ -486,7 +489,7 @@ namespace AI_Onboarding.Data.Migrations
 
                             b1.HasKey("ConversationId", "Id");
 
-                            b1.ToTable("QuestionAnswers", (string)null);
+                            b1.ToTable("QuestionAnswer");
 
                             b1.WithOwner()
                                 .HasForeignKey("ConversationId");

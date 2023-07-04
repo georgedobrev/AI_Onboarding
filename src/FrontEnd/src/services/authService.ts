@@ -1,9 +1,11 @@
-import { fetchWrapper } from './FetchWrapper.tsx';
+import jwt_decode from 'jwt-decode';
+import { errorNotifications } from '../components/Notifications/Notifications.tsx';
 import config from '../config.json';
+import { authHeaderAI, authHeaderAIGetConversations } from './commonConfig.ts';
+import { fetchWrapper } from './FetchWrapper.tsx';
 import { FormValues as SignInForms } from '../components/SignIn/types.ts';
 import { FormValues as RegisterForms } from '../components/Register/types.ts';
 import { ExtendSessionFormValues } from '../components/SignIn/types.ts';
-import { authHeaderAI } from './commonConfig.ts';
 
 interface LoginResponse {
   accessToken?: string;
@@ -25,11 +27,13 @@ interface GoogleLoginRequestBody {
 }
 
 interface AISearchRequestBody {
-  searchQuery: string;
+  id: number;
+  question: string;
 }
 
 interface AISearchResponse {
-  answerQuery: string;
+  id: string;
+  answer: string;
 }
 
 interface forgotPasswordRequestBody {
@@ -52,6 +56,11 @@ interface validateResetTokenRequestBody {
   email: string;
 }
 
+interface AISearch {
+  question: string;
+  id?: string;
+}
+
 export const authService = {
   login: async (formData: SignInForms) => {
     try {
@@ -71,9 +80,7 @@ export const authService = {
       localStorage.setItem('refreshToken', refreshToken);
 
       // TODO to be refactored
-      const tokenParts = accessToken.split('.');
-      const tokenPayload = JSON.parse(atob(tokenParts[1]));
-
+      const tokenPayload = jwt_decode(accessToken);
       const userRole = tokenPayload[config.JWTUserRole];
       localStorage.setItem('userRole', userRole);
 
@@ -87,6 +94,7 @@ export const authService = {
 
       return response;
     } catch (error) {
+      errorNotifications('Wrong email or password');
       throw new Error('Login failed');
     }
   },
@@ -160,6 +168,7 @@ export const authService = {
       }
       return response;
     } catch (error) {
+      errorNotifications('Wrong email or non-existing email');
       console.error(error);
       throw new Error('Forget password failed');
     }
@@ -202,7 +211,7 @@ export const authService = {
     }
   },
 
-  AISearchResponse: async (formData: string | undefined) => {
+  AISearchResponse: async (formData: AISearch | undefined) => {
     try {
       const headers = authHeaderAI();
       const url = `${config.baseUrl}${config.AISearchEndpoint}`;
@@ -218,6 +227,36 @@ export const authService = {
     } catch (error) {
       console.error(error);
       throw new Error('AI Search failed');
+    }
+  },
+
+  AIGetAllConversations: async () => {
+    try {
+      const headers = authHeaderAIGetConversations();
+      const url = `${config.baseUrl}${config.AIConversations}`;
+      const response = await fetchWrapper.get<AISearchResponse>(url, headers);
+      if (!response) {
+        throw new Error('Request failed');
+      }
+      return response;
+    } catch (error) {
+      console.error(error);
+      throw new Error('AI Get All Conversations failed');
+    }
+  },
+
+  AIGetConversationById: async (id: number) => {
+    try {
+      const headers = authHeaderAIGetConversations();
+      const url = `${config.baseUrl}${config.AIConversation}${id}`;
+      const response = await fetchWrapper.get<AISearchResponse>(url, headers);
+      if (!response) {
+        throw new Error('Request failed');
+      }
+      return response;
+    } catch (error) {
+      console.error(error);
+      throw new Error('AI Get Conversation By Id failed');
     }
   },
 };

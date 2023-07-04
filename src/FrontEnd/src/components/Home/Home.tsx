@@ -1,11 +1,39 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { Outlet, useNavigate, useParams } from 'react-router-dom';
 import Navbar from '../Navbar/Navbar.tsx';
 import Chats from '../Chats/Chats.tsx';
-import Messages from '../Messages/Messages.tsx';
-import './Home.css';
 import blankfactorLogo from '../../assets/blankfactor-logo.jpg';
+import './Home.css';
 
 const Home: React.FC = () => {
+  const [isMobileView, setIsMobileView] = useState(false);
+  const navigate = useNavigate();
+  const { id } = useParams();
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobileView(window.innerWidth < 768);
+    };
+
+    if (!id) {
+      localStorage.removeItem('conversationId');
+    }
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  const handleConversationClick = (id) => {
+    if (id) {
+      localStorage.setItem('conversationId', id);
+      navigate(`/home/${id}`);
+    }
+  };
+
   return (
     <>
       <Navbar />
@@ -18,11 +46,12 @@ const Home: React.FC = () => {
           <div className="header-line"></div>
         </div>
         <div className="main-container">
-          <Chats />
-          <Messages />
+          {!isMobileView && <Chats onConversationClick={handleConversationClick} />}
+          <Outlet />
         </div>
       </div>
     </>
   );
 };
+
 export default Home;

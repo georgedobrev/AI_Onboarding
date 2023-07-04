@@ -68,6 +68,8 @@ namespace AI_Onboarding.Data.Repository
                 return null;
             }
 
+            _entities.Remove(entity);
+
             return entity;
         }
 

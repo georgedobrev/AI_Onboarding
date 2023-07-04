@@ -6,11 +6,11 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import logoImage from '../../assets/blankfactor-logo.jpg';
 import { FormValues, ExtendSessionFormValues } from './types.ts';
 import { authService } from '../../services/authService.ts';
-import { toast } from 'react-toastify';
 import config from '../../config.json';
 import 'react-toastify/dist/ReactToastify.css';
 import './Signup.css';
 import { successNotification } from '../Notifications/Notifications.tsx';
+import jwt_decode from 'jwt-decode';
 
 const Signup: React.FC = () => {
   const location = useLocation();
@@ -38,10 +38,12 @@ const Signup: React.FC = () => {
     successNotification('Google login successful');
 
     const accessToken = localStorage.getItem('accessToken');
-    const tokenParts = accessToken.split('.');
-    const tokenPayload = JSON.parse(atob(tokenParts[1]));
+    const tokenPayload = jwt_decode(accessToken);
     const userRole = tokenPayload[config.JWTUserRole];
+    const fullName = tokenPayload[config.Name];
+    localStorage.setItem('fullName', fullName);
     localStorage.setItem('userRole', userRole);
+    localStorage.removeItem('conversationId');
     return navigate('/home');
   };
 
@@ -65,8 +67,7 @@ const Signup: React.FC = () => {
   };
 
   const calculateRemainingTime = (token: string) => {
-    const tokenParts = token.split('.');
-    const tokenPayload = JSON.parse(atob(tokenParts[1]));
+    const tokenPayload = jwt_decode(token);
     const expirationTime = tokenPayload.exp * 1000;
     const currentTime = new Date().getTime();
     const remainingTime = expirationTime - currentTime;
@@ -78,6 +79,7 @@ const Signup: React.FC = () => {
       const response = await authService.login(formData);
       if (response) {
         await handleSuccessfulLogin(response);
+        localStorage.removeItem('conversationId');
         navigate('/home');
         successNotification('Login Successful');
       } else {
@@ -97,6 +99,9 @@ const Signup: React.FC = () => {
       const accessToken = response.headers.get('access-token');
       const refreshToken = response.headers.get('refresh-token');
       const remainingTime = calculateRemainingTime(refreshToken);
+      const tokenPayload = jwt_decode(accessToken);
+      const fullName = tokenPayload[config.Name];
+      localStorage.setItem('fullName', fullName);
 
       setTimeout(() => {
         localStorage.removeItem('refreshToken');
@@ -108,6 +113,7 @@ const Signup: React.FC = () => {
       } else {
         const remainingTime = calculateRemainingTime(accessToken);
         extendSession(remainingTime);
+        localStorage.removeItem('conversationId');
         navigate('/home');
       }
     } catch (error) {
