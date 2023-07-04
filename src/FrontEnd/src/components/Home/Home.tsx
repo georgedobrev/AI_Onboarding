@@ -27,9 +27,9 @@ const Home: React.FC = () => {
     };
   }, []);
 
-  const handleConversationClick = (id) => {
+  const handleConversationClick = (id: number | null) => {
     if (id) {
-      localStorage.setItem('conversationId', id);
+      localStorage.setItem('conversationId', id.toString());
       navigate(`/home/${id}`);
     }
   };

@@ -6,7 +6,8 @@ import { Send } from '@mui/icons-material';
 import { authService } from '../../services/authService.ts';
 import FileUploader from './FileUploader.tsx';
 import './Message.css';
-import {fetchConversations} from "../../store/reduxStore.ts";
+import { fetchConversations } from '../../store/reduxStore.ts';
+import { ThunkDispatch } from 'redux-thunk';
 
 interface Message {
   text: string;
@@ -15,10 +16,13 @@ interface Message {
 }
 
 interface Conversation {
-  questionAnswers: {
-    question: string;
-    answer: string;
-  }[];
+  id: string;
+  questionAnswers: [
+    {
+      question: string;
+      answer: string;
+    }
+  ];
 }
 
 interface AIResponse {
@@ -30,7 +34,7 @@ interface AIResponse {
 
 const Message: React.FC = () => {
   const location = useLocation();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
   const { id } = useParams<{ id: string }>();
   const [userRole, setUserRole] = useState<string | null>(null);
   const [question, setQuestion] = useState<string>('');
@@ -53,8 +57,12 @@ const Message: React.FC = () => {
     if (!id) {
       return;
     } else {
-      const response = await authService.AIGetConversationById(id);
-      handleConversationClick(response.data);
+      const response = await authService.AIGetConversationById(Number(id));
+      const userConversation: Conversation = {
+        id: response.data.id,
+        questionAnswers: JSON.parse(JSON.stringify(response.data.questionAnswers)),
+      };
+      handleConversationClick(userConversation);
     }
   };
 
@@ -71,8 +79,8 @@ const Message: React.FC = () => {
       setCurrentConversationId(null);
       setQuestionsAnswers([]);
     } else {
-      setCurrentConversationId(id);
-      localStorage.setItem('conversationId', id);
+      setCurrentConversationId(Number(id));
+      localStorage.setItem('conversationId', id ?? '');
     }
   }, [id]);
 

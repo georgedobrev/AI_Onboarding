@@ -42,6 +42,12 @@ const roles = {
   Employee: 'Employee',
 };
 
+interface TokenPayload {
+  aud: string;
+  exp: number;
+  [key: string]: string | number;
+}
+
 const ProtectedRouteHome: React.FC<ProtectedRouteHomeProps> = ({ element, redirectTo }) => {
   const accessToken = localStorage.getItem('accessToken');
 
@@ -71,7 +77,7 @@ const ProtectedRouteUpload: React.FC<ProtectedRouteUploadProps> = ({
   if (!accessToken) {
     return <Navigate to={redirectTo} replace />;
   }
-  const tokenPayload = jwt_decode(accessToken);
+  const tokenPayload: TokenPayload = jwt_decode(accessToken);
   const userRole = tokenPayload[config.JWTUserRole];
   if (userRole === roles.Administrator) {
     return element;

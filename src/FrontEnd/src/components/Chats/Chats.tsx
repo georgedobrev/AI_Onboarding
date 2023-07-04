@@ -14,18 +14,17 @@ import './Chats.css';
 
 interface ChatsProps {
   onConversationClick: (conversationId: number | null) => void;
-  id: number;
-  triggerLoadConversations: boolean;
+  id?: number;
 }
 
 interface Conversation {
-  text: string;
-  questionAnswers: string[];
   id: number;
-}
-
-interface AIGetAllConversationsResponse {
-  conversations: Conversation[];
+  questionAnswers: [
+    {
+      question: string;
+      answer: string;
+    }
+  ];
 }
 
 const FETCH_CONVERSATIONS_SUCCESS = 'FETCH_CONVERSATIONS_SUCCESS';
@@ -43,8 +42,17 @@ const fetchConversationsSuccess = (
 });
 
 export const loadAllChatMessages = async (): Promise<Conversation[]> => {
-  const conversations = await authService.AIGetAllConversations();
-  return conversations.data.conversations.reverse();
+  const response = await authService.AIGetAllConversations();
+  const conversations: Conversation[] = response.data.conversations
+    .reverse()
+    .map((conversation: Conversation) => {
+      return {
+        id: conversation.id,
+        questionAnswers: JSON.parse(JSON.stringify(conversation.questionAnswers)),
+      } as Conversation;
+    });
+
+  return conversations;
 };
 
 const Chats: React.FC<ChatsProps> = ({ onConversationClick }) => {

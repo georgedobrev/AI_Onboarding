@@ -13,8 +13,8 @@ interface LoginResponse {
 }
 
 interface RequestLoginBody {
-  email: string;
-  password: string;
+  email?: string;
+  password?: string;
 }
 
 interface ExtendSessionRequestBody {
@@ -23,12 +23,7 @@ interface ExtendSessionRequestBody {
 }
 
 interface GoogleLoginRequestBody {
-  token: string;
-}
-
-interface AISearchRequestBody {
-  id: number;
-  question: string;
+  token: string | undefined;
 }
 
 interface AISearchResponse {
@@ -41,8 +36,8 @@ interface AIGetConversationsResponse {
 }
 
 interface AIGetConversationByIdResponse {
-    id: string;
-    questionAnswers: string[];
+  id: string;
+  questionAnswers: string[];
 }
 
 interface forgotPasswordRequestBody {
@@ -67,11 +62,17 @@ interface validateResetTokenRequestBody {
 
 interface AISearch {
   question: string;
-  id?: string;
+  id?: string | null;
 }
 
 interface AIDeleteRequestBody {
   id: number;
+}
+
+interface TokenPayload {
+  aud: string;
+  exp: number;
+  [key: string]: string | number;
 }
 
 export const authService = {
@@ -81,8 +82,8 @@ export const authService = {
       const headers = { headers: { 'Content-Type': 'application/json' } };
       const body: RequestLoginBody = formData;
       const response = await fetchWrapper.post<LoginResponse, RequestLoginBody>(url, body, headers);
-      const accessToken = response.headers.get('access-token');
-      const refreshToken = response.headers.get('refresh-token');
+      const accessToken = response.headers['access-token'];
+      const refreshToken = response.headers['refresh-token'];
 
       if (!accessToken || !refreshToken) {
         throw new Error('Access or refresh token not found');
@@ -92,16 +93,15 @@ export const authService = {
       localStorage.setItem('accessToken', accessToken);
       localStorage.setItem('refreshToken', refreshToken);
 
-      // TODO to be refactored
-      const tokenPayload = jwt_decode(accessToken);
-      const userRole = tokenPayload[config.JWTUserRole];
+      const tokenPayload: TokenPayload = jwt_decode(accessToken);
+      const userRole: string = tokenPayload[config.JWTUserRole] as string;
       localStorage.setItem('userRole', userRole);
 
       const expirationTime = tokenPayload.exp * 1000;
       const currentTime = new Date().getTime();
       const remainingTime = expirationTime - currentTime;
 
-      const role = setTimeout(() => {
+      setTimeout(() => {
         // TODO in next branch
       }, remainingTime);
 
@@ -114,7 +114,7 @@ export const authService = {
 
   register: async (formData: RegisterForms) => {
     delete formData['confirmPassword'];
-    const { confirmPassword, ...registerData } = formData;
+    const { ...registerData } = formData;
     try {
       const url = `${config.baseUrl}${config.registerEndpoint}`;
       const response = await fetchWrapper.post(url, registerData);
@@ -146,7 +146,7 @@ export const authService = {
     }
   },
 
-  googleLogin: async (formData: string | undefined) => {
+  googleLogin: async (formData: GoogleLoginRequestBody) => {
     try {
       const headers = { headers: { 'Content-Type': 'application/json' } };
       const url = `${config.baseUrl}${config.googleLoginEndpoint}`;
@@ -158,8 +158,8 @@ export const authService = {
       if (!response) {
         throw new Error('Request failed');
       }
-      localStorage.setItem('accessToken', response.headers.get('access-token'));
-      localStorage.setItem('refreshToken', response.headers.get('refresh-token'));
+      localStorage.setItem('accessToken', response.headers['access-token']);
+      localStorage.setItem('refreshToken', response.headers['refresh-token']);
       return response;
     } catch (error) {
       console.error(error);
@@ -167,7 +167,7 @@ export const authService = {
     }
   },
 
-  forgotPassword: async (formData: object | undefined) => {
+  forgotPassword: async (formData: forgotPasswordRequestBody) => {
     try {
       const headers = { headers: { 'Content-Type': 'application/json' } };
       const url = `${config.baseUrl}${config.forgotPasswordEndpoint}`;
@@ -187,7 +187,7 @@ export const authService = {
     }
   },
 
-  resetPassword: async (formData: object | undefined) => {
+  resetPassword: async (formData: resetPasswordRequestBody) => {
     try {
       const headers = { headers: { 'Content-Type': 'application/json' } };
       const url = `${config.baseUrl}${config.resetPasswordEndpoint}`;
@@ -206,7 +206,7 @@ export const authService = {
     }
   },
 
-  validateResetToken: async (formData: object | undefined) => {
+  validateResetToken: async (formData: validateResetTokenRequestBody) => {
     try {
       const headers = { headers: { 'Content-Type': 'application/json' } };
       const url = `${config.baseUrl}${config.validateResetTokenEndpoint}`;
@@ -224,15 +224,11 @@ export const authService = {
     }
   },
 
-  AISearchResponse: async (formData: AISearch | undefined) => {
+  AISearchResponse: async (formData: AISearch) => {
     try {
       const headers = authHeaderAI();
       const url = `${config.baseUrl}${config.AISearchEndpoint}`;
-      const response = await fetchWrapper.post<AISearchResponse, AISearchRequestBody>(
-        url,
-        formData,
-        headers
-      );
+      const response = await fetchWrapper.post<AISearchResponse, AISearch>(url, formData, headers);
       if (!response) {
         throw new Error('Request failed');
       }
