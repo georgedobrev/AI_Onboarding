@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useLocation, useParams } from 'react-router-dom';
 import { IconButton, TextField } from '@mui/material';
 import { Send } from '@mui/icons-material';
 import { authService } from '../../services/authService.ts';
-import { loadAllChatMessages } from '../Chats/Chats.tsx';
 import FileUploader from './FileUploader.tsx';
 import './Message.css';
+import {fetchConversations} from "../../store/reduxStore.ts";
 
 interface Message {
   text: string;
@@ -29,6 +30,7 @@ interface AIResponse {
 
 const Message: React.FC = () => {
   const location = useLocation();
+  const dispatch = useDispatch();
   const { id } = useParams<{ id: string }>();
   const [userRole, setUserRole] = useState<string | null>(null);
   const [question, setQuestion] = useState<string>('');
@@ -82,10 +84,6 @@ const Message: React.FC = () => {
     setQuestion(event.target.value);
   };
 
-  const triggerLoadAllChatMessages = async () => {
-    await loadAllChatMessages();
-  };
-
   const handleSearchSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
@@ -105,17 +103,15 @@ const Message: React.FC = () => {
         response = await authService.AISearchResponse({
           question,
         });
-        await loadAllChatMessages();
+        dispatch(fetchConversations());
         localStorage.setItem('conversationId', response.data.id);
       } else {
         response = await authService.AISearchResponse({
           question,
           id: id || localStorage.getItem('conversationId'),
         });
-        await loadAllChatMessages();
+        dispatch(fetchConversations());
       }
-
-      triggerLoadAllChatMessages(); // Trigger loadAllChatMessages separately
       setMessages((prevMessages) => [
         ...prevMessages.slice(0, -1),
         { text: response.data.answer, isAnswer: true },

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Provider } from 'react-redux';
 import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { pdfjs } from 'react-pdf';
@@ -12,8 +13,9 @@ import ResetPassword from './components/ResetPassword/ResetPassword.tsx';
 import Account from './components/Account/Account.tsx';
 import LandingPage from './components/LandingPage/LandingPage.tsx';
 import Message from './components/Message/Message.tsx';
-import './App.css';
+import store from './store/reduxStore.ts';
 import config from './config.json';
+import './App.css';
 import 'react-toastify/dist/ReactToastify.css';
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
@@ -93,41 +95,43 @@ const App = () => {
   }
 
   return (
-    <GoogleOAuthProvider clientId={clientId}>
-      <Router>
-        <div className="App">
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/account/change-password" element={<ResetPassword />} />
-            <Route path="/account/reset-password" element={<ResetPassword />} />
-            <Route
-              path="/home"
-              element={<ProtectedRouteHome element={<Home />} redirectTo="/signup" />}
-            >
-              <Route index element={<Message />} />
-              <Route path=":id" element={<Message />} />
-            </Route>
-            <Route
-              path="/account"
-              element={<ProtectedRouteAccount element={<Account />} redirectTo="/signup" />}
-            />
-            <Route
-              path="/upload/"
-              element={
-                <ProtectedRouteUpload
-                  element={<Upload />}
-                  redirectTo="/signup"
-                  allowedPaths={['/upload']}
-                />
-              }
-            />
-          </Routes>
-          <ToastContainer />
-        </div>
-      </Router>
-    </GoogleOAuthProvider>
+    <Provider store={store}>
+      <GoogleOAuthProvider clientId={clientId}>
+        <Router>
+          <div className="App">
+            <Routes>
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/account/change-password" element={<ResetPassword />} />
+              <Route path="/account/reset-password" element={<ResetPassword />} />
+              <Route
+                path="/home"
+                element={<ProtectedRouteHome element={<Home />} redirectTo="/signup" />}
+              >
+                <Route index element={<Message />} />
+                <Route path=":id" element={<Message />} />
+              </Route>
+              <Route
+                path="/account"
+                element={<ProtectedRouteAccount element={<Account />} redirectTo="/signup" />}
+              />
+              <Route
+                path="/upload/"
+                element={
+                  <ProtectedRouteUpload
+                    element={<Upload />}
+                    redirectTo="/signup"
+                    allowedPaths={['/upload']}
+                  />
+                }
+              />
+            </Routes>
+            <ToastContainer />
+          </div>
+        </Router>
+      </GoogleOAuthProvider>
+    </Provider>
   );
 };
 

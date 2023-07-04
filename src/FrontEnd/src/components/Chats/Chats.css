@@ -22,8 +22,9 @@
     color: var(--whiteColor);
     width: 100%;
     font-size: 24px;
-    margin-block: 24px;
+    padding-block: 24px;
     text-align: center;
+    border-bottom: 1px solid var(--lineColor);
 }
 
 .chat-header {

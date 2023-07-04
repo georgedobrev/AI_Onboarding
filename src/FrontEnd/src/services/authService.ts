@@ -36,6 +36,15 @@ interface AISearchResponse {
   answer: string;
 }
 
+interface AIGetConversationsResponse {
+  conversations: AIGetConversationsResponse[];
+}
+
+interface AIGetConversationByIdResponse {
+    id: string;
+    questionAnswers: string[];
+}
+
 interface forgotPasswordRequestBody {
   email: string;
 }
@@ -59,6 +68,10 @@ interface validateResetTokenRequestBody {
 interface AISearch {
   question: string;
   id?: string;
+}
+
+interface AIDeleteRequestBody {
+  id: number;
 }
 
 export const authService = {
@@ -234,7 +247,7 @@ export const authService = {
     try {
       const headers = authHeaderAIGetConversations();
       const url = `${config.baseUrl}${config.AIConversations}`;
-      const response = await fetchWrapper.get<AISearchResponse>(url, headers);
+      const response = await fetchWrapper.get<AIGetConversationsResponse>(url, headers);
       if (!response) {
         throw new Error('Request failed');
       }
@@ -249,7 +262,7 @@ export const authService = {
     try {
       const headers = authHeaderAIGetConversations();
       const url = `${config.baseUrl}${config.AIConversation}${id}`;
-      const response = await fetchWrapper.get<AISearchResponse>(url, headers);
+      const response = await fetchWrapper.get<AIGetConversationByIdResponse>(url, headers);
       if (!response) {
         throw new Error('Request failed');
       }
