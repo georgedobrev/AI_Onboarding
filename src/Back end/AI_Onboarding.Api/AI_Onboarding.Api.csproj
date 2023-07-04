@@ -27,6 +27,7 @@
     <Folder Include="Infrastructure\Filter\" />
     <PackageReference Include="Spire.Presentation" Version="8.6.0" />
     <PackageReference Include="SendGrid" Version="9.28.1" />
+    <PackageReference Include="sautinsoft.document" Version="2023.4.19" />
   </ItemGroup>
 
   <ItemGroup>

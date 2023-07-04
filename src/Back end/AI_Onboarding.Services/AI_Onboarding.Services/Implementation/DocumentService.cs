@@ -1,15 +1,15 @@
 ﻿using System.Text;
 using AI_Onboarding.Common;
-using AI_Onboarding.Data.Models;
 using AI_Onboarding.Data.NoSQLDatabase.Interfaces;
 using AI_Onboarding.Services.Interfaces;
 using AI_Onboarding.ViewModels.DocumentModels;
 using AI_Onboarding.ViewModels.ResponseModels;
 using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.parser;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
+using SautinSoft.Document;
 using Spire.Presentation;
 using Xceed.Words.NET;
 using IShape = Spire.Presentation.IShape;
@@ -95,7 +95,7 @@ namespace AI_Onboarding.Services.Implementation
             ScriptResponseViewModel resultStoreDocument;
             try
             {
-                Document dbDocument = new Document { ExtractedText = extractedText };
+                Data.Models.Document dbDocument = new Data.Models.Document { ExtractedText = extractedText };
                 _documentRepository.Add(dbDocument);
                 resultStoreDocument = _aiService.RunScript(_configuration["PythonScript:StoreDocumentPath"], extractedText);
 
@@ -114,6 +114,32 @@ namespace AI_Onboarding.Services.Implementation
                 return new BaseResponseViewModel { Success = false, ErrorMessage = ex.Message };
             }
         }
+
+        public ConvertFileResponseViewModel ConvertToPdf(DocumentViewModel document)
+        {
+            switch (document.FileTypeId)
+            {
+                case (int)FileType.docx:
+                    return new ConvertFileResponseViewModel { Success = true, ErrorMessage = "", ConvertedFile = ConvertDocxToPdf(document.File) };
+                default:
+                    return new ConvertFileResponseViewModel { Success = true, ErrorMessage = "Unsupported document type ID." };
+            }
+        }
+
+        private byte[] ConvertDocxToPdf(IFormFile docxFile)
+        {
+            using (var docxStream = docxFile.OpenReadStream())
+            {
+                var docxDocument = DocumentCore.Load(docxStream, new DocxLoadOptions());
+
+                using (var pdfStream = new MemoryStream())
+                {
+                    docxDocument.Save(pdfStream, new PdfSaveOptions());
+                    return pdfStream.ToArray();
+                }
+            }
+        }
     }
 }
+
 
