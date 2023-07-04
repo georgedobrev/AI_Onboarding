@@ -34,6 +34,7 @@ namespace AI_Onboarding.Api.Controllers
             }
         }
 
+        [Authorize(Roles = Roles.Administrator)]
         [HttpPost("convert")]
         public ActionResult ConvertFile([FromForm] DocumentViewModel document)
         {

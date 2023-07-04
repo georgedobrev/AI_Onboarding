@@ -61,7 +61,7 @@ namespace AI_Onboarding.Services.Implementation
                 case (int)FileType.pptx:
                     using (Presentation presentation = new Presentation())
                     {
-                        presentation.LoadFromStream(document.File.OpenReadStream(), Spire.Presentation.FileFormat.Auto);
+                        presentation.LoadFromStream(document.File.OpenReadStream(), FileFormat.Auto);
 
                         foreach (ISlide slide in presentation.Slides)
                         {
