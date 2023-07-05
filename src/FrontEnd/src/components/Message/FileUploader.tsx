@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { apiService } from '../../services/apiService.ts';
 import { Document, Page } from 'react-pdf';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import CloseIcon from '@mui/icons-material/Close';
 import { Button, CircularProgress } from '@mui/material';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import { apiService } from '../../services/apiService.ts';
 import config from '../../config.json';
 import './FileUploader.css';
 
@@ -126,9 +126,14 @@ const FileUploader: React.FC = () => {
               </Button>
             </div>
           )}
-          {responseReceived && (
+          {!loading && responseReceived && (
             <div className="pdf-navigation">
               <span>{`${currentPage} / ${numPages}`}</span>
+            </div>
+          )}
+          {!loading && !responseReceived && (
+            <div className="pdf-navigation">
+              <span>Uploading...</span>
             </div>
           )}
         </div>
