@@ -60,6 +60,13 @@ const Navbar: React.FC = () => {
     setOpen(false);
   };
 
+  const handleConversationClick = (id: number | null) => {
+    if (id) {
+      localStorage.setItem('conversationId', id.toString());
+      navigate(`/home/${id}`);
+    }
+  };
+
   return (
     <div className="navbar">
       <div className="nav-container">
@@ -115,7 +122,7 @@ const Navbar: React.FC = () => {
                   </ListItemIcon>
                 </ListItem>
               </List>
-              <Chats />
+              <Chats onConversationClick={handleConversationClick} />
             </div>
             <Divider />
           </Drawer>

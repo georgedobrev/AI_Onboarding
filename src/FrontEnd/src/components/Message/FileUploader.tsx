@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { apiService } from '../../services/apiService.ts';
-import config from '../../config.json';
 import { Document, Page } from 'react-pdf';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
+import CloseIcon from '@mui/icons-material/Close';
 import { Button, CircularProgress } from '@mui/material';
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import config from '../../config.json';
 import './FileUploader.css';
 
 const FileUploader: React.FC = () => {
@@ -35,6 +36,7 @@ const FileUploader: React.FC = () => {
 
   const handleFileUpload = async () => {
     try {
+      setLoading(true);
       const responses = await apiService.displayFile(documentFiles);
       setDocumentFiles(responses);
       setDocumentType('pdf');
@@ -59,6 +61,25 @@ const FileUploader: React.FC = () => {
   const handleNextPage = () => {
     if (responseReceived) {
       setCurrentPage((prevPage) => Math.min(prevPage + 1, numPages));
+    }
+  };
+
+  const handleResetFile = () => {
+    setDocumentFiles(null);
+    setResponseReceived(false);
+  };
+
+  const handleUploadFile = async () => {
+    if (documentFiles) {
+      setLoading(true);
+      try {
+        const baseUrl = config.baseUrl;
+        const uploadUrl = config.uploadEndpoint;
+        await apiService.uploadFile(baseUrl, uploadUrl, documentFiles);
+      } catch (error) {
+        console.error('Error uploading file:', error);
+      }
+      setLoading(false);
     }
   };
 
@@ -110,24 +131,38 @@ const FileUploader: React.FC = () => {
               <span>{`${currentPage} / ${numPages}`}</span>
             </div>
           )}
+          <Button onClick={handleResetFile} variant="outlined" className="reset-file-button">
+            <CloseIcon />
+          </Button>
         </div>
       ) : null}
-
-      <div className="attach-icon">
-        <input
-          type="file"
-          id="file-input"
-          accept={acceptedFileTypes}
-          style={{ display: 'none' }}
-          onChange={handleFileChange}
-        />
-        <label htmlFor="file-input">
-          <Button variant="contained" component="span" className="attach-btn">
+      {!documentFiles ? (
+        <div className="attach-icon">
+          <input
+            type="file"
+            id="file-input"
+            accept={acceptedFileTypes}
+            style={{ display: 'none' }}
+            onChange={handleFileChange}
+          />
+          <label htmlFor="file-input">
+            <Button variant="contained" component="span" className="attach-btn">
+              <AttachFileIcon />
+              <p>ATTACH FILE</p>
+            </Button>
+          </label>
+        </div>
+      ) : (
+        <div className="upload-icon">
+          <Button variant="contained" className="upload-btn" onClick={handleUploadFile}>
             <AttachFileIcon />
             <p>UPLOAD FILE</p>
           </Button>
-        </label>
-      </div>
+          <Button onClick={handleResetFile} variant="outlined" className="reset-file-button">
+            <CloseIcon />
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
