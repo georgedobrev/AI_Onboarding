@@ -93,11 +93,11 @@ namespace AI_Onboarding.Services.Implementation
             }
         }
 
-        public ConversationDTO? GetConversation(int id)
+        public ConversationInfo? GetConversation(int id)
         {
             int.TryParse(_httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value, out int userId);
 
-            return _mapper.Map<ConversationDTO>(_repository.FindByCondition(x => x.Id == id && x.UserId == userId));
+            return _mapper.Map<ConversationInfo>(_repository.FindByCondition(x => x.Id == id && x.UserId == userId));
         }
 
         public UserConversationsViewModel GetUserConversations()
@@ -108,7 +108,7 @@ namespace AI_Onboarding.Services.Implementation
 
             foreach (var conversation in _repository.FindAllByCondition(c => c.UserId == userId).ToList())
             {
-                userConversations.Conversations.Add(_mapper.Map<ConversationDTO>(conversation));
+                userConversations.Conversations.Add(new { conversation.Id, Name = conversation.QuestionAnswers[0].Question });
             }
 
             return userConversations;
