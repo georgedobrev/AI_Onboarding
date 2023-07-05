@@ -1,9 +1,10 @@
-import { fetchWrapper } from './FetchWrapper.tsx';
-import config from '../config.json';
 import { lookup } from 'mime-types';
+import { fetchWrapper } from './FetchWrapper.tsx';
+import { successNotification } from '../components/Notifications/Notifications.tsx';
 import { authService } from './authService.ts';
 import { authHeaderFile } from './commonConfig.ts';
-import { successNotification } from '../components/Notifications/Notifications.tsx';
+import config from '../config.json';
+
 const uploadFile = async (baseUrl: string, uploadEndpoint: string, file: File) => {
   const formData = new FormData();
   const mimeType = file.type || lookup(file.name);
@@ -59,7 +60,6 @@ const displayFile = async (file: File) => {
     formData.append('file', file);
     formData.append('FileTypeId', fileId);
     const response = await authService.convertFile(formData);
-
     return new File([base64ToArrayBuffer(String(response))], 'file name', {
       type: 'application/pdf',
     });
@@ -70,6 +70,6 @@ const displayFile = async (file: File) => {
 };
 
 export const apiService = {
-  uploadFile,
-  displayFile,
+    uploadFile,
+    displayFile,
 };

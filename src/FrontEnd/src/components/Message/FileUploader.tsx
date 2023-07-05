@@ -131,9 +131,6 @@ const FileUploader: React.FC = () => {
               <span>{`${currentPage} / ${numPages}`}</span>
             </div>
           )}
-          <Button onClick={handleResetFile} variant="outlined" className="reset-file-button">
-            <CloseIcon />
-          </Button>
         </div>
       ) : null}
       {!documentFiles ? (
