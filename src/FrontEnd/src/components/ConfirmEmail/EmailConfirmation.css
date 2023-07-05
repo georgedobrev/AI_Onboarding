@@ -37,7 +37,7 @@
 }
 
 .email-confirmation-welcome-h1 {
-    font-size: 1.874rem;
+    font-size: 30px;
     font-weight: 300;
     margin-top: 0.5rem;
     margin-bottom: 1rem;
@@ -60,7 +60,7 @@
     align-items: center;
     margin-bottom: 10px;
     margin-top: 10px;
-    gap: 15px;
+    gap: 16px;
 }
 
 .email-field,
