@@ -11,7 +11,7 @@ const EmailConfirmation: React.FC = () => {
   const location = useLocation();
   const email = new URLSearchParams(location.search).get('email');
   const token = new URLSearchParams(location.search).get('token');
-  const emailFieldValue = email || '';
+  const [emailFieldValue] = useState<string>(email || '');
 
   const handleContinueClick = async () => {
     await authService.validateConfirmToken({ token, email: emailFieldValue });
