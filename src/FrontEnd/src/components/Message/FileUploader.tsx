@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { apiService } from '../../services/apiService.ts';
 import config from '../../config.json';
 import { Document, Page } from 'react-pdf';
@@ -9,50 +9,42 @@ import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
 import './FileUploader.css';
 
 const FileUploader: React.FC = () => {
-  const [documentFiles, setDocumentFiles] = useState<File[]>([]);
+  const [documentFiles, setDocumentFiles] = useState<File | null>(null);
   const [documentType, setDocumentType] = useState<string | null>(null);
   const [numPages, setNumPages] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);
   const [responseReceived, setResponseReceived] = useState<boolean>(false);
-  const [pdfByteArray, setPdfByteArray] = useState<Uint8Array | null>(null);
+  const acceptedFileTypes = '.pdf, .docx, .pptx';
 
-  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = (event.target as HTMLInputElement)?.files || null;
-    if (files) {
-      setDocumentFiles(Array.from(files));
+  useEffect(() => {
+    if (documentFiles) {
       setCurrentPage(1);
       setLoading(true);
       setResponseReceived(false);
+      handleFileUpload();
     }
+  }, [documentFiles]);
 
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = (event.target as HTMLInputElement)?.files;
+    if (files && files.length > 0) {
+      setDocumentFiles(files[0]);
+    }
+  };
+
+  const handleFileUpload = async () => {
     try {
-      const baseUrl = config.baseUrl;
-      const uploadEndpoint = config.uploadEndpoint;
-
-      const responses = await Promise.all(
-          Array.from(files).map((file) => apiService.convertFileToPdf(file))
-      );
-      console.log(responses);
-
-      if (responses.every((response) => response)) {
-        setResponseReceived(true);
-        setDocumentType('pdf');
-
-        const pdfResponse = responses[0];
-
-        setPdfByteArray(pdfResponse);
-      } else {
-        console.error('Error uploading files:', responses);
-      }
+      const responses = await apiService.displayFile(documentFiles);
+      setDocumentFiles(responses);
+      setDocumentType('pdf');
+      setResponseReceived(true);
     } catch (error) {
       console.error('Error uploading files:', error);
     } finally {
       setLoading(false);
     }
   };
-
-
 
   const handleDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
     setNumPages(numPages);
@@ -72,7 +64,7 @@ const FileUploader: React.FC = () => {
 
   return (
     <div className="pdf-main">
-      {documentFiles.length > 0 ? (
+      {documentFiles ? (
         <div className="pdf-container">
           {loading ? (
             <div className="loading-spinner">
@@ -88,12 +80,12 @@ const FileUploader: React.FC = () => {
               >
                 <KeyboardArrowLeftIcon />
               </Button>
-              {documentType === 'pdf' && pdfByteArray && (
-                  <Document
-                      file={{ data: pdfByteArray  }}
-                      onLoadSuccess={handleDocumentLoadSuccess}
-                      onLoadError={(error) => console.error('Error loading PDF:', error)}
-                  >
+              {documentType === 'pdf' && (
+                <Document
+                  file={documentFiles}
+                  onLoadSuccess={handleDocumentLoadSuccess}
+                  onLoadError={(error) => console.error('Error loading PDF:', error)}
+                >
                   <Page
                     pageNumber={currentPage}
                     className="pdf-page"
@@ -125,6 +117,7 @@ const FileUploader: React.FC = () => {
         <input
           type="file"
           id="file-input"
+          accept={acceptedFileTypes}
           style={{ display: 'none' }}
           onChange={handleFileChange}
         />

@@ -1,16 +1,32 @@
 import { fetchWrapper } from './FetchWrapper.tsx';
 import config from '../config.json';
 import { lookup } from 'mime-types';
+import { authService } from './authService.ts';
 import { authHeaderFile } from './commonConfig.ts';
 import { successNotification } from '../components/Notifications/Notifications.tsx';
-import { authService } from './authService.ts';
+const uploadFile = async (baseUrl: string, uploadEndpoint: string, file: File) => {
+  const formData = new FormData();
+  const mimeType = file.type || lookup(file.name);
+  formData.append('file', file);
+  let fileId: string;
 
-const uploadFile = async (baseUrl: string, uploadEndpoint: string, formData: FormData) => {
   try {
+    if (mimeType === 'application/pdf') {
+      fileId = config.pdfID;
+    } else if (
+      mimeType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    ) {
+      fileId = config.docID;
+    } else {
+      console.error('Unsupported file type:', mimeType);
+      return;
+    }
+
+    formData.append('FileTypeId', fileId);
     const response = await fetchWrapper.post(
-        `${baseUrl}${uploadEndpoint}`,
-        formData,
-        authHeaderFile()
+      `${baseUrl}${uploadEndpoint}`,
+      formData,
+      authHeaderFile()
     );
 
     if (response) {
@@ -24,40 +40,36 @@ const uploadFile = async (baseUrl: string, uploadEndpoint: string, formData: For
   }
 };
 
-const convertFileToPdf = async (file: File) => {
-  const formData = new FormData();
-  formData.append('file', file);
-
+const displayFile = async (file: File) => {
   const mimeType = file.type || lookup(file.name);
-
+  const formData = new FormData();
   let fileId;
+
+  function base64ToArrayBuffer(base64: string) {
+    const binaryString = window.atob(base64);
+    return new Uint8Array(Array.from(binaryString, (char) => char.charCodeAt(0)));
+  }
+
   if (mimeType === 'application/pdf') {
-    fileId = config.pdfID;
-    formData.append('FileTypeId', fileId);
-    return uploadFile(config.baseUrl, config.convertFileEndpoint, formData);
+    return file;
   } else if (
-      mimeType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    mimeType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
   ) {
     fileId = config.docID;
+    formData.append('file', file);
     formData.append('FileTypeId', fileId);
-    const convertedResponse = await authService.convertFile(formData);
+    const response = await authService.convertFile(formData);
 
-    if (convertedResponse) {
-      const convertedPdfByteArray = new Uint8Array(convertedResponse);
-      const convertedPdfBlob = new Blob([convertedPdfByteArray], { type: 'application/pdf' });
-      const convertedFile = new File([convertedPdfBlob], file.name, { type: 'application/pdf' });
-
-      return uploadFile(config.baseUrl, config.uploadEndpoint, convertedResponse);
-    } else {
-      console.error('Error converting file:', convertedResponse);
-    }
+    return new File([base64ToArrayBuffer(String(response))], 'file name', {
+      type: 'application/pdf',
+    });
   } else {
     console.error('Unsupported file type:', mimeType);
-    return null;
+    return;
   }
 };
 
 export const apiService = {
   uploadFile,
-  convertFileToPdf,
+  displayFile,
 };
