@@ -9,7 +9,7 @@ namespace AI_Onboarding.Services.Implementation
     public class FinetuningJobService : BackgroundService, IFinetuningJobService
     {
 
-        private readonly PeriodicTimer _timer = new PeriodicTimer(TimeSpan.FromMinutes(1));
+        private readonly PeriodicTimer _timer = new PeriodicTimer(TimeSpan.FromDays(1));
         private readonly IServiceProvider _serviceProvider;
         private readonly IConfiguration _configuration;
         private readonly ILogger<FinetuningJobService> _logger;
