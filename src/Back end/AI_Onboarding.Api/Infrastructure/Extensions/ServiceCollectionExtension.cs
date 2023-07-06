@@ -52,7 +52,7 @@ public static class ServiceCollectionExtension
 
         services.AddScoped<IDocumentRepository, DocumentRepository>();
 
-        services.AddHostedService<FunetuningJobService>();
+        services.AddHostedService<FinetuningJobService>();
 
         services.AddScopedServiceTypes(typeof(TokenService).Assembly, typeof(IService));
         services.AddAutoMapper(typeof(UserProfile));

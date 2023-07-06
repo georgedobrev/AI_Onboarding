@@ -2,18 +2,21 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace AI_Onboarding.Services.Implementation
 {
-    public class FunetuningJobService : BackgroundService, IFunetuningJobService
+    public class FinetuningJobService : BackgroundService, IFinetuningJobService
     {
 
-        private readonly PeriodicTimer _timer = new PeriodicTimer(TimeSpan.FromDays(1));
+        private readonly PeriodicTimer _timer = new PeriodicTimer(TimeSpan.FromMinutes(1));
         private readonly IServiceProvider _serviceProvider;
         private readonly IConfiguration _configuration;
+        private readonly ILogger<FinetuningJobService> _logger;
 
-        public FunetuningJobService(IServiceProvider serviceProvider, IConfiguration configuration)
+        public FinetuningJobService(ILogger<FinetuningJobService> logger, IServiceProvider serviceProvider, IConfiguration configuration)
         {
+            _logger = logger;
             _serviceProvider = serviceProvider;
             _configuration = configuration;
         }
@@ -27,7 +30,11 @@ namespace AI_Onboarding.Services.Implementation
                     IAIService scopedProcessingService =
                         scope.ServiceProvider.GetRequiredService<IAIService>();
 
-                    scopedProcessingService.RunScript(_configuration["PythonScript:TrainModelPath"]);
+                    var result = scopedProcessingService.RunScript(_configuration["PythonScript:TrainModelPath"]);
+                    if (!result.Success)
+                    {
+                        _logger.LogError(result.ErrorMessage);
+                    }
                 }
             }
         }

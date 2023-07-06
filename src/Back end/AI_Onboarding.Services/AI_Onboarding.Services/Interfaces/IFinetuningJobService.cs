@@ -2,7 +2,7 @@
 
 namespace AI_Onboarding.Services.Interfaces
 {
-    public interface IFunetuningJobService : IService
+    public interface IFinetuningJobService : IService
     {
     }
 }
