@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { ThunkDispatch } from 'redux-thunk';
 import { useLocation, useParams } from 'react-router-dom';
 import { IconButton, TextField } from '@mui/material';
 import { Send } from '@mui/icons-material';
-import { authService } from '../../services/authService.ts';
 import FileUploader from './FileUploader.tsx';
-import './Message.css';
+import { authService } from '../../services/authService.ts';
 import { fetchConversations } from '../../store/reduxStore.ts';
-import { ThunkDispatch } from 'redux-thunk';
+import './Message.css';
 
 interface Message {
   text: string;
