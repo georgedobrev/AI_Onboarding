@@ -56,6 +56,15 @@ interface validateResetTokenRequestBody {
   email: string;
 }
 
+interface validateConfirmTokenRequestBody {
+  token: string;
+  email: string;
+}
+
+interface validateConfirmTokenResponse {
+  message: string;
+}
+
 interface AISearch {
   question: string;
   id?: string;
@@ -94,8 +103,12 @@ export const authService = {
 
       return response;
     } catch (error) {
-      errorNotifications('Wrong email or password');
-      throw new Error('Login failed');
+      if (error.response.data === 'Email is not confirmed. Please confirm your email.') {
+        errorNotifications(error.response.data, { autoClose: 3000 });
+      } else {
+        errorNotifications(error.response.data, { autoClose: 3000 });
+        throw new Error('Login failed');
+      }
     }
   },
 
@@ -211,7 +224,26 @@ export const authService = {
     }
   },
 
-  AISearchResponse: async (formData: AISearch | undefined) => {
+  validateConfirmToken: async (formData: object | undefined) => {
+    try {
+      const headers = { headers: { 'Content-Type': 'application/json' } };
+      const url = `${config.baseUrl}${config.validateConfirmTokenEndpoint}`;
+      const response = await fetchWrapper.post<validateConfirmTokenResponse, validateConfirmTokenRequestBody>(
+        url,
+        formData,
+        headers
+      );
+      if (!response) {
+        throw new Error('Request failed');
+      }
+      return response;
+    } catch (error) {
+      console.error(error);
+      throw new Error('Validate confirm token failed');
+    }
+  },
+
+  AISearchResponse: async (formData: string | undefined) => {
     try {
       const headers = authHeaderAI();
       const url = `${config.baseUrl}${config.AISearchEndpoint}`;
