@@ -108,7 +108,7 @@ namespace AI_Onboarding.Services.Implementation
 
             foreach (var conversation in _repository.FindAllByCondition(c => c.UserId == userId).ToList())
             {
-                userConversations.Conversations.Add(new { conversation.Id, Name = conversation.QuestionAnswers[0].Question });
+                userConversations.Conversations.Add(new BaseConversationViewModel { Id = conversation.Id, Name = conversation.QuestionAnswers[0].Question });
             }
 
             return userConversations;

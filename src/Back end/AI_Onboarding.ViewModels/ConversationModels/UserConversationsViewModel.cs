@@ -2,7 +2,7 @@
 {
     public class UserConversationsViewModel
     {
-        public List<Object> Conversations { get; set; } = new List<Object>();
+        public List<BaseConversationViewModel> Conversations { get; set; } = new List<BaseConversationViewModel>();
     }
 }
 
