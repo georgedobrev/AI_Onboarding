@@ -6,6 +6,7 @@ import { fetchWrapper } from './FetchWrapper.tsx';
 import { FormValues as SignInForms } from '../components/SignIn/types.ts';
 import { FormValues as RegisterForms } from '../components/Register/types.ts';
 import { ExtendSessionFormValues } from '../components/SignIn/types.ts';
+import { AISearch } from '../common/interfaces.ts';
 
 interface LoginResponse {
   accessToken?: string;
@@ -67,11 +68,6 @@ interface validateConfirmTokenRequestBody {
 
 interface validateConfirmTokenResponse {
   message: string;
-}
-
-interface AISearch {
-  question: string;
-  id?: string | null;
 }
 
 interface AIDeleteRequestBody {
@@ -273,7 +269,7 @@ export const authService = {
       if (!response) {
         throw new Error('Request failed');
       }
-      return response;
+      return response.data;
     } catch (error) {
       console.error(error);
       throw new Error('AI Search failed');

@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { ThunkDispatch } from 'redux-thunk';
+import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useParams } from 'react-router-dom';
 import { IconButton, TextField } from '@mui/material';
 import { Send } from '@mui/icons-material';
 import FileUploader from './FileUploader.tsx';
 import { authService } from '../../services/authService.ts';
-import { fetchConversations } from '../../store/reduxStore.ts';
+import store, { fetchAISearchResponse, fetchConversations } from '../../store/reduxStore.ts';
 import './Message.css';
 
 interface Message {
@@ -34,14 +33,15 @@ interface AIResponse {
 
 const Message: React.FC = () => {
   const location = useLocation();
-  const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
+  const dispatch = useDispatch();
   const { id } = useParams<{ id: string }>();
   const [userRole, setUserRole] = useState<string | null>(null);
   const [question, setQuestion] = useState<string>('');
   const [messages, setMessages] = useState<Message[]>([]);
   const [currentConversationId, setCurrentConversationId] = useState<number | null>(null);
   const [questionsAnswers, setQuestionsAnswers] = useState<string[]>([]);
-
+  type RootState = ReturnType<typeof store.getState>;
+  const aiSearchResponse = useSelector((state: RootState) => state.aiSearchResponse);
   const handleConversationClick = (conversation: Conversation) => {
     const questionsAnswers: string[] = [];
 
@@ -106,23 +106,18 @@ const Message: React.FC = () => {
         { text: '', isAnswer: true, isTyping: true },
       ]);
 
-      let response: AIResponse;
       if (!id && !localStorage.getItem('conversationId')) {
-        response = await authService.AISearchResponse({
-          question,
-        });
+        dispatch(fetchAISearchResponse({ question }));
         dispatch(fetchConversations());
-        localStorage.setItem('conversationId', response.data.id);
       } else {
-        response = await authService.AISearchResponse({
-          question,
-          id: id || localStorage.getItem('conversationId'),
-        });
+        dispatch(
+          fetchAISearchResponse({ question, id: id || localStorage.getItem('conversationId') })
+        );
         dispatch(fetchConversations());
       }
       setMessages((prevMessages) => [
         ...prevMessages.slice(0, -1),
-        { text: response.data.answer, isAnswer: true },
+        { text: aiSearchResponse.answer, isAnswer: true },
       ]);
     }
   };

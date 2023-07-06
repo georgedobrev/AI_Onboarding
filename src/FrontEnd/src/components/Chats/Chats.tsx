@@ -9,7 +9,7 @@ import {
   Close as CloseIcon,
 } from '@mui/icons-material';
 import { authService } from '../../services/authService.ts';
-import store from '../../store/reduxStore.ts';
+import store, { fetchConversations, fetchConversationsSuccess } from '../../store/reduxStore.ts';
 import './Chats.css';
 
 interface ChatsProps {
@@ -26,20 +26,6 @@ interface Conversation {
     }
   ];
 }
-
-const FETCH_CONVERSATIONS_SUCCESS = 'FETCH_CONVERSATIONS_SUCCESS';
-
-interface FetchConversationsSuccessAction {
-  type: typeof FETCH_CONVERSATIONS_SUCCESS;
-  payload: Conversation[];
-}
-
-const fetchConversationsSuccess = (
-  conversations: Conversation[]
-): FetchConversationsSuccessAction => ({
-  type: FETCH_CONVERSATIONS_SUCCESS,
-  payload: conversations,
-});
 
 export const loadAllChatMessages = async (): Promise<Conversation[]> => {
   const response = await authService.AIGetAllConversations();
@@ -65,13 +51,8 @@ const Chats: React.FC<ChatsProps> = ({ onConversationClick }) => {
   const allConversations = useSelector((state: RootState) => state.conversations);
 
   useEffect(() => {
-    const fetchConversations = async () => {
-      const response = await loadAllChatMessages();
-      dispatch(fetchConversationsSuccess(response));
-    };
-
-    fetchConversations();
-  }, [dispatch]);
+    dispatch(fetchConversations());
+  }, []);
 
   const handleConversationClick = (conversation: Conversation) => {
     setSelectedConversation(conversation);
