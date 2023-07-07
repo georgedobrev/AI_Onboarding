@@ -24,13 +24,6 @@ interface Conversation {
   ];
 }
 
-interface AIResponse {
-  data: {
-    id: string;
-    answer: string;
-  };
-}
-
 const Message: React.FC = () => {
   const location = useLocation();
   const dispatch = useDispatch();
@@ -88,6 +81,16 @@ const Message: React.FC = () => {
     setMessages([]);
   }, [currentConversationId]);
 
+  useEffect(() => {
+    if (aiSearchResponse.answer) {
+      setMessages((prevMessages) => [
+        ...prevMessages.slice(0, -1),
+        { text: aiSearchResponse.answer, isAnswer: true },
+      ]);
+    }
+    dispatch(fetchConversations());
+  }, [aiSearchResponse.answer]);
+
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQuestion(event.target.value);
   };
@@ -110,15 +113,9 @@ const Message: React.FC = () => {
         dispatch(fetchAISearchResponse({ question }));
         dispatch(fetchConversations());
       } else {
-        dispatch(
-          fetchAISearchResponse({ question, id: id || localStorage.getItem('conversationId') })
-        );
+        dispatch(fetchAISearchResponse({ question, id }));
         dispatch(fetchConversations());
       }
-      setMessages((prevMessages) => [
-        ...prevMessages.slice(0, -1),
-        { text: aiSearchResponse.answer, isAnswer: true },
-      ]);
     }
   };
 
