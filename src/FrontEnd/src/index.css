@@ -14,13 +14,14 @@
     --blankfactorLogoLightBlue: #18c1e2;
     --blankfactorLogoDarkBlue: #080731;
     --accentColor: #fed330;
-    --greyAccentColor: #c9cace;
+    --greyAccentColor: #323444;
     --background-color: #242424;
     --searchBarColor: #14afcc;
     --searchBarColorBox: #1cedff;
     --messagesColor: #006acc;
     --answerColor: #25282a;
     --hoverOnConversation: rgba(37, 40, 42, 1);
+    --borderOnWelcomeConversation: #000000BF;
 }
 
 ::-webkit-scrollbar {

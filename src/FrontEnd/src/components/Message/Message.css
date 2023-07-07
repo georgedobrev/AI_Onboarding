@@ -152,6 +152,37 @@
     z-index: 0;
 }
 
+.welcome-header {
+    display: flex;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    gap: 10px;
+    color: var(--whiteColor);
+}
+
+.welcome-capabilities,
+.welcome-limitations {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.welcome-limitations,
+.welcome-capabilities {
+    background-color: #404046;
+    border-radius: 10px;
+    box-shadow: 0px 0px 8px 8px var(--borderOnWelcomeConversation);
+    padding: 10px;
+}
+
+.lightbulbEmoji,
+.limitationsEmoji {
+    font-size: 30px !important;
+}
+
 .search-container {
     display: flex;
     flex-direction: column;
