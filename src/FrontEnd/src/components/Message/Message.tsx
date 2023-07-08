@@ -97,6 +97,7 @@ const Message: React.FC = () => {
     } else {
       setShowWelcomeHeader(true);
     }
+    setIsMessageSent(false);
   }, [questionsAnswers, isMessageSent]);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -105,6 +106,7 @@ const Message: React.FC = () => {
 
   const handleSearchSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+    console.log(isMessageSent)
     setIsMessageSent(true);
     if (question.trim() !== '') {
       setMessages((prevMessages) => [...prevMessages, { text: question, isAnswer: false }]);
@@ -192,33 +194,38 @@ const Message: React.FC = () => {
         <div className="horizontal-messagesline"></div>
       </div>
       <div className="messages-content-container">
-        {showWelcomeHeader && (
+        {showWelcomeHeader && (window.location.pathname === '/home') && (
           <div className="welcome-header">
             <div className="welcome-capabilities">
-              <EmojiObjects className="lightbulbEmoji" />
-              <h2>Capabilties:</h2>
-              <br />
+              <div className="welcome-capabilities-header">
+              <EmojiObjects className="lightbulb-emoji" />
+              <h2>Capabilities:</h2>
+              </div>
+              <div className="welcome-capabilities-accepts">
               • Accepts document submissions in various formats, including DOCX, PDF, and others.
-              <br />
-              <br />
+              </div>
+              <div className="welcome-capabilities-util">
               • Utilizes AI for document processing and extraction of relevant information.
-              <br />
-              <br />• Supports natural language processing for user queries and provides relevant
+              </div>
+              <div className="welcome-capabilities-queries">
+              • Supports natural language processing for user queries and provides relevant
               responses.
+              </div>
             </div>
             <div className="welcome-limitations">
-              <ErrorOutline className="limitationsEmoji" />
-              <h2>Limitations:</h2>
-              <br />
-              • Limited to processing document formats such as DOCX, PDF, and other supported
-              formats.
-              <br />
-              <br />
-              • The accuracy of AI-based document processing may vary depending on the quality and
-              complexity of the documents.
-              <br />
-              <br />• The chatbot's natural language processing capabilities may have limitations in
-              understanding complex queries or specialized terminology.
+              <div className="welcome-limitations-header">
+                <ErrorOutline className="limitations-emoji" />
+                <h2>Limitations:</h2>
+              </div>
+              <div className="welcome-limitations-processing">
+                • Limited to processing document formats such as DOCX, PDF, and other supported formats.
+              </div>
+              <div className="welcome-limitations-accuracy">
+                • The accuracy of AI-based document processing may vary depending on the quality and complexity of the documents.
+              </div>
+              <div className="welcome-limitations-queries">
+                • The chatbot's natural language processing capabilities may have limitations in understanding complex queries or specialized terminology.
+              </div>
             </div>
             <div className="welcome-examples>"></div>
           </div>

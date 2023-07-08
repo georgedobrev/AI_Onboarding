@@ -148,8 +148,6 @@ const Chats: React.FC<ChatsProps> = ({ onConversationClick }) => {
           </div>
         ))}
       </div>
-      <div className="vertical-chatline-left"></div>
-      <div className="vertical-chatline-right"></div>
     </div>
   );
 };
