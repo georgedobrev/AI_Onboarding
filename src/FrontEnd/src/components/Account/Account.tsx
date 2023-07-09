@@ -28,8 +28,8 @@ const Account: React.FC = () => {
         </div>
         <div className="main-container">
           <div className="account-container">
-            <Button variant="contained" onClick={handleSignOut}>
-              <LogoutIcon />
+            <Button variant="contained" onClick={handleSignOut} className="logout-button">
+              <LogoutIcon className="logout-icon"/>
               Sign Out
             </Button>
           </div>
