@@ -7,6 +7,7 @@ namespace AI_Onboarding.Services.Interfaces
     public interface IDocumentService : IService
     {
         public BaseResponseViewModel UploadFile(DocumentViewModel document);
+        public ConvertFileResponseViewModel ConvertToPdf(DocumentViewModel document);
     }
 }
 
