@@ -5,7 +5,9 @@ import { authService } from './authService.ts';
 import { authHeaderFile } from './commonConfig.ts';
 import config from '../config.json';
 
-const uploadFile = async (baseUrl: string, uploadEndpoint: string, file: File) => {
+const uploadFile = async (file: File) => {
+  const baseUrl = config.baseUrl;
+  const uploadEndpoint = config.uploadEndpoint;
   const formData = new FormData();
   const mimeType = file.type || lookup(file.name);
   formData.append('file', file);

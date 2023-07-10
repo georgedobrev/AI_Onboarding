@@ -69,7 +69,6 @@
     text-overflow: ellipsis;
 }
 
-
 .conversation-delete-icon,
 .conversation-tick-icon,
 .conversation-close-icon {
@@ -116,11 +115,9 @@
     background-color: var(--hoverOnConversation);
 }
 
-
 ::-webkit-scrollbar {
     width: 0.1em;
 }
-
 
 .chat-container::-webkit-scrollbar {
     width: 0;
@@ -147,9 +144,6 @@
     width: 10em;
     height: 1px;
 }
-
-
-
 
 @media screen and (max-width: 768px) {
     .chat-container {

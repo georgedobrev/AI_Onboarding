@@ -101,11 +101,7 @@ const Message: React.FC = () => {
 
   useEffect(() => {
     const hasConversationData = messages.length > 0 || questionsAnswers.length > 0;
-    if (hasConversationData) {
-      setShowWelcomeHeader(false);
-    } else {
-      setShowWelcomeHeader(true);
-    }
+    setShowWelcomeHeader(!hasConversationData);
     setIsMessageSent(false);
   }, [messages, isMessageSent]);
 

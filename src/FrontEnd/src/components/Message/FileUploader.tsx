@@ -4,7 +4,6 @@ import { AttachFile, Close } from '@mui/icons-material';
 import { Button, CircularProgress } from '@mui/material';
 import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material';
 import { apiService } from '../../services/apiService.ts';
-import config from '../../config.json';
 import './FileUploader.css';
 
 const FileUploader: React.FC = () => {
@@ -14,7 +13,7 @@ const FileUploader: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);
   const [responseReceived, setResponseReceived] = useState<boolean>(false);
-  const acceptedFileTypes = '.pdf, .docx, .pptx';
+  const acceptedFileTypes = '.pdf, .docx';
 
   useEffect(() => {
     if (documentFiles) {
@@ -71,9 +70,7 @@ const FileUploader: React.FC = () => {
     if (documentFiles) {
       setLoading(true);
       try {
-        const baseUrl = config.baseUrl;
-        const uploadUrl = config.uploadEndpoint;
-        await apiService.uploadFile(baseUrl, uploadUrl, documentFiles);
+        await apiService.uploadFile(documentFiles);
       } catch (error) {
         console.error('Error uploading file:', error);
       }

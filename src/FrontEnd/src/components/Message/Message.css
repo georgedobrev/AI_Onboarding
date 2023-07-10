@@ -232,3 +232,7 @@
 .send-btn {
     color: var(--whiteColor);
 }
+
+.file-input {
+    display: none;
+}
