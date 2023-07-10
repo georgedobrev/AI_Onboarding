@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Divider, Drawer, IconButton, List, ListItem, ListItemIcon } from '@mui/material';
-import { Menu as MenuIcon } from '@mui/icons-material';
-import HomeIcon from '@mui/icons-material/Home';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import FileUploadIcon from '@mui/icons-material/FileUpload';
+import {
+  Menu as MenuIcon,
+  Home as HomeIcon,
+  AccountCircle as AccountCircleIcon,
+  FileUpload as FileUploadIcon,
+} from '@mui/icons-material';
 import Chats from '../Chats/Chats.tsx';
 import './Navbar.css';
 
@@ -58,6 +60,13 @@ const Navbar: React.FC = () => {
 
   const handleDrawerClose = () => {
     setOpen(false);
+  };
+
+  const handleConversationClick = (id: number | null) => {
+    if (id) {
+      localStorage.setItem('conversationId', id.toString());
+      navigate(`/home/${id}`);
+    }
   };
 
   return (
@@ -115,7 +124,7 @@ const Navbar: React.FC = () => {
                   </ListItemIcon>
                 </ListItem>
               </List>
-              <Chats />
+              <Chats onConversationClick={handleConversationClick} />
             </div>
             <Divider />
           </Drawer>

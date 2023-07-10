@@ -3,7 +3,9 @@
     height: 100%;
     width: 25%;
     justify-content: center;
+    overflow: auto;
     z-index: 0;
+    border-right: 1px solid var(--lineColor);
 }
 
 .vertical-chatline-right {
@@ -67,7 +69,6 @@
     text-overflow: ellipsis;
 }
 
-
 .conversation-delete-icon,
 .conversation-tick-icon,
 .conversation-close-icon {
@@ -112,6 +113,36 @@
 
 .selected {
     background-color: var(--hoverOnConversation);
+}
+
+::-webkit-scrollbar {
+    width: 0.1em;
+}
+
+.chat-container::-webkit-scrollbar {
+    width: 0;
+    background-color: transparent;
+    z-index: 1;
+}
+
+.chat-container:hover::-webkit-scrollbar {
+    width: 0.1em;
+    background-color: transparent;
+}
+
+.chat-container::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
+.chat-container::-webkit-scrollbar-thumb {
+    background-color: darkgrey;
+    outline: 1px solid slategrey;
+}
+
+.chat-container:hover::-webkit-scrollbar-thumb {
+    background-color: lightgrey;
+    width: 10em;
+    height: 1px;
 }
 
 @media screen and (max-width: 768px) {

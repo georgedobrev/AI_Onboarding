@@ -1,48 +1,43 @@
-import React, { useState } from 'react';
-import { apiService } from '../../services/apiService.ts';
-import config from '../../config.json';
-import DocViewer, { DocViewerRenderers } from '@cyntler/react-doc-viewer';
+import React, { useState, useEffect } from 'react';
 import { Document, Page } from 'react-pdf';
-import AttachFileIcon from '@mui/icons-material/AttachFile';
+import { AttachFile, Close } from '@mui/icons-material';
 import { Button, CircularProgress } from '@mui/material';
-import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
-import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material';
+import { apiService } from '../../services/apiService.ts';
 import './FileUploader.css';
 
 const FileUploader: React.FC = () => {
-  const [documentFiles, setDocumentFiles] = useState<File[]>([]);
+  const [documentFiles, setDocumentFiles] = useState<File | null | undefined>(null);
   const [documentType, setDocumentType] = useState<string | null>(null);
   const [numPages, setNumPages] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);
   const [responseReceived, setResponseReceived] = useState<boolean>(false);
-  const acceptedFileTypes = '.pdf, .docx, .pptx';
-  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = (event.target as HTMLInputElement)?.files || null;
-    if (files) {
-      setDocumentFiles(Array.from(files));
+  const acceptedFileTypes = '.pdf, .docx';
+
+  useEffect(() => {
+    if (documentFiles) {
       setCurrentPage(1);
       setLoading(true);
       setResponseReceived(false);
+      handleFileUpload();
     }
+  }, [documentFiles]);
 
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = (event.target as HTMLInputElement)?.files;
+    if (files && files.length > 0) {
+      setDocumentFiles(files[0]);
+    }
+  };
+
+  const handleFileUpload = async () => {
     try {
-      const baseUrl = config.baseUrl;
-      const uploadEndpoint = config.uploadEndpoint;
-
-      const responses = await Promise.all(
-        Array.from(files).map((file) => apiService.uploadFile(baseUrl, uploadEndpoint, file))
-      );
-
-      if (responses.every((response) => response)) {
-        const extension = files[0].name.split('.').pop()?.toLowerCase();
-        if (extension === 'pdf' || extension === 'docx' || extension === 'pptx') {
-          setDocumentType(extension);
-        }
-        setResponseReceived(true);
-      } else {
-        console.error('Error uploading files:', responses);
-      }
+      setLoading(true);
+      const responses = await apiService.displayFile(documentFiles);
+      setDocumentFiles(responses);
+      setDocumentType('pdf');
+      setResponseReceived(true);
     } catch (error) {
       console.error('Error uploading files:', error);
     } finally {
@@ -66,9 +61,26 @@ const FileUploader: React.FC = () => {
     }
   };
 
+  const handleResetFile = () => {
+    setDocumentFiles(null);
+    setResponseReceived(false);
+  };
+
+  const handleUploadFile = async () => {
+    if (documentFiles) {
+      setLoading(true);
+      try {
+        await apiService.uploadFile(documentFiles);
+      } catch (error) {
+        console.error('Error uploading file:', error);
+      }
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="pdf-main">
-      {documentFiles.length > 0 ? (
+      {documentFiles ? (
         <div className="pdf-container">
           {loading ? (
             <div className="loading-spinner">
@@ -82,11 +94,11 @@ const FileUploader: React.FC = () => {
                 className="pdf-previous-page"
                 variant="contained"
               >
-                <KeyboardArrowLeftIcon />
+                <KeyboardArrowLeft />
               </Button>
               {documentType === 'pdf' && (
                 <Document
-                  file={documentFiles[0]}
+                  file={documentFiles}
                   onLoadSuccess={handleDocumentLoadSuccess}
                   onLoadError={(error) => console.error('Error loading PDF:', error)}
                 >
@@ -99,48 +111,55 @@ const FileUploader: React.FC = () => {
                   />
                 </Document>
               )}
-              {(documentType === 'docx' || documentType === 'pptx') && (
-                <DocViewer
-                  renderer={documentType === 'pptx' ? DocViewerRenderers.Pptx : undefined}
-                  documents={documentFiles.map((file) => ({ uri: URL.createObjectURL(file) }))}
-                  onError={(error) =>
-                    console.error(`Error loading ${documentType.toUpperCase()}:`, error)
-                  }
-                />
-              )}
               <Button
                 onClick={handleNextPage}
                 disabled={currentPage === numPages}
                 className="pdf-next-page"
                 variant="contained"
               >
-                <KeyboardArrowRightIcon />
+                <KeyboardArrowRight />
               </Button>
             </div>
           )}
-          {responseReceived && (
+          {!loading && responseReceived && (
             <div className="pdf-navigation">
               <span>{`${currentPage} / ${numPages}`}</span>
             </div>
           )}
+          {!loading && !responseReceived && (
+            <div className="pdf-navigation">
+              <span>Uploading...</span>
+            </div>
+          )}
         </div>
       ) : null}
-
-      <div className="attach-icon">
-        <input
-          type="file"
-          id="file-input"
-          accept={acceptedFileTypes}
-          style={{ display: 'none' }}
-          onChange={handleFileChange}
-        />
-        <label htmlFor="file-input">
-          <Button variant="contained" component="span" className="attach-btn">
-            <AttachFileIcon />
+      {!documentFiles ? (
+        <div className="attach-icon">
+          <input
+            type="file"
+            id="file-input"
+            accept={acceptedFileTypes}
+            style={{ display: 'none' }}
+            onChange={handleFileChange}
+          />
+          <label htmlFor="file-input">
+            <Button variant="contained" component="span" className="attach-btn">
+              <AttachFile />
+              <p>ATTACH FILE</p>
+            </Button>
+          </label>
+        </div>
+      ) : (
+        <div className="upload-icon">
+          <Button variant="contained" className="upload-btn" onClick={handleUploadFile}>
+            <AttachFile />
             <p>UPLOAD FILE</p>
           </Button>
-        </label>
-      </div>
+          <Button onClick={handleResetFile} variant="outlined" className="reset-file-button">
+            <Close />
+          </Button>
+        </div>
+      )}
     </div>
   );
 };
