@@ -1,43 +1,19 @@
 import { createStore, applyMiddleware } from 'redux';
 import thunkMiddleware, { ThunkDispatch } from 'redux-thunk';
 import { loadAllChatMessages } from '../components/Chats/Chats.tsx';
+import {
+  AppState,
+  Conversation,
+  AISearchResponse,
+  FetchAISearchResponseSuccessAction,
+  FetchConversationsSuccessAction,
+  AppAction,
+} from './actions.ts';
 import { AISearch } from '../common/interfaces.ts';
 import { authService } from '../services/authService.ts';
 
-interface AppState {
-  conversations: Conversation[];
-  aiSearchResponse: AISearchResponse;
-}
-
-interface Conversation {
-  id: number;
-  questionAnswers: [
-    {
-      question: string;
-      answer: string;
-    }
-  ];
-}
-
-interface AISearchResponse {
-  id: string;
-  answer: string;
-}
-
 const FETCH_CONVERSATIONS_SUCCESS = 'FETCH_CONVERSATIONS_SUCCESS';
 const FETCH_AI_SEARCH_RESPONSE_SUCCESS = 'FETCH_AI_SEARCH_RESPONSE_SUCCESS';
-
-interface FetchConversationsSuccessAction {
-  type: typeof FETCH_CONVERSATIONS_SUCCESS;
-  payload: Conversation[];
-}
-
-interface FetchAISearchResponseSuccessAction {
-  type: typeof FETCH_AI_SEARCH_RESPONSE_SUCCESS;
-  payload: AISearchResponse;
-}
-
-type AppAction = FetchConversationsSuccessAction | FetchAISearchResponseSuccessAction;
 
 export const fetchConversationsSuccess = (
   conversations: Conversation[]
@@ -52,8 +28,6 @@ export const fetchAISearchResponseSuccess = (
   type: FETCH_AI_SEARCH_RESPONSE_SUCCESS,
   payload: aiSearchResponse,
 });
-
-// type AppThunk<ReturnType = void> = ThunkAction<ReturnType, AppState, unknown, AppAction>;
 
 export const fetchConversations = () => {
   return async (dispatch: ThunkDispatch<AppState, unknown, AppAction>): Promise<void> => {
