@@ -1,7 +1,7 @@
 import jwt_decode from 'jwt-decode';
 import { errorNotifications } from '../components/Notifications/Notifications.tsx';
 import config from '../config.json';
-import { authHeaderAI, authHeaderAIGetConversations } from './commonConfig.ts';
+import { authHeaderAI, authHeaderAIGetConversations, authHeaderFile } from './commonConfig.ts';
 import { fetchWrapper } from './fetchWrapper.tsx';
 import { FormValues as SignInForms } from '../components/SignIn/types.ts';
 import { FormValues as RegisterForms } from '../components/Register/types.ts';

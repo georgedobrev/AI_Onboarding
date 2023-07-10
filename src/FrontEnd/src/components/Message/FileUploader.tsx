@@ -10,7 +10,7 @@ import config from '../../config.json';
 import './FileUploader.css';
 
 const FileUploader: React.FC = () => {
-  const [documentFiles, setDocumentFiles] = useState<File | null>(null);
+  const [documentFiles, setDocumentFiles] = useState<File | null | undefined>(null);
   const [documentType, setDocumentType] = useState<string | null>(null);
   const [numPages, setNumPages] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(1);

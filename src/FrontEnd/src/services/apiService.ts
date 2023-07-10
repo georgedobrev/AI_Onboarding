@@ -1,5 +1,5 @@
 import { lookup } from 'mime-types';
-import { fetchWrapper } from './FetchWrapper.tsx';
+import { fetchWrapper } from './fetchWrapper.tsx';
 import { successNotification } from '../components/Notifications/Notifications.tsx';
 import { authService } from './authService.ts';
 import { authHeaderFile } from './commonConfig.ts';
@@ -41,8 +41,8 @@ const uploadFile = async (baseUrl: string, uploadEndpoint: string, file: File) =
   }
 };
 
-const displayFile = async (file: File) => {
-  const mimeType = file.type || lookup(file.name);
+const displayFile = async (file: File | null | undefined) => {
+  const mimeType = file?.type || lookup(file?.name ?? '');
   const formData = new FormData();
   let fileId;
 
@@ -57,7 +57,9 @@ const displayFile = async (file: File) => {
     mimeType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
   ) {
     fileId = config.docID;
-    formData.append('file', file);
+    if (file) {
+      formData.append('file', file);
+    }
     formData.append('FileTypeId', fileId);
     const response = await authService.convertFile(formData);
     return new File([base64ToArrayBuffer(String(response))], 'file name', {
@@ -70,6 +72,6 @@ const displayFile = async (file: File) => {
 };
 
 export const apiService = {
-    uploadFile,
-    displayFile,
+  uploadFile,
+  displayFile,
 };

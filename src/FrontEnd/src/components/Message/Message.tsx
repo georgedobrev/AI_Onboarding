@@ -34,7 +34,7 @@ const Message: React.FC = () => {
   const [currentConversationId, setCurrentConversationId] = useState<number | null>(null);
   const [questionsAnswers, setQuestionsAnswers] = useState<string[]>([]);
   const [showWelcomeHeader, setShowWelcomeHeader] = useState<boolean>(false);
-  const [isMessageSent, setIsMessageSent] = useState(false);
+  const [isMessageSent, setIsMessageSent] = useState<boolean>(false);
   type RootState = ReturnType<typeof store.getState>;
   const aiSearchResponse = useSelector((state: RootState) => state.aiSearchResponse);
 
@@ -81,8 +81,23 @@ const Message: React.FC = () => {
   }, [id]);
 
   useEffect(() => {
-    setMessages([]);
-  }, [currentConversationId]);
+    if (aiSearchResponse.answer !== '') {
+      aiSearchResponse.answer = '';
+    }
+  }, [currentConversationId, location.pathname]);
+
+  useEffect(() => {
+    if (location.pathname === '/upload') {
+      return;
+    }
+    if (aiSearchResponse.answer) {
+      setMessages((prevMessages) => [
+        ...prevMessages.slice(0, -1),
+        { text: aiSearchResponse.answer, isAnswer: true },
+      ]);
+    }
+    dispatch(fetchConversations());
+  }, [aiSearchResponse.answer]);
 
   useEffect(() => {
     const hasConversationData = messages.length > 0 || questionsAnswers.length > 0;
@@ -92,14 +107,7 @@ const Message: React.FC = () => {
       setShowWelcomeHeader(true);
     }
     setIsMessageSent(false);
-    if (aiSearchResponse.answer) {
-      setMessages((prevMessages) => [
-        ...prevMessages.slice(0, -1),
-        { text: aiSearchResponse.answer, isAnswer: true },
-      ]);
-    }
-    dispatch(fetchConversations());
-  }, [aiSearchResponse.answer, questionsAnswers, isMessageSent]);
+  }, [messages, isMessageSent]);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQuestion(event.target.value);

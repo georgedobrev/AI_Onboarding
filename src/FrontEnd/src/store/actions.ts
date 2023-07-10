@@ -5,12 +5,7 @@ export interface AppState {
 
 export interface Conversation {
   id: number;
-  questionAnswers: [
-    {
-      question: string;
-      answer: string;
-    }
-  ];
+  name: string;
 }
 
 export interface AISearchResponse {
