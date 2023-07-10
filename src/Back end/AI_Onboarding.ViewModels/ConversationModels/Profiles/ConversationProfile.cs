@@ -8,7 +8,7 @@ namespace AI_Onboarding.ViewModels.ConversationModels.Profiles
     {
         public ConversationProfile()
         {
-            CreateMap<Conversation, ConversationDTO>()
+            CreateMap<Conversation, ConversationInfo>()
                 .ForMember(dest => dest.QuestionAnswers, opt => opt.MapFrom(src => src.QuestionAnswers.ToList()))
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id));
         }
