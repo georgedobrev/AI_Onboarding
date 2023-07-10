@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { ThunkDispatch } from 'redux-thunk';
+import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useParams } from 'react-router-dom';
 import { IconButton, TextField } from '@mui/material';
 import { Send, EmojiObjects, ErrorOutline } from '@mui/icons-material';
-import { fetchConversations } from '../../store/reduxStore.ts';
+import store, { fetchConversations, fetchAISearchResponse } from '../../store/reduxStore.ts';
 import { authService } from '../../services/authService.ts';
 import FileUploader from './FileUploader.tsx';
 import './Message.css';
@@ -25,16 +24,9 @@ interface Conversation {
   ];
 }
 
-interface AIResponse {
-  data: {
-    id: string;
-    answer: string;
-  };
-}
-
 const Message: React.FC = () => {
   const location = useLocation();
-  const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
+  const dispatch = useDispatch();
   const { id } = useParams<{ id: string }>();
   const [userRole, setUserRole] = useState<string | null>(null);
   const [question, setQuestion] = useState<string>('');
@@ -43,6 +35,8 @@ const Message: React.FC = () => {
   const [questionsAnswers, setQuestionsAnswers] = useState<string[]>([]);
   const [showWelcomeHeader, setShowWelcomeHeader] = useState<boolean>(false);
   const [isMessageSent, setIsMessageSent] = useState(false);
+  type RootState = ReturnType<typeof store.getState>;
+  const aiSearchResponse = useSelector((state: RootState) => state.aiSearchResponse);
 
   const handleConversationClick = (conversation: Conversation) => {
     const questionsAnswers: string[] = [];
@@ -98,7 +92,14 @@ const Message: React.FC = () => {
       setShowWelcomeHeader(true);
     }
     setIsMessageSent(false);
-  }, [questionsAnswers, isMessageSent]);
+    if (aiSearchResponse.answer) {
+      setMessages((prevMessages) => [
+        ...prevMessages.slice(0, -1),
+        { text: aiSearchResponse.answer, isAnswer: true },
+      ]);
+    }
+    dispatch(fetchConversations());
+  }, [aiSearchResponse.answer, questionsAnswers, isMessageSent]);
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setQuestion(event.target.value);
@@ -106,37 +107,24 @@ const Message: React.FC = () => {
 
   const handleSearchSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    console.log(isMessageSent)
     setIsMessageSent(true);
     if (question.trim() !== '') {
       setMessages((prevMessages) => [...prevMessages, { text: question, isAnswer: false }]);
       setQuestion('');
     }
-
     if (!messages.some((message) => message.isTyping)) {
       setMessages((prevMessages) => [
         ...prevMessages,
         { text: '', isAnswer: true, isTyping: true },
       ]);
 
-      let response: AIResponse;
       if (!id && !localStorage.getItem('conversationId')) {
-        response = await authService.AISearchResponse({
-          question,
-        });
+        dispatch(fetchAISearchResponse({ question }));
         dispatch(fetchConversations());
-        localStorage.setItem('conversationId', response.data.id);
       } else {
-        response = await authService.AISearchResponse({
-          question,
-          id: id || localStorage.getItem('conversationId'),
-        });
+        dispatch(fetchAISearchResponse({ question, id }));
         dispatch(fetchConversations());
       }
-      setMessages((prevMessages) => [
-        ...prevMessages.slice(0, -1),
-        { text: response.data.answer, isAnswer: true },
-      ]);
     }
   };
 
@@ -194,22 +182,22 @@ const Message: React.FC = () => {
         <div className="horizontal-messagesline"></div>
       </div>
       <div className="messages-content-container">
-        {showWelcomeHeader && (window.location.pathname === '/home') && (
+        {showWelcomeHeader && window.location.pathname === '/home' && (
           <div className="welcome-header">
             <div className="welcome-capabilities">
               <div className="welcome-capabilities-header">
-              <EmojiObjects className="lightbulb-emoji" />
-              <h2>Capabilities:</h2>
+                <EmojiObjects className="lightbulb-emoji" />
+                <h2>Capabilities:</h2>
               </div>
               <div className="welcome-capabilities-accepts">
-              • Accepts document submissions in various formats, including DOCX, PDF, and others.
+                • Accepts document submissions in various formats, including DOCX, PDF, and others.
               </div>
               <div className="welcome-capabilities-util">
-              • Utilizes AI for document processing and extraction of relevant information.
+                • Utilizes AI for document processing and extraction of relevant information.
               </div>
               <div className="welcome-capabilities-queries">
-              • Supports natural language processing for user queries and provides relevant
-              responses.
+                • Supports natural language processing for user queries and provides relevant
+                responses.
               </div>
             </div>
             <div className="welcome-limitations">
@@ -218,13 +206,16 @@ const Message: React.FC = () => {
                 <h2>Limitations:</h2>
               </div>
               <div className="welcome-limitations-processing">
-                • Limited to processing document formats such as DOCX, PDF, and other supported formats.
+                • Limited to processing document formats such as DOCX, PDF, and other supported
+                formats.
               </div>
               <div className="welcome-limitations-accuracy">
-                • The accuracy of AI-based document processing may vary depending on the quality and complexity of the documents.
+                • The accuracy of AI-based document processing may vary depending on the quality and
+                complexity of the documents.
               </div>
               <div className="welcome-limitations-queries">
-                • The chatbot's natural language processing capabilities may have limitations in understanding complex queries or specialized terminology.
+                • The chatbot's natural language processing capabilities may have limitations in
+                understanding complex queries or specialized terminology.
               </div>
             </div>
             <div className="welcome-examples>"></div>

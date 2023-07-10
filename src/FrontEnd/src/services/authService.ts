@@ -1,11 +1,12 @@
 import jwt_decode from 'jwt-decode';
 import { errorNotifications } from '../components/Notifications/Notifications.tsx';
 import config from '../config.json';
-import { authHeaderAI, authHeaderAIGetConversations, authHeaderFile } from './commonConfig.ts';
-import { fetchWrapper } from './FetchWrapper.tsx';
+import { authHeaderAI, authHeaderAIGetConversations } from './commonConfig.ts';
+import { fetchWrapper } from './fetchWrapper.tsx';
 import { FormValues as SignInForms } from '../components/SignIn/types.ts';
 import { FormValues as RegisterForms } from '../components/Register/types.ts';
 import { ExtendSessionFormValues } from '../components/SignIn/types.ts';
+import { AISearch } from '../common/interfaces.ts';
 
 interface LoginResponse {
   accessToken?: string;
@@ -73,11 +74,6 @@ interface validateConfirmTokenResponse {
   message: string;
 }
 
-interface AISearch {
-  question: string;
-  id?: string | null;
-}
-
 interface AIDeleteRequestBody {
   id: number;
 }
@@ -87,6 +83,11 @@ interface TokenPayload {
   exp: number;
 
   [key: string]: string | number;
+}
+interface errorResponse {
+  response: {
+    data: string;
+  };
 }
 
 export const authService = {
@@ -121,10 +122,15 @@ export const authService = {
 
       return response;
     } catch (error) {
-      if (error.response.data === 'Email is not confirmed. Please confirm your email.') {
-        errorNotifications(error.response.data, { autoClose: 3000 });
+      if (
+        (error as errorResponse).response?.data ===
+        'Email is not confirmed. Please confirm your email.'
+      ) {
+        errorNotifications('Email is not confirmed. Please confirm your email.', {
+          autoClose: 3000,
+        });
       } else {
-        errorNotifications(error.response.data, { autoClose: 3000 });
+        errorNotifications('Login failed', { autoClose: 3000 });
         throw new Error('Login failed');
       }
     }
@@ -265,11 +271,10 @@ export const authService = {
     try {
       const headers = { headers: { 'Content-Type': 'application/json' } };
       const url = `${config.baseUrl}${config.validateConfirmTokenEndpoint}`;
-      const response = await fetchWrapper.post<validateConfirmTokenResponse, validateConfirmTokenRequestBody>(
-        url,
-        formData,
-        headers
-      );
+      const response = await fetchWrapper.post<
+        validateConfirmTokenResponse,
+        validateConfirmTokenRequestBody
+      >(url, formData, headers);
       if (!response) {
         throw new Error('Request failed');
       }
@@ -288,7 +293,7 @@ export const authService = {
       if (!response) {
         throw new Error('Request failed');
       }
-      return response;
+      return response.data;
     } catch (error) {
       console.error(error);
       throw new Error('AI Search failed');
