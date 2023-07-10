@@ -157,9 +157,9 @@ namespace AI_Onboarding.Api.Controllers
 
         [HttpPost("google-login")]
         [AllowAnonymous]
-        public async Task<IActionResult> GoogleLoginAsync([FromBody] string token)
+        public async Task<IActionResult> GoogleLoginAsync([FromBody] GoogleLoginViewModel googleLoginViewModel)
         {
-            var result = await _identityServise.GoogleLoginAsync(token);
+            var result = await _identityServise.GoogleLoginAsync(googleLoginViewModel.Token);
             if (result.Success)
             {
                 int.TryParse(_configuration["JWT:RefreshTokenValidityInDays"], out int refreshTokenValidityInDays);

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { AxiosResponse } from 'axios';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { TextField, Button, InputAdornment, IconButton } from '@mui/material';
 import { CredentialResponse, GoogleLogin } from '@react-oauth/google';
@@ -11,6 +12,12 @@ import config from '../../config.json';
 import logoImage from '../../assets/blankfactor-logo.jpg';
 import 'react-toastify/dist/ReactToastify.css';
 import './Signup.css';
+
+interface TokenPayload {
+  aud: string;
+  exp: number;
+  [key: string]: string | number;
+}
 
 const Signup: React.FC = () => {
   const location = useLocation();
@@ -33,16 +40,16 @@ const Signup: React.FC = () => {
   }, []);
 
   const handleGoogleSignupSuccess = async (credentialResponse: CredentialResponse) => {
-    const response = await authService.googleLogin(credentialResponse.credential);
+    const response = await authService.googleLogin({ token: credentialResponse.credential });
     await handleSuccessfulLogin(response);
     successNotification('Google login successful');
 
-    const accessToken = localStorage.getItem('accessToken');
-    const tokenPayload = jwt_decode(accessToken);
-    const userRole = tokenPayload[config.JWTUserRole];
-    const fullName = tokenPayload[config.Name];
-    localStorage.setItem('fullName', fullName);
+    const accessToken: string = localStorage.getItem('accessToken')?.toString() ?? '';
+    const tokenPayload: TokenPayload = jwt_decode(accessToken);
+    const userRole: string = tokenPayload[config.JWTUserRole] as string;
+    const fullName: string = tokenPayload[config.Name] as string;
     localStorage.setItem('userRole', userRole);
+    localStorage.setItem('fullName', fullName);
     localStorage.removeItem('conversationId');
     return navigate('/home');
   };
@@ -67,11 +74,10 @@ const Signup: React.FC = () => {
   };
 
   const calculateRemainingTime = (token: string) => {
-    const tokenPayload = jwt_decode(token);
+    const tokenPayload: TokenPayload = jwt_decode(token);
     const expirationTime = tokenPayload.exp * 1000;
     const currentTime = new Date().getTime();
-    const remainingTime = expirationTime - currentTime;
-    return remainingTime;
+    return expirationTime - currentTime;
   };
 
   const handleContinueClick = async () => {
@@ -94,13 +100,13 @@ const Signup: React.FC = () => {
     setTimeout(handleSessionExtensionPrompt, remainingTime);
   };
 
-  const handleSuccessfulLogin = async (response: object) => {
+  const handleSuccessfulLogin = async (response: AxiosResponse) => {
     try {
-      const accessToken = response.headers.get('access-token');
-      const refreshToken = response.headers.get('refresh-token');
+      const accessToken = response.headers['access-token'];
+      const refreshToken = response.headers['refresh-token'];
       const remainingTime = calculateRemainingTime(refreshToken);
-      const tokenPayload = jwt_decode(accessToken);
-      const fullName = tokenPayload[config.Name];
+      const tokenPayload: TokenPayload = jwt_decode(accessToken);
+      const fullName: string = tokenPayload[config.Name] as string;
       localStorage.setItem('fullName', fullName);
 
       setTimeout(() => {
@@ -132,7 +138,7 @@ const Signup: React.FC = () => {
     const response = await authService.extendSession(formData);
 
     if (response) {
-      const newAccessToken = response.headers.get('access-token');
+      const newAccessToken = response.headers['access-token'];
       localStorage.setItem('accessToken', newAccessToken);
       const remainingTime = calculateRemainingTime(newAccessToken);
       extendSession(remainingTime);

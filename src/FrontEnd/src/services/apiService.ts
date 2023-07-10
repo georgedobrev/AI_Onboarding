@@ -1,4 +1,4 @@
-import { fetchWrapper } from './FetchWrapper.tsx';
+import { fetchWrapper } from './fetchWrapper.tsx';
 import config from '../config.json';
 import { lookup } from 'mime-types';
 import { authHeaderFile } from './commonConfig.ts';
