@@ -12,6 +12,7 @@ import Upload from './components/Upload/Upload.tsx';
 import ResetPassword from './components/ResetPassword/ResetPassword.tsx';
 import Account from './components/Account/Account.tsx';
 import LandingPage from './components/LandingPage/LandingPage.tsx';
+import EmailConfirmation from "./components/ConfirmEmail/EmailConfirmation.tsx";
 import Message from './components/Message/Message.tsx';
 import store from './store/reduxStore.ts';
 import config from './config.json';
@@ -108,6 +109,7 @@ const App = () => {
             <Routes>
               <Route path="/" element={<LandingPage />} />
               <Route path="/signup" element={<Signup />} />
+              <Route path="/account/:token" element={<EmailConfirmation />} />
               <Route path="/register" element={<Register />} />
               <Route path="/account/change-password" element={<ResetPassword />} />
               <Route path="/account/reset-password" element={<ResetPassword />} />
