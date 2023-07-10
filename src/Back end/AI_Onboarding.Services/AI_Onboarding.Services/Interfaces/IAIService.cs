@@ -5,7 +5,7 @@ namespace AI_Onboarding.Services.Interfaces
 {
     public interface IAIService : IService
     {
-        public ScriptResponseViewModel RunScript(string relativePath, string argument);
+        public ScriptResponseViewModel RunScript(string relativePath, string argument = "");
     }
 }
 

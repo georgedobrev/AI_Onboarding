@@ -6,7 +6,7 @@ namespace AI_Onboarding.Services.Implementation
 {
     public class AIService : IAIService
     {
-        public ScriptResponseViewModel RunScript(string relativePath, string argument)
+        public ScriptResponseViewModel RunScript(string relativePath, string argument = "")
         {
             int maxArgumentLength = 30000;
 
