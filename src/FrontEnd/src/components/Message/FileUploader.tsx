@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Document, Page } from 'react-pdf';
-import AttachFileIcon from '@mui/icons-material/AttachFile';
-import CloseIcon from '@mui/icons-material/Close';
+import { AttachFile, Close } from '@mui/icons-material';
 import { Button, CircularProgress } from '@mui/material';
-import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
-import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import { KeyboardArrowLeft, KeyboardArrowRight } from '@mui/icons-material';
 import { apiService } from '../../services/apiService.ts';
 import config from '../../config.json';
 import './FileUploader.css';
@@ -99,7 +97,7 @@ const FileUploader: React.FC = () => {
                 className="pdf-previous-page"
                 variant="contained"
               >
-                <KeyboardArrowLeftIcon />
+                <KeyboardArrowLeft />
               </Button>
               {documentType === 'pdf' && (
                 <Document
@@ -122,7 +120,7 @@ const FileUploader: React.FC = () => {
                 className="pdf-next-page"
                 variant="contained"
               >
-                <KeyboardArrowRightIcon />
+                <KeyboardArrowRight />
               </Button>
             </div>
           )}
@@ -149,7 +147,7 @@ const FileUploader: React.FC = () => {
           />
           <label htmlFor="file-input">
             <Button variant="contained" component="span" className="attach-btn">
-              <AttachFileIcon />
+              <AttachFile />
               <p>ATTACH FILE</p>
             </Button>
           </label>
@@ -157,11 +155,11 @@ const FileUploader: React.FC = () => {
       ) : (
         <div className="upload-icon">
           <Button variant="contained" className="upload-btn" onClick={handleUploadFile}>
-            <AttachFileIcon />
+            <AttachFile />
             <p>UPLOAD FILE</p>
           </Button>
           <Button onClick={handleResetFile} variant="outlined" className="reset-file-button">
-            <CloseIcon />
+            <Close />
           </Button>
         </div>
       )}

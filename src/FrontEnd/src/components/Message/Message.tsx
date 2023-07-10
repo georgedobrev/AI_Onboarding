@@ -3,9 +3,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useParams } from 'react-router-dom';
 import { IconButton, TextField } from '@mui/material';
 import { Send, EmojiObjects, ErrorOutline } from '@mui/icons-material';
+import FileUploader from './FileUploader.tsx';
 import store, { fetchConversations, fetchAISearchResponse } from '../../store/reduxStore.ts';
 import { authService } from '../../services/authService.ts';
-import FileUploader from './FileUploader.tsx';
 import './Message.css';
 
 interface Message {
