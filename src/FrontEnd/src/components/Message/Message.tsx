@@ -35,6 +35,7 @@ const Message: React.FC = () => {
   const [questionsAnswers, setQuestionsAnswers] = useState<string[]>([]);
   const [showWelcomeHeader, setShowWelcomeHeader] = useState<boolean>(false);
   const [isMessageSent, setIsMessageSent] = useState<boolean>(false);
+  const conversationId = localStorage.getItem('conversationId');
   type RootState = ReturnType<typeof store.getState>;
   const aiSearchResponse = useSelector((state: RootState) => state.aiSearchResponse);
 
@@ -71,7 +72,7 @@ const Message: React.FC = () => {
     const storedUserRole = localStorage.getItem('userRole');
     setUserRole(storedUserRole);
     handleConversationById();
-    if (!id && !localStorage.getItem('conversationId')) {
+    if (!id && !conversationId) {
       setCurrentConversationId(null);
       setQuestionsAnswers([]);
     } else {
@@ -123,13 +124,11 @@ const Message: React.FC = () => {
         { text: '', isAnswer: true, isTyping: true },
       ]);
 
-      if (!id && !localStorage.getItem('conversationId')) {
+      if (!id && !conversationId) {
         dispatch(fetchAISearchResponse({ question }));
         dispatch(fetchConversations());
       } else {
-        dispatch(
-          fetchAISearchResponse({ question, id: id || localStorage.getItem('conversationId') })
-        );
+        dispatch(fetchAISearchResponse({ question, id: id || conversationId }));
         dispatch(fetchConversations());
       }
     }
