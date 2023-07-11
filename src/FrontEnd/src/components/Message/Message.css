@@ -206,8 +206,8 @@
 .search-container {
     display: flex;
     position: fixed;
-    left: 25%;
-    right: 5%;
+    left: 26%;
+    right: 6%;
     bottom: 0;
     flex-direction: column;
     justify-content: flex-end;
@@ -243,8 +243,8 @@
 
 @media screen and (max-width: 768px) {
     .search-container {
-        left: 15%;
-        right: 5%;
-        margin-inline: 5%;
+        left: 16%;
+        right: 6%;
+        margin-inline: 6%;
     }
 }
