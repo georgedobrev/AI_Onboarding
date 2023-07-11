@@ -73,18 +73,18 @@
 .attach-icon.MuiButtonBase-root,
 .attach-icon {
     display: flex;
+    position: fixed;
     align-items: center;
     justify-content: center;
-    width: 100%;
+    width: 120%;
     margin-top: auto;
-    margin-bottom: 10px;
-    position: relative;
+    bottom: 10px;
 }
 
 .attach-icon::before {
     content: '';
     position: absolute;
-    bottom: 45px;
+    bottom: 44px;
     left: 0;
     right: 0;
     height: 1px;

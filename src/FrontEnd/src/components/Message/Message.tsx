@@ -81,6 +81,7 @@ const Message: React.FC = () => {
   }, [id]);
 
   useEffect(() => {
+    setMessages([]);
     if (aiSearchResponse.answer !== '') {
       aiSearchResponse.answer = '';
     }
@@ -126,7 +127,9 @@ const Message: React.FC = () => {
         dispatch(fetchAISearchResponse({ question }));
         dispatch(fetchConversations());
       } else {
-        dispatch(fetchAISearchResponse({ question, id }));
+        dispatch(
+          fetchAISearchResponse({ question, id: id || localStorage.getItem('conversationId') })
+        );
         dispatch(fetchConversations());
       }
     }
