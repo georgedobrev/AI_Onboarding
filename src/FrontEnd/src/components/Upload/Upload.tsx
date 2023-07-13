@@ -1,6 +1,6 @@
 import React from 'react';
 import Navbar from '../Navbar/Navbar.tsx';
-import Message from '../Message/Message.tsx';
+import FileUploader from '../Message/FileUploader.tsx';
 import blankfactorLogo from '../../assets/blankfactor-logo.jpg';
 
 const Upload: React.FC = () => {
@@ -16,7 +16,7 @@ const Upload: React.FC = () => {
           <div className="header-line"></div>
         </div>
         <div className="main-container">
-          <Message />
+          <FileUploader />
         </div>
       </div>
     </>

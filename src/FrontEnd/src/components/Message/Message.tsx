@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useParams } from 'react-router-dom';
 import { IconButton, TextField } from '@mui/material';
 import { Send, EmojiObjects, ErrorOutline } from '@mui/icons-material';
-import FileUploader from './FileUploader.tsx';
 import store, { fetchConversations, fetchAISearchResponse } from '../../store/reduxStore.ts';
 import { authService } from '../../services/authService.ts';
 import './Message.css';
@@ -28,7 +27,6 @@ const Message: React.FC = () => {
   const location = useLocation();
   const dispatch = useDispatch();
   const { id } = useParams<{ id: string }>();
-  const [userRole, setUserRole] = useState<string | null>(null);
   const [question, setQuestion] = useState<string>('');
   const [messages, setMessages] = useState<Message[]>([]);
   const [currentConversationId, setCurrentConversationId] = useState<number | null>(null);
@@ -63,14 +61,7 @@ const Message: React.FC = () => {
     }
   };
 
-  const roles = {
-    Administrator: 'Administrator',
-    Employee: 'Employee',
-  };
-
   useEffect(() => {
-    const storedUserRole = localStorage.getItem('userRole');
-    setUserRole(storedUserRole);
     handleConversationById();
     if (!id && !conversationId) {
       setCurrentConversationId(null);
@@ -230,7 +221,6 @@ const Message: React.FC = () => {
         <div className="messages-content">
           {renderSelectedQuestionAnswers}
           {renderMessages}
-          {location.pathname === '/upload' && userRole === roles.Administrator && <FileUploader />}
           {location.pathname.includes('home') && (
             <form onSubmit={handleSearchSubmit} className="search-container">
               <div className="search-input">

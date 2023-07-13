@@ -23,4 +23,5 @@
     --answerColor: #25282a;
     --hoverOnConversation: rgba(37, 40, 42, 1);
     --borderOnWelcomeConversation: #000000BF;
+    --backgroundWelcomeHeader: rgba(64,64,70,0.8);
 }
